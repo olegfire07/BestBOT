@@ -7,8 +7,50 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Создание заключения v4.3</title>
-    <!-- Version: 4.3 (Cache Buster) -->
+    <title>Создание заключения v4.4</title>
+    <!-- Version: 4.4 (Cache Buster: Motivation Memo Added) -->
+    <style>
+        /* Motivation Modal Styles */
+        .motivation-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            padding: 10px 0;
+        }
+
+        .motivation-item {
+            background: rgba(0, 122, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border: 1px solid rgba(0, 122, 255, 0.1);
+        }
+
+        .motivation-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .motivation-text b {
+            display: block;
+            color: var(--primary-color);
+            margin-bottom: 2px;
+        }
+
+        .motivation-text span {
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script
         src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
@@ -1244,8 +1286,16 @@
 </head>
 
 <body>
-    <div class="title-header">
-        <h1 id="mainTitle">Новое заключение</h1>
+    <div class="header-container" id="headerContainer">
+        <div class="motivation-trigger" onclick="showMotivation()" title="Система мотивации">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" style="color: #007aff;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+        </div>
+        <h1 id="mainTitle">Новое заключение v4.4</h1>
         <span class="info-icon" onclick="showUserGuide()" title="Инструкция">i</span>
     </div>
 
@@ -1254,8 +1304,7 @@
         ✅ Восстановлен черновик из предыдущей сессии
     </div>
 
-    <!-- Progress Bar -->
-    <div class="progress-container" id="progressContainer">
+    <div class="progress-container">
         <div class="progress-bar" id="progressBar"></div>
     </div>
 
@@ -1402,6 +1451,30 @@
         </div>
     </div>
 
+    <!-- Motivation Modal -->
+    <div id="motivationModal" class="modal">
+        <div class="modal-content">
+            <h2 class="no-margin-top guide-title">Система мотивации</h2>
+            <div class="motivation-container">
+                <div class="motivation-item">
+                    <div class="motivation-icon">📄</div>
+                    <div class="motivation-text">
+                        <b>+10 очков</b>
+                        <span>За каждое оформленное заключение</span>
+                    </div>
+                </div>
+                <div class="motivation-item">
+                    <div class="motivation-icon">💰</div>
+                    <div class="motivation-text">
+                        <b>+1 очко</b>
+                        <span>За каждые 1000 ₽ суммы оценки</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 20px;" onclick="closeMotivation()">Понятно</button>
+        </div>
+    </div>
+
     <!-- Guide Modal -->
     <div id="guideModal" class="modal">
         <div class="modal-content">
@@ -1514,12 +1587,22 @@
         }
 
         function showUserGuide() {
-            document.getElementById('guideModal').style.display = 'block';
+            document.getElementById('guideModal').style.display = 'flex';
             haptic('light');
         }
 
         function closeGuide() {
             document.getElementById('guideModal').style.display = 'none';
+            haptic('light');
+        }
+
+        function showMotivation() {
+            document.getElementById('motivationModal').style.display = 'flex';
+            haptic('light');
+        }
+
+        function closeMotivation() {
+            document.getElementById('motivationModal').style.display = 'none';
             haptic('light');
         }
 
