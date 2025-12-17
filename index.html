@@ -7,8 +7,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Создание заключения v4.8</title>
-    <!-- Version: 4.8 (Enterprise Upgrade) -->
+    <title>Создание заключения v4.9</title>
+    <!-- Version: 4.9 (UI Refresh & Points Renaming) -->
     <style>
         /* Motivation Modal Styles */
         .motivation-container {
@@ -1287,16 +1287,18 @@
 
 <body>
     <div class="header-container" id="headerContainer">
-        <div class="motivation-trigger" onclick="showMotivation()" title="Система мотивации">
+        <div class="motivation-trigger" onclick="showMotivation()" title="Рейтинговая система">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" style="color: #007aff;">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                stroke-linecap="round" stroke-linejoin="round" style="color: #FFD700;">
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                <path d="M4 22h16"></path>
+                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path>
             </svg>
         </div>
-        <h1 id="mainTitle">Новое заключение v4.4</h1>
-        <span class="info-icon" onclick="showUserGuide()" title="Инструкция">i</span>
+        <h1 id="mainTitle">Новое заключение</h1>
     </div>
 
     <!-- Draft Notice -->
@@ -1429,11 +1431,14 @@
         </div>
 
         <div class="footer-note">
+            <div class="footer-author" onclick="showUserGuide()" style="cursor:pointer; text-decoration: underline;">
+                📘 Инструкция пользователя
+            </div>
             <div class="footer-author">
-                Жуков Олег
+                Разработка: Жуков Олег
             </div>
             <div class="footer-version">
-                Version 2.1 - 17-12-2025
+                Enterprise v4.9
             </div>
         </div>
     </form>
@@ -1454,19 +1459,19 @@
     <!-- Motivation Modal -->
     <div id="motivationModal" class="modal">
         <div class="modal-content">
-            <h2 class="no-margin-top guide-title">Система мотивации</h2>
+            <h2 class="no-margin-top guide-title">Рейтинги и достижения</h2>
             <div class="motivation-container">
                 <div class="motivation-item">
                     <div class="motivation-icon">📄</div>
                     <div class="motivation-text">
-                        <b>+10 очков</b>
+                        <b>+10 баллов</b>
                         <span>За каждое оформленное заключение</span>
                     </div>
                 </div>
                 <div class="motivation-item">
                     <div class="motivation-icon">💰</div>
                     <div class="motivation-text">
-                        <b>+1 очко</b>
+                        <b>+1 балл</b>
                         <span>За каждые 1000 ₽ суммы оценки</span>
                     </div>
                 </div>
