@@ -2445,7 +2445,7 @@
                     <div class="preview-section-title">📦 Предметы (${items.length})</div>
                     ${itemsList}
                     
-                    <!-- Total Banner -->
+                // Total Banner
                     <div class="total-banner">
                         <div class="total-label">
                             💰 Общая сумма:
@@ -2454,6 +2454,14 @@
                             ${totalCost.toLocaleString('ru-RU')} ₽
                         </div>
                     </div>
+                    
+                    <!-- SMART GUARD: Price Warning -->
+                    ${totalCost > 100000 ? `
+                        <div style="margin-top: 12px; padding: 10px; background: rgba(255, 152, 0, 0.1); border-left: 3px solid #FF9800; border-radius: 8px;">
+                            <div style="color: #FF9800; font-weight: 600; font-size: 13px; margin-bottom: 4px;">💰 Крупная сумма</div>
+                            <div style="color: var(--secondary-text); font-size: 12px;">Убедитесь, что оценка произведена корректно.</div>
+                        </div>
+                    ` : ''}
                 </div>
             `;
 
