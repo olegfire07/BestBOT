@@ -31,26 +31,6 @@
             --radius-md: 16px;
         }
 
-        /* Force gradient to render inside Telegram WebApp (can override theme bg) */
-        html,
-        body {
-            min-height: 100%;
-            background-color: #f0f2f5 !important;
-            /* Premium Soft Mesh Gradient */
-            background-image:
-                radial-gradient(at 40% 20%, hsla(28, 100%, 74%, 1) 0px, transparent 50%),
-                radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 1) 0px, transparent 50%),
-                radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 1) 0px, transparent 50%),
-                radial-gradient(at 80% 50%, hsla(340, 100%, 76%, 1) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, hsla(22, 100%, 77%, 1) 0px, transparent 50%),
-                radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 1) 0px, transparent 50%),
-                radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 1) 0px, transparent 50%) !important;
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            -webkit-font-smoothing: antialiased;
-        }
-
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
@@ -59,6 +39,14 @@
             /* Fix sticky footer overlap */
             min-height: 100vh;
             color: var(--text-color);
+            background-color: #f0f2f5;
+            /* Premium Soft Mesh Gradient */
+            background-image:
+                radial-gradient(at 0% 0%, hsla(253, 16%, 90%, 1) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 90%, 1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339, 49%, 90%, 1) 0, transparent 50%);
+            background-size: 100% 100%;
+            -webkit-font-smoothing: antialiased;
         }
 
         @keyframes gradient-animation {
@@ -77,8 +65,6 @@
 
         /* Light Theme Override for Mesh */
         @media (prefers-color-scheme: light) {
-
-            html,
             body {
                 background-color: #ffffff;
                 background-image:
@@ -102,7 +88,6 @@
             letter-spacing: -0.02em;
             color: #1d1d1f;
             animation: fadeInUp 0.6s ease-out;
-            cursor: pointer;
         }
 
         .section {
@@ -1259,7 +1244,7 @@
 
 <body>
     <div class="title-header">
-        <h1 id="mainTitle" onclick="handleTitleClick()">Новое заключение</h1>
+        <h1 id="mainTitle">Новое заключение</h1>
         <span class="info-icon" onclick="showUserGuide()" title="Инструкция">i</span>
     </div>
 
@@ -1318,7 +1303,7 @@
             <div class="form-group">
                 <label>Дата</label>
                 <div class="input-wrapper">
-                    <input type="date" id="date" required max="" placeholder="Дата" title="Дата">
+                    <input type="date" id="date" required placeholder="Дата" title="Дата">
                     <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -1421,308 +1406,277 @@
         <div class="modal-content">
             <h2 class="no-margin-top">Настройки</h2>
             <div class="form-group">
-                <label>ImgBB API Key</label>
-                <input type="text" id="apiKeyInput" placeholder="Введите ключ с api.imgbb.com">
-                <div class="hint-text">Ключ сохранится на устройстве</div>
+                <div class="form-group">
+                    <input type="text" id="botUrlInput" class="item-field" placeholder="https://your-bot-url.com">
+                    <label class="floating-label" for="botUrlInput">URL Бота (Опционально)</label>
+                    <div class="input-hint">Если не указан, используется стандартный</div>
+                </div>
+                <button class="btn btn-primary" onclick="saveSettings()">Сохранить</button>
+                <button class="btn btn-secondary btn-margin-10"
+                    onclick="document.getElementById('settingsModal').style.display = 'none'">Закрыть</button>
             </div>
-            <div class="form-group">
-                <label>URL Бота (для браузера)</label>
-                <input type="text" id="botUrlInput" placeholder="https://... (ngrok/glitch)">
-                <div class="hint-text">Оставьте пустым, если используете внутри Telegram</div>
-            </div>
-            <button class="btn btn-primary" onclick="saveSettings()">Сохранить</button>
-            <button class="btn btn-secondary btn-margin-10"
-                onclick="document.getElementById('settingsModal').style.display = 'none'">Закрыть</button>
         </div>
-    </div>
 
-    <!-- Guide Modal -->
-    <div id="guideModal" class="modal">
-        <div class="modal-content">
-            <h2 class="no-margin-top guide-title">Как это работает</h2>
+        <!-- Guide Modal -->
+        <div id="guideModal" class="modal">
+            <div class="modal-content">
+                <h2 class="no-margin-top guide-title">Как это работает</h2>
 
-            <div class="guide-steps">
-                <div class="guide-step">
-                    <div class="step-icon-wrapper">
-                        <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
+                <div class="guide-steps">
+                    <div class="guide-step">
+                        <div class="step-icon-wrapper">
+                            <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </div>
+                        <div class="step-text">
+                            <h3>1. Заполните данные</h3>
+                            <p>Укажите подразделение, номер билета и дату.</p>
+                        </div>
                     </div>
-                    <div class="step-text">
-                        <h3>1. Заполните данные</h3>
-                        <p>Укажите подразделение, номер билета и дату.</p>
+
+                    <div class="guide-step">
+                        <div class="step-icon-wrapper">
+                            <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                        </div>
+                        <div class="step-text">
+                            <h3>2. Добавьте предметы</h3>
+                            <p>Загрузите фото и укажите оценку для каждого предмета.</p>
+                        </div>
+                    </div>
+
+                    <div class="guide-step">
+                        <div class="step-icon-wrapper">
+                            <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="9 11 12 14 22 4"></polyline>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                        </div>
+                        <div class="step-text">
+                            <h3>3. Проверьте</h3>
+                            <p>Нажмите кнопку внизу, чтобы проверить введенные данные.</p>
+                        </div>
+                    </div>
+
+                    <div class="guide-step">
+                        <div class="step-icon-wrapper">
+                            <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </div>
+                        <div class="step-text">
+                            <h3>4. Отправьте</h3>
+                            <p>Выберите режим (Оригинал/Черновик) и отправьте боту.</p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="guide-step">
-                    <div class="step-icon-wrapper">
-                        <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                            <polyline points="21 15 16 10 5 21"></polyline>
-                        </svg>
-                    </div>
-                    <div class="step-text">
-                        <h3>2. Добавьте предметы</h3>
-                        <p>Загрузите фото и укажите оценку для каждого предмета.</p>
-                    </div>
-                </div>
-
-                <div class="guide-step">
-                    <div class="step-icon-wrapper">
-                        <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="9 11 12 14 22 4"></polyline>
-                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                        </svg>
-                    </div>
-                    <div class="step-text">
-                        <h3>3. Проверьте</h3>
-                        <p>Нажмите кнопку внизу, чтобы проверить введенные данные.</p>
-                    </div>
-                </div>
-
-                <div class="guide-step">
-                    <div class="step-icon-wrapper">
-                        <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                    </div>
-                    <div class="step-text">
-                        <h3>4. Отправьте</h3>
-                        <p>Выберите режим (Оригинал/Черновик) и отправьте боту.</p>
-                    </div>
-                </div>
+                <button class="btn btn-primary guide-btn" onclick="closeGuide()">Всё понятно</button>
             </div>
-
-            <button class="btn btn-primary guide-btn" onclick="closeGuide()">Всё понятно</button>
         </div>
-    </div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
+        <script>
+            const tg = window.Telegram.WebApp;
 
-        // Ensure Telegram doesn't override our gradient background
-        if (tg && typeof tg.setBackgroundColor === 'function') {
-            try {
-                tg.setBackgroundColor('#f0f2f5');
-                tg.setHeaderColor('bg_color');
-            } catch (err) {
-                console.warn('Telegram theme setup failed', err);
-            }
-        }
-
-        if (tg && typeof tg.ready === 'function') {
-            tg.ready();
-        }
-
-        // --- CONFIGURATION ---
-        // WARNING: These are default values for local/demo use.
-        // For production, consider injecting these via environment variables or a build step.
-        // --- SECURITY: XSS PROTECTION ---
-        function escapeHtml(unsafe) {
-            if (!unsafe) return '';
-            return String(unsafe)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        const APP_CONFIG = {
-            DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || "",
-            DEFAULT_IMGBB_KEY: window.APP_DEFAULT_IMGBB_KEY || "603922d4d07bdc828df7356ac7a75dbc"
-        };
-
-        // Initialize
-        tg.expand();
-        // Assuming restoreDraft() exists elsewhere or will be added.
-        // restoreDraft();
-
-        // URL params allow setting shared config for all users (e.g. from bot WebApp URL).
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlImgBBKey = (urlParams.get('imgbb_key') || '').trim();
-        const urlBotUrl = (urlParams.get('bot_url') || '').trim();
-        const isInTelegram = Boolean(tg.initDataUnsafe && tg.initDataUnsafe.user);
-
-        // Load API Key (shared first; don't let stale per-user settings break uploads)
-        let imgbbKey = urlImgBBKey || APP_CONFIG.DEFAULT_IMGBB_KEY;
-        if (!isInTelegram) {
-            try {
-                imgbbKey = localStorage.getItem('imgbb_key') || imgbbKey;
-            } catch (e) { }
-        } else if (imgbbKey) {
-            try {
-                localStorage.setItem('imgbb_key', imgbbKey);
-            } catch (e) { }
-        }
-
-        // Load Bot URL (for standalone mode)
-        let botUrl = urlBotUrl || APP_CONFIG.DEFAULT_BOT_URL;
-        if (!isInTelegram) {
-            try {
-                botUrl = localStorage.getItem('bot_url') || botUrl;
-            } catch (e) { }
-        } else if (botUrl) {
-            try {
-                localStorage.setItem('bot_url', botUrl);
-            } catch (e) { }
-        }
-
-        // Secret Settings Access
-        let titleClicks = 0;
-        let titleTimer;
-
-        function populateSettingsInputs() {
-            document.getElementById('apiKeyInput').value = imgbbKey;
-            document.getElementById('botUrlInput').value = botUrl;
-        }
-
-        function handleTitleClick() {
-            titleClicks++;
-            clearTimeout(titleTimer);
-            titleTimer = setTimeout(() => {
-                titleClicks = 0;
-            }, 1000);
-
-            if (titleClicks >= 5) {
-                populateSettingsInputs();
-                document.getElementById('settingsModal').style.display = 'block';
-                titleClicks = 0;
-            }
-        }
-
-        function showUserGuide() {
-            document.getElementById('guideModal').style.display = 'block';
-            haptic('light');
-        }
-
-        function closeGuide() {
-            document.getElementById('guideModal').style.display = 'none';
-            haptic('light');
-        }
-
-        function saveSettings() {
-            const key = document.getElementById('apiKeyInput').value.trim();
-            const url = document.getElementById('botUrlInput').value.trim();
-
-            if (key) {
-                localStorage.setItem('imgbb_key', key);
-                imgbbKey = key;
-            } else {
-                localStorage.removeItem('imgbb_key');
-                imgbbKey = APP_CONFIG.DEFAULT_IMGBB_KEY;
+            // --- CONFIGURATION ---
+            // WARNING: These are default values for local/demo use.
+            // For production, consider injecting these via environment variables or a build step.
+            // --- SECURITY: XSS PROTECTION ---
+            function escapeHtml(unsafe) {
+                if (!unsafe) return '';
+                return String(unsafe)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
             }
 
-            if (url) {
-                // Remove trailing slash
-                const cleanUrl = url.replace(/\/$/, "");
-                localStorage.setItem('bot_url', cleanUrl);
-                botUrl = cleanUrl;
-            } else {
-                localStorage.removeItem('bot_url');
-                botUrl = APP_CONFIG.DEFAULT_BOT_URL;
+            const APP_CONFIG = {
+                DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || ""
+            };
+
+            // Initialize
+            tg.expand();
+            // Assuming restoreDraft() exists elsewhere or will be added.
+            // restoreDraft();
+
+            // URL params allow setting shared config for all users (e.g. from bot WebApp URL).
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlBotUrl = (urlParams.get('bot_url') || '').trim();
+            const isInTelegram = Boolean(tg.initDataUnsafe && tg.initDataUnsafe.user);
+
+            // Load Bot URL (for standalone mode)
+            let botUrl = urlBotUrl || APP_CONFIG.DEFAULT_BOT_URL;
+            if (!isInTelegram) {
+                try {
+                    botUrl = localStorage.getItem('bot_url') || botUrl;
+                } catch (e) { }
+            } else if (botUrl) {
+                try {
+                    localStorage.setItem('bot_url', botUrl);
+                } catch (e) { }
             }
 
-            document.getElementById('settingsModal').style.display = 'none';
-            tg.showAlert("Настройки сохранены!");
-        }
+            // Secret Settings Access
+            let titleClicks = 0;
+            let titleTimer;
 
-        // Theme handling
-        if (tg.themeParams) {
-            const r = document.documentElement.style;
-        }
-
-        // Set today's date and max date (prevent future dates)
-        const today = new Date().toISOString().split('T')[0];
-        const dateInput = document.getElementById('date');
-        dateInput.valueAsDate = new Date();
-        dateInput.setAttribute('max', today);
-
-        let itemCount = 0;
-        let appState = 'editing'; // State: 'editing' or 'preview'
-        let autosaveTimeout; // For debounced autosave
-
-        // Swipe gesture support
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let currentCard = null;
-
-        function handleTouchStart(e) {
-            const card = e.currentTarget.closest('.item-card');
-            const touchX = e.touches[0].clientX;
-            const touchY = e.touches[0].clientY;
-            const diffX = touchX - touchStartX;
-            const diffY = touchY - touchStartY;
-
-            // Only horizontal swipe
-            if (Math.abs(diffX) > Math.abs(diffY) && diffX < -50) {
-                currentCard.style.transform = `translateX(${diffX}px)`;
-                currentCard.style.opacity = 1 + diffX / 200;
-            }
-        }
-
-        function handleTouchEnd(e) {
-            if (!currentCard) return;
-
-            const touchX = e.changedTouches[0].clientX;
-            const diffX = touchX - touchStartX;
-
-            if (diffX < -100) {
-                // Swipe threshold reached - delete
-                currentCard.style.transition = 'transform 0.3s, opacity 0.3s';
-                currentCard.style.transform = 'translateX(-100%)';
-                currentCard.style.opacity = '0';
-
-                setTimeout(() => {
-                    currentCard.remove();
-                    updateBadge();
-                    haptic('medium');
-                }, 300);
-            } else {
-                // Reset position
-                currentCard.style.transition = 'transform 0.3s, opacity 0.3s';
-                currentCard.style.transform = 'translateX(0)';
-                currentCard.style.opacity = '1';
+            function populateSettingsInputs() {
+                document.getElementById('botUrlInput').value = botUrl;
             }
 
-            currentCard = null;
-        }
+            function handleTitleClick() {
+                titleClicks++;
+                clearTimeout(titleTimer);
+                titleTimer = setTimeout(() => {
+                    titleClicks = 0;
+                }, 1000);
 
-        // Real-time Total Calculation
-        function updateTotalCost() {
-            let total = 0;
-            document.querySelectorAll('.eval').forEach(input => {
-                const val = input.value.replace(/\s/g, ''); // Remove spaces
-                total += parseInt(val) || 0;
+                if (titleClicks >= 5) {
+                    populateSettingsInputs();
+                    document.getElementById('settingsModal').style.display = 'block';
+                    titleClicks = 0;
+                }
+            }
+
+            function showUserGuide() {
+                document.getElementById('guideModal').style.display = 'block';
+                haptic('light');
+            }
+
+            function closeGuide() {
+                document.getElementById('guideModal').style.display = 'none';
+                haptic('light');
+            }
+
+            function saveSettings() {
+                const url = document.getElementById('botUrlInput').value.trim();
+
+                if (url) {
+                    // Remove trailing slash
+                    const cleanUrl = url.replace(/\/$/, "");
+                    localStorage.setItem('bot_url', cleanUrl);
+                    botUrl = cleanUrl;
+                } else {
+                    localStorage.removeItem('bot_url');
+                    botUrl = APP_CONFIG.DEFAULT_BOT_URL;
+                }
+
+                document.getElementById('settingsModal').style.display = 'none';
+                tg.showAlert("Настройки сохранены!");
+            }
+
+            // Theme handling
+            if (tg.themeParams) {
+                const r = document.documentElement.style;
+            }
+
+            // Set today's date and max date (prevent future dates)
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('date');
+            dateInput.valueAsDate = new Date();
+            dateInput.setAttribute('max', today);
+
+            // Additional validation on change (for iOS compatibility)
+            dateInput.addEventListener('change', function () {
+                const selectedDate = new Date(this.value);
+                const todayDate = new Date(today);
+
+                if (selectedDate > todayDate) {
+                    tg.showAlert('⚠️ Нельзя выбрать будущую дату! Выберите сегодня или прошедшую дату.');
+                    this.value = today; // Reset to today
+                }
             });
 
-            const banner = document.getElementById('realTimeTotal');
-            const display = document.getElementById('totalAmountDisplay');
+            let itemCount = 0;
+            let appState = 'editing'; // State: 'editing' or 'preview'
+            let autosaveTimeout; // For debounced autosave
 
-            if (total > 0) {
-                banner.style.display = 'flex';
-                display.textContent = total.toLocaleString('ru-RU') + ' ₽';
-            } else {
-                banner.style.display = 'none';
+            // Swipe gesture support
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let currentCard = null;
+
+            function handleTouchStart(e) {
+                const card = e.currentTarget.closest('.item-card');
+                const touchX = e.touches[0].clientX;
+                const touchY = e.touches[0].clientY;
+                const diffX = touchX - touchStartX;
+                const diffY = touchY - touchStartY;
+
+                // Only horizontal swipe
+                if (Math.abs(diffX) > Math.abs(diffY) && diffX < -50) {
+                    currentCard.style.transform = `translateX(${diffX}px)`;
+                    currentCard.style.opacity = 1 + diffX / 200;
+                }
             }
-        }
 
-        function addItem() {
-            // Collapse existing items
-            collapseAllItems();
+            function handleTouchEnd(e) {
+                if (!currentCard) return;
 
-            // Create new item
-            const div = document.createElement('div');
-            div.className = 'item-card';
-            // ID and Title will be fixed by renumberItems()
-            div.innerHTML = `
+                const touchX = e.changedTouches[0].clientX;
+                const diffX = touchX - touchStartX;
+
+                if (diffX < -100) {
+                    // Swipe threshold reached - delete
+                    currentCard.style.transition = 'transform 0.3s, opacity 0.3s';
+                    currentCard.style.transform = 'translateX(-100%)';
+                    currentCard.style.opacity = '0';
+
+                    setTimeout(() => {
+                        currentCard.remove();
+                        updateBadge();
+                        haptic('medium');
+                    }, 300);
+                } else {
+                    // Reset position
+                    currentCard.style.transition = 'transform 0.3s, opacity 0.3s';
+                    currentCard.style.transform = 'translateX(0)';
+                    currentCard.style.opacity = '1';
+                }
+
+                currentCard = null;
+            }
+
+            // Real-time Total Calculation
+            function updateTotalCost() {
+                let total = 0;
+                document.querySelectorAll('.eval').forEach(input => {
+                    const val = input.value.replace(/\s/g, ''); // Remove spaces
+                    total += parseInt(val) || 0;
+                });
+
+                const banner = document.getElementById('realTimeTotal');
+                const display = document.getElementById('totalAmountDisplay');
+
+                if (total > 0) {
+                    banner.style.display = 'flex';
+                    display.textContent = total.toLocaleString('ru-RU') + ' ₽';
+                } else {
+                    banner.style.display = 'none';
+                }
+            }
+
+            function addItem() {
+                // Collapse existing items
+                collapseAllItems();
+
+                // Create new item
+                const div = document.createElement('div');
+                div.className = 'item-card';
+                // ID and Title will be fixed by renumberItems()
+                div.innerHTML = `
                 <div class="item-header" onclick="toggleItem(this)">
                     <div class="item-header-info">
                         <span class="item-title">Предмет</span>
@@ -1769,696 +1723,676 @@
                     <div class="upload-status">Добавьте одно фото: общий вид и крупный план важных деталей</div>
                 </div>
             `;
-            document.getElementById('itemsList').appendChild(div);
+                document.getElementById('itemsList').appendChild(div);
 
-            // --- ADDED EVENT LISTENERS ---
-            // 1. Input Mask for Evaluation (Cleave.js)
-            const evalInput = div.querySelector('.eval');
-            new Cleave(evalInput, {
-                numeral: true,
-                numeralThousandsGroupStyle: 'thousand',
-                delimiter: ' '
-            });
-
-            // Real-time total update
-            evalInput.addEventListener('input', updateTotalCost);
-
-            // 2. File Input Trigger
-            const fileInput = div.querySelector('.file-input');
-            const previewContainer = div.querySelector('.photo-preview-container');
-
-            // Handle click on container to trigger file input
-            previewContainer.onclick = (e) => {
-                // Prevent double trigger if clicking on label/input directly
-                if (e.target !== fileInput && !e.target.closest('.upload-label')) {
-                    fileInput.click();
-                }
-            };
-
-            // 3. Validation clearing
-            const inputs = div.querySelectorAll('input');
-            inputs.forEach(input => {
-                input.addEventListener('input', () => {
-                    input.classList.remove('invalid');
-                    const errorMsg = input.closest('.form-group')?.querySelector('.error-message');
-                    if (errorMsg) errorMsg.classList.remove('show');
+                // --- ADDED EVENT LISTENERS ---
+                // 1. Input Mask for Evaluation (Cleave.js)
+                const evalInput = div.querySelector('.eval');
+                new Cleave(evalInput, {
+                    numeral: true,
+                    numeralThousandsGroupStyle: 'thousand',
+                    delimiter: ' '
                 });
-            });
+
+                // Real-time total update
+                evalInput.addEventListener('input', updateTotalCost);
+
+                // 2. File Input Trigger
+                const fileInput = div.querySelector('.file-input');
+                const previewContainer = div.querySelector('.photo-preview-container');
+
+                // Handle click on container to trigger file input
+                previewContainer.onclick = (e) => {
+                    // Prevent double trigger if clicking on label/input directly
+                    if (e.target !== fileInput && !e.target.closest('.upload-label')) {
+                        fileInput.click();
+                    }
+                };
+
+                // 3. Validation clearing
+                const inputs = div.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.addEventListener('input', () => {
+                        input.classList.remove('invalid');
+                        const errorMsg = input.closest('.form-group')?.querySelector('.error-message');
+                        if (errorMsg) errorMsg.classList.remove('show');
+                    });
+                });
 
 
-            // Fix numbering
-            document.getElementById('itemsList').appendChild(div);
-            renumberItems();
-        }
+                // Fix numbering
+                document.getElementById('itemsList').appendChild(div);
+                renumberItems();
+            }
 
-        function removeItem(btn, event) {
-            if (event) event.stopPropagation();
-            btn.closest('.item-card').remove();
-            renumberItems();
-        }
+            function removeItem(btn, event) {
+                if (event) event.stopPropagation();
+                btn.closest('.item-card').remove();
+                renumberItems();
+            }
 
-        function renumberItems() {
-            const items = document.querySelectorAll('.item-card');
-            items.forEach((card, index) => {
-                const num = index + 1;
-                card.id = `item-${num}`;
+            function renumberItems() {
+                const items = document.querySelectorAll('.item-card');
+                items.forEach((card, index) => {
+                    const num = index + 1;
+                    card.id = `item-${num}`;
 
-                // Update Title
-                const title = card.querySelector('.item-title');
-                if (title) title.textContent = `Предмет #${num}`;
+                    // Update Title
+                    const title = card.querySelector('.item-title');
+                    if (title) title.textContent = `Предмет #${num}`;
 
-                // Update Remove Button visibility
-                const headerBtnContainer = card.querySelector('.item-header > div:last-child');
-                if (headerBtnContainer) {
-                    if (num > 1) {
-                        // Add button if missing
-                        if (!headerBtnContainer.querySelector('.btn-remove')) {
-                            headerBtnContainer.innerHTML = `
+                    // Update Remove Button visibility
+                    const headerBtnContainer = card.querySelector('.item-header > div:last-child');
+                    if (headerBtnContainer) {
+                        if (num > 1) {
+                            // Add button if missing
+                            if (!headerBtnContainer.querySelector('.btn-remove')) {
+                                headerBtnContainer.innerHTML = `
                                 <button type="button" class="btn-remove" onclick="removeItem(this, event)">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                                     Удалить
                                 </button>`;
+                            }
+                        } else {
+                            // Remove button for first item
+                            headerBtnContainer.innerHTML = '';
                         }
+                    }
+                });
+
+                // Update global counter
+                itemCount = items.length;
+                updateBadge();
+            }
+
+            function collapseAllItems() {
+                document.querySelectorAll('.item-card').forEach(card => {
+                    card.classList.add('collapsed');
+                    updateItemSummary(card);
+                });
+            }
+
+            function updateItemSummary(card) {
+                const desc = card.querySelector('.desc').value;
+                const price = card.querySelector('.eval').value;
+                const hasPhoto = card.querySelector('.file-input').files.length > 0;
+
+                let summary = [];
+                if (desc) summary.push(desc);
+                if (price) {
+                    // Check if formatNumberWithSpaces exists (might not be loaded yet on initial load)
+                    if (typeof formatNumberWithSpaces === 'function') {
+                        summary.push(formatNumberWithSpaces(price) + ' ₽');
                     } else {
-                        // Remove button for first item
-                        headerBtnContainer.innerHTML = '';
+                        summary.push(price + ' ₽');
                     }
                 }
-            });
+                if (hasPhoto) summary.push('📷 Фото');
 
-            // Update global counter
-            itemCount = items.length;
-            updateBadge();
-        }
+                const summaryText = summary.join(', ') || 'Нет данных';
+                card.querySelector('.item-summary').textContent = summaryText;
+            }
 
-        function collapseAllItems() {
-            document.querySelectorAll('.item-card').forEach(card => {
-                card.classList.add('collapsed');
-                updateItemSummary(card);
-            });
-        }
-
-        function updateItemSummary(card) {
-            const desc = card.querySelector('.desc').value;
-            const price = card.querySelector('.eval').value;
-            const hasPhoto = card.querySelector('.file-input').files.length > 0;
-
-            let summary = [];
-            if (desc) summary.push(desc);
-            if (price) {
-                // Check if formatNumberWithSpaces exists (might not be loaded yet on initial load)
-                if (typeof formatNumberWithSpaces === 'function') {
-                    summary.push(formatNumberWithSpaces(price) + ' ₽');
+            function toggleItem(header) {
+                const card = header.closest('.item-card');
+                if (card.classList.contains('collapsed')) {
+                    card.classList.remove('collapsed');
                 } else {
-                    summary.push(price + ' ₽');
+                    card.classList.add('collapsed');
+                    updateItemSummary(card);
                 }
             }
-            if (hasPhoto) summary.push('📷 Фото');
 
-            const summaryText = summary.join(', ') || 'Нет данных';
-            card.querySelector('.item-summary').textContent = summaryText;
-        }
-
-        function toggleItem(header) {
-            const card = header.closest('.item-card');
-            if (card.classList.contains('collapsed')) {
-                card.classList.remove('collapsed');
-            } else {
-                card.classList.add('collapsed');
-                updateItemSummary(card);
+            function updateBadge() {
+                const count = document.getElementById('itemsList').children.length;
+                const badge = document.getElementById('itemCountBadge');
+                if (badge) {
+                    badge.textContent = count;
+                    // Optional: Hide badge if 0 (though we always have 1 item)
+                    // badge.style.display = count > 0 ? 'inline-block' : 'none';
+                }
             }
-        }
 
-        function updateBadge() {
-            const count = document.getElementById('itemsList').children.length;
-            const badge = document.getElementById('itemCountBadge');
-            if (badge) {
-                badge.textContent = count;
-                // Optional: Hide badge if 0 (though we always have 1 item)
-                // badge.style.display = count > 0 ? 'inline-block' : 'none';
+            // --- UX Features ---
+
+            // Helper for formatting numbers
+            function formatNumberWithSpaces(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
             }
-        }
 
-        // --- UX Features ---
-
-        // Helper for formatting numbers
-        function formatNumberWithSpaces(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-        }
-
-        // 1. Drag & Drop
-        function handleDragOver(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.currentTarget.style.borderColor = 'var(--primary-color)';
-            e.currentTarget.style.background = 'rgba(0, 122, 255, 0.05)';
-        }
-
-        function handleDragLeave(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.1)';
-            e.currentTarget.style.background = 'rgba(0, 0, 0, 0.03)';
-        }
-
-        function handleDrop(e, container) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            container.style.borderColor = 'rgba(0, 0, 0, 0.1)';
-            container.style.background = 'rgba(0, 0, 0, 0.03)';
-
-            const dt = e.dataTransfer;
-            const files = dt.files;
-
-            if (files && files[0]) {
-                const fileInput = container.querySelector('.file-input');
-                fileInput.files = files;
-                handleFileSelect(fileInput);
+            // 1. Drag & Drop
+            function handleDragOver(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.currentTarget.style.borderColor = 'var(--primary-color)';
+                e.currentTarget.style.background = 'rgba(0, 122, 255, 0.05)';
             }
-        }
 
-        // 3. Input Mask for Ticket (Digits only, max 11) + Auto-focus
-        document.getElementById('ticket').addEventListener('input', function (e) {
-            e.target.value = e.target.value.replace(/\D/g, '').substring(0, 11);
-
-            // \u2705 UX: Auto-focus to date field when 11 digits entered
-            if (e.target.value.length === 11) {
-                document.getElementById('date').focus();
+            function handleDragLeave(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+                e.currentTarget.style.background = 'rgba(0, 0, 0, 0.03)';
             }
-        });
 
-        // Input Mask for Department and Issue (Digits only)
-        ['department', 'issue'].forEach(id => {
-            document.getElementById(id).addEventListener('input', function (e) {
-                e.target.value = e.target.value.replace(/\D/g, '');
+            function handleDrop(e, container) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                container.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+                container.style.background = 'rgba(0, 0, 0, 0.03)';
+
+                const dt = e.dataTransfer;
+                const files = dt.files;
+
+                if (files && files[0]) {
+                    const fileInput = container.querySelector('.file-input');
+                    fileInput.files = files;
+                    handleFileSelect(fileInput);
+                }
+            }
+
+            // 3. Input Mask for Ticket (Digits only, max 11) + Auto-focus
+            document.getElementById('ticket').addEventListener('input', function (e) {
+                e.target.value = e.target.value.replace(/\D/g, '').substring(0, 11);
+
+                // \u2705 UX: Auto-focus to date field when 11 digits entered
+                if (e.target.value.length === 11) {
+                    document.getElementById('date').focus();
+                }
             });
-        });
 
-        // Input Mask for Evaluation (Thousands Separator)
-        // Dynamically attached in addItem() but also need utility function
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-        }
-
-        function cleanNumber(str) {
-            return str.replace(/\s/g, '');
-        }
-
-        // Auto-save on input
-        ['department', 'issue', 'ticket', 'date', 'region'].forEach(id => {
-            document.getElementById(id)?.addEventListener('change', saveDraft);
-        });
-
-        // Restore draft on load
-        restoreDraft();
-
-        // ============================================
-        // SERVICE WORKER & OFFLINE MODE
-        // ============================================
-        if ('serviceWorker' in navigator) {
-            const swVersion = '2322'; // Cache bust for Telegram gradient fix
-            const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
-            const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
-            navigator.serviceWorker.register(swUrl)
-                .then(reg => console.log('Service Worker registered:', reg.scope))
-                .catch(err => console.error('Service Worker registration failed:', err));
-        }
-
-        // Offline queue using IndexedDB
-        async function openOfflineDB() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open('ReportsDB', 1);
-                request.onerror = () => reject(request.error);
-                request.onsuccess = () => resolve(request.result);
-                request.onupgradeneeded = (event) => {
-                    const db = event.target.result;
-                    if (!db.objectStoreNames.contains('pending')) {
-                        db.createObjectStore('pending', { keyPath: 'id', autoIncrement: true });
-                    }
-                };
+            // Input Mask for Department and Issue (Digits only)
+            ['department', 'issue'].forEach(id => {
+                document.getElementById(id).addEventListener('input', function (e) {
+                    e.target.value = e.target.value.replace(/\D/g, '');
+                });
             });
-        }
 
-        async function savePendingReport(data) {
-            try {
-                const db = await openOfflineDB();
-                const tx = db.transaction('pending', 'readwrite');
-                const store = tx.objectStore('pending');
-                await store.add({ data, timestamp: Date.now() });
-                console.log('Report saved to offline queue');
-                return true;
-            } catch (error) {
-                console.error('Failed to save to offline queue:', error);
-                return false;
+            // Input Mask for Evaluation (Thousands Separator)
+            // Dynamically attached in addItem() but also need utility function
+            function formatNumber(num) {
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
             }
-        }
 
-        // Online event - sync pending reports
-        window.addEventListener('online', async () => {
-            console.log('Connection restored, syncing...');
-            tg.showAlert('✅ Соединение восстановлено! Отправляем данные...');
+            function cleanNumber(str) {
+                return str.replace(/\s/g, '');
+            }
 
-            try {
-                const db = await openOfflineDB();
-                const tx = db.transaction('pending', 'readonly');
-                const store = tx.objectStore('pending');
-                const pending = await store.getAll();
+            // Auto-save on input
+            ['department', 'issue', 'ticket', 'date', 'region'].forEach(id => {
+                document.getElementById(id)?.addEventListener('change', saveDraft);
+            });
 
-                if (pending.length > 0) {
-                    for (const item of pending) {
-                        try {
-                            await submitData(item.data);
-                            // Remove from queue after successful send
-                            const deleteTx = db.transaction('pending', 'readwrite');
-                            await deleteTx.objectStore('pending').delete(item.id);
-                        } catch (error) {
-                            console.error('Failed to sync report:', error);
+            // Restore draft on load
+            restoreDraft();
+
+            // ============================================
+            // SERVICE WORKER & OFFLINE MODE
+            // ============================================
+            if ('serviceWorker' in navigator) {
+                const swVersion = '2318'; // Floating Labels
+                const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
+                const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
+                navigator.serviceWorker.register(swUrl)
+                    .then(reg => console.log('Service Worker registered:', reg.scope))
+                    .catch(err => console.error('Service Worker registration failed:', err));
+            }
+
+            // Offline queue using IndexedDB
+            async function openOfflineDB() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open('ReportsDB', 1);
+                    request.onerror = () => reject(request.error);
+                    request.onsuccess = () => resolve(request.result);
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains('pending')) {
+                            db.createObjectStore('pending', { keyPath: 'id', autoIncrement: true });
                         }
-                    }
-                    tg.showAlert(`🎉 Отправлено ${pending.length} сохраненных заключений!`);
-                }
-            } catch (error) {
-                console.error('Failed to sync:', error);
-            }
-        });
-
-        // Offline event notification
-        window.addEventListener('offline', () => {
-            console.log('Connection lost');
-            tg.showAlert('⚠️ Соединение потеряно. Данные будут сохранены и отправлены автоматически.');
-        });
-
-        // 4. Smart Memory (Department & Region)
-        const deptInput = document.getElementById('department');
-        const regionInput = document.getElementById('region');
-
-        // Load defaults if not draft
-        if (!localStorage.getItem('formDraft')) {
-            const savedDept = localStorage.getItem('default_department');
-            const savedRegion = localStorage.getItem('default_region');
-            if (savedDept) deptInput.value = savedDept;
-            if (savedRegion) regionInput.value = savedRegion;
-        }
-
-        // Save on change
-        deptInput.addEventListener('change', (e) => {
-            localStorage.setItem('default_department', e.target.value);
-        });
-
-        regionInput.addEventListener('change', (e) => {
-            localStorage.setItem('default_region', e.target.value);
-        });
-
-        async function handleFileSelect(input) {
-            const file = input.files[0];
-            if (!file) return;
-
-            const container = input.closest('.item-card');
-            const previewContainer = container.querySelector('.photo-preview-container');
-            const btnText = container.querySelector('.btn-text');
-            const status = container.querySelector('.upload-status');
-
-            // Show loading state
-            previewContainer.classList.add('loading');
-            btnText.textContent = "Сжатие...";
-            status.textContent = "⏳ Обработка фото...";
-            status.className = "upload-status";
-
-            try {
-                // Compression options
-                const options = {
-                    maxSizeMB: 1,
-                    maxWidthOrHeight: 1280, // Optimized for speed
-                    useWebWorker: true,
-                    fileType: 'image/jpeg'
-                };
-
-                console.log(`Original: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
-
-                // Compress
-                const compressedFile = await imageCompression(file, options);
-
-                console.log(`Compressed: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
-
-                // Show preview
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    // Create or get IMG element
-                    let img = previewContainer.querySelector('.photo-preview-img');
-                    if (!img) {
-                        img = document.createElement('img');
-                        img.className = 'photo-preview-img';
-                        img.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 10; border-radius: 16px;';
-                        previewContainer.appendChild(img);
-                    }
-
-                    img.src = e.target.result;
-                    img.style.display = 'block';
-
-                    // Hide placeholder elements
-                    const label = previewContainer.querySelector('.upload-label');
-                    if (label) label.style.opacity = '0';
-
-                    previewContainer.classList.add('has-photo');
-                    previewContainer.classList.remove('loading');
-
-                    // Lightbox trigger
-                    img.onclick = (evt) => {
-                        evt.stopPropagation();
-                        openLightbox(e.target.result);
                     };
-                };
-                reader.readAsDataURL(compressedFile);
+                });
+            }
 
-                // 🚀 BACKGROUND UPLOAD with Compressed File
-                btnText.textContent = "Загрузка...";
-                status.textContent = "⏳ Загрузка на сервер...";
-
-                const uploadedUrl = await uploadImageToTelegram(compressedFile);
-
-                // Store URL
-                container.dataset.photoUrl = uploadedUrl;
-
-                // Success UI
-                btnText.textContent = "✓ Загружено";
-                status.textContent = "✅ Готово к отправке";
-                status.className = "upload-status success";
-                haptic('success');
-
-            } catch (error) {
-                console.error('Processing failed:', error);
-                btnText.textContent = "❌ Ошибка";
-                status.textContent = `⚠️ ${error.message || 'Ошибка обработки'}`;
-                status.className = "upload-status";
-                haptic('error');
-
-                // Reset UI
-                input.value = '';
-                const previewDiv = previewContainer.querySelector('.photo-preview');
-                previewDiv.style.backgroundImage = ''; // Clear background image
-                previewDiv.innerHTML = ''; // Clear any content
-
-                // Restore default upload label content if it was removed/hidden
-                const uploadLabel = previewContainer.querySelector('.upload-label');
-                if (uploadLabel) {
-                    uploadLabel.style.display = 'flex'; // Ensure it's visible
-                    btnText.textContent = "Добавить фото"; // Reset text
-                    previewContainer.querySelector('.hint').style.display = 'block'; // Show hint
+            async function savePendingReport(data) {
+                try {
+                    const db = await openOfflineDB();
+                    const tx = db.transaction('pending', 'readwrite');
+                    const store = tx.objectStore('pending');
+                    await store.add({ data, timestamp: Date.now() });
+                    console.log('Report saved to offline queue');
+                    return true;
+                } catch (error) {
+                    console.error('Failed to save to offline queue:', error);
+                    return false;
                 }
+            }
 
-                previewContainer.classList.remove('loading');
-                previewContainer.classList.remove('has-photo');
-                delete container.dataset.photoUrl;
+            // Online event - sync pending reports
+            window.addEventListener('online', async () => {
+                console.log('Connection restored, syncing...');
+                tg.showAlert('✅ Соединение восстановлено! Отправляем данные...');
 
-                // Re-attach click handler for upload
-                previewContainer.onclick = (e) => {
-                    if (e.target !== input && !e.target.closest('.upload-label')) {
-                        input.click();
+                try {
+                    const db = await openOfflineDB();
+                    const tx = db.transaction('pending', 'readonly');
+                    const store = tx.objectStore('pending');
+                    const pending = await store.getAll();
+
+                    if (pending.length > 0) {
+                        for (const item of pending) {
+                            try {
+                                await submitData(item.data);
+                                // Remove from queue after successful send
+                                const deleteTx = db.transaction('pending', 'readwrite');
+                                await deleteTx.objectStore('pending').delete(item.id);
+                            } catch (error) {
+                                console.error('Failed to sync report:', error);
+                            }
+                        }
+                        tg.showAlert(`🎉 Отправлено ${pending.length} сохраненных заключений!`);
                     }
-                };
-            }
-        }
+                } catch (error) {
+                    console.error('Failed to sync:', error);
+                }
+            });
 
-        // New function to handle Telegram upload (via Bot API)
-        async function uploadImageToImgBB(file) {
-            // Rename this function or just change logic, keeping name for compatibility with calling code (or rename call site too).
-            // Let's keep the name "uploadImageToImgBB" but change implementation if we want least friction, 
-            // BUT for clarity I will rename it and update the caller. 
-            // Caller is handleFileSelect: "const uploadedUrl = await uploadImageToImgBB(compressedFile);"
+            // Offline event notification
+            window.addEventListener('offline', () => {
+                console.log('Connection lost');
+                tg.showAlert('⚠️ Соединение потеряно. Данные будут сохранены и отправлены автоматически.');
+            });
 
-            // I'll execute a replace on the caller in a separate chunk to be clean.
-            return await uploadImageToTelegram(file);
-        }
+            // 4. Smart Memory (Department & Region)
+            const deptInput = document.getElementById('department');
+            const regionInput = document.getElementById('region');
 
-        async function uploadImageToTelegram(file) {
-            // Use local API
-            const formData = new FormData();
-            formData.append('image', file, 'image.jpg');
-
-            // Determine API URL
-            // If botUrl is set (external), use it. otherwise relative /api/upload-photo
-            let apiUrl = '/api/upload-photo';
-            if (botUrl) {
-                // Ensure no double slash if botUrl has trailing slash
-                apiUrl = botUrl.replace(/\/$/, "") + '/api/upload-photo';
+            // Load defaults if not draft
+            if (!localStorage.getItem('formDraft')) {
+                const savedDept = localStorage.getItem('default_department');
+                const savedRegion = localStorage.getItem('default_region');
+                if (savedDept) deptInput.value = savedDept;
+                if (savedRegion) regionInput.value = savedRegion;
             }
 
-            // Add API Auth Header if needed (we used _is_authorized in api.py checking X-API-KEY)
-            // But currently the API_AUTH_TOKEN is load from env.
-            // In index.html we don't seem to have the token injected easily unless we did it in handle_root
-            // Let's check handle_root... it injects bot_url and imgbb_key. not api_token.
-            // BUT api.py checks: if not API_AUTH_TOKEN: return True.
-            // If API_AUTH_TOKEN is set in env, we might have an issue.
-            // However, the current setup likely relies on it being empty or handled.
-            // If I need to support auth, I should inject it.
-            // For now assuming internal access.
+            // Save on change
+            deptInput.addEventListener('change', (e) => {
+                localStorage.setItem('default_department', e.target.value);
+            });
 
-            try {
-                const response = await fetch(apiUrl, {
+            regionInput.addEventListener('change', (e) => {
+                localStorage.setItem('default_region', e.target.value);
+            });
+
+            async function handleFileSelect(input) {
+                const file = input.files[0];
+                if (!file) return;
+
+                const container = input.closest('.item-card');
+                const previewContainer = container.querySelector('.photo-preview-container');
+                const btnText = container.querySelector('.btn-text');
+                const status = container.querySelector('.upload-status');
+
+                // Show loading state
+                previewContainer.classList.add('loading');
+                btnText.textContent = "Сжатие...";
+                status.textContent = "⏳ Обработка фото...";
+                status.className = "upload-status";
+
+                try {
+                    // Compression options
+                    const options = {
+                        maxSizeMB: 1,
+                        maxWidthOrHeight: 1280, // Optimized for speed
+                        useWebWorker: true,
+                        fileType: 'image/jpeg'
+                    };
+
+                    console.log(`Original: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+
+                    // Compress
+                    const compressedFile = await imageCompression(file, options);
+
+                    console.log(`Compressed: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+
+                    // Show preview
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        // Create or get IMG element
+                        let img = previewContainer.querySelector('.photo-preview-img');
+                        if (!img) {
+                            img = document.createElement('img');
+                            img.className = 'photo-preview-img';
+                            img.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 10; border-radius: 16px;';
+                            previewContainer.appendChild(img);
+                        }
+
+                        img.src = e.target.result;
+                        img.style.display = 'block';
+
+                        // Hide placeholder elements
+                        const label = previewContainer.querySelector('.upload-label');
+                        if (label) label.style.opacity = '0';
+
+                        previewContainer.classList.add('has-photo');
+                        previewContainer.classList.remove('loading');
+
+                        // Lightbox trigger
+                        img.onclick = (evt) => {
+                            evt.stopPropagation();
+                            openLightbox(e.target.result);
+                        };
+                    };
+                    reader.readAsDataURL(compressedFile);
+
+                    // 🚀 BACKGROUND UPLOAD with Compressed File
+                    btnText.textContent = "Загрузка...";
+                    status.textContent = "⏳ Загрузка на сервер...";
+
+                    const uploadedUrl = await uploadImageToBot(compressedFile);
+
+                    // Store URL
+                    container.dataset.photoUrl = uploadedUrl;
+
+                    // Success UI
+                    btnText.textContent = "✓ Загружено";
+                    status.textContent = "✅ Готово к отправке";
+                    status.className = "upload-status success";
+                    haptic('success');
+
+                } catch (error) {
+                    console.error('Processing failed:', error);
+                    btnText.textContent = "❌ Ошибка";
+                    status.textContent = `⚠️ ${error.message || 'Ошибка обработки'}`;
+                    status.className = "upload-status";
+                    haptic('error');
+
+                    // Reset UI
+                    input.value = '';
+                    const previewDiv = previewContainer.querySelector('.photo-preview');
+                    previewDiv.style.backgroundImage = ''; // Clear background image
+                    previewDiv.innerHTML = ''; // Clear any content
+
+                    // Restore default upload label content if it was removed/hidden
+                    const uploadLabel = previewContainer.querySelector('.upload-label');
+                    if (uploadLabel) {
+                        uploadLabel.style.display = 'flex'; // Ensure it's visible
+                        btnText.textContent = "Добавить фото"; // Reset text
+                        previewContainer.querySelector('.hint').style.display = 'block'; // Show hint
+                    }
+
+                    previewContainer.classList.remove('loading');
+                    previewContainer.classList.remove('has-photo');
+                    delete container.dataset.photoUrl;
+
+                    // Re-attach click handler for upload
+                    previewContainer.onclick = (e) => {
+                        if (e.target !== input && !e.target.closest('.upload-label')) {
+                            input.click();
+                        }
+                    };
+                }
+            }
+
+            // New function to handle Bot API upload
+            async function uploadImageToBot(file) {
+                // File is already compressed by handleFileSelect (library)
+                // const compressedBlob = await compressImage(file);
+                const compressedBlob = file; // Use directly
+
+                const formData = new FormData();
+                formData.append('image', compressedBlob, 'image.jpg');
+
+                // Use configured botUrl if available (for GitHub Pages), otherwise relative path
+                const baseUrl = typeof botUrl !== 'undefined' ? botUrl : '';
+                // Ensure no double slash if botUrl ends with /
+                const cleanBase = baseUrl.replace(/\/$/, "");
+                const uploadUrl = `${cleanBase}/api/upload-photo`;
+
+                const response = await fetch(uploadUrl, {
                     method: 'POST',
+                    headers: {
+                        // 'X-API-KEY': 'YOUR_TOKEN' // If auth needed
+                    },
                     body: formData
-                    // No headers needed for FormData, browser sets content-type multipart
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Upload failed: ${response.status}`);
+                    const errorText = await response.text();
+                    throw new Error(`Ошибка сервера: ${response.status}`);
                 }
 
                 const result = await response.json();
 
-                if (result.success && result.data && result.data.url) {
+                if (result && result.data && result.data.url) {
+                    // Ensure we return the tg: URL
                     return result.data.url;
                 } else {
-                    throw new Error(result.error || "Unknown upload error");
+                    throw new Error(result.error || "Неизвестная ошибка загрузки");
                 }
-            } catch (e) {
-                console.error("Upload error:", e);
-                throw e;
             }
-        }
 
-        // Lightbox Functions
-        function openLightbox(src) {
-            const modal = document.getElementById('lightboxModal');
-            const img = document.getElementById('lightboxImage');
-            img.src = src;
-            modal.style.display = 'flex'; // Flex to center
-            modal.style.alignItems = 'center';
-            modal.style.justifyContent = 'center';
-        }
-
-        function closeLightbox() {
-            document.getElementById('lightboxModal').style.display = 'none';
-        }
-
-        // Confetti Trigger
-        function fireConfetti() {
-            if (typeof confetti === 'function') {
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 }
-                });
+            // Lightbox Functions
+            function openLightbox(src) {
+                const modal = document.getElementById('lightboxModal');
+                const img = document.getElementById('lightboxImage');
+                img.src = src;
+                modal.style.display = 'flex'; // Flex to center
+                modal.style.alignItems = 'center';
+                modal.style.justifyContent = 'center';
             }
-        }
 
-        // 5. Telegram Native UI & Haptic Feedback
-        const mainButton = tg.MainButton;
-
-        // State Machine Button Handler
-        function handleMainButton() {
-            if (appState === 'editing') {
-                showPreview();
-            } else if (appState === 'preview') {
-                submitForm();
+            function closeLightbox() {
+                document.getElementById('lightboxModal').style.display = 'none';
             }
-        }
 
-        function updateMainButton() {
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                // We are in Telegram
-                document.getElementById('finalSubmitBtn').style.display = 'none'; // Hide HTML button in modal
-                document.querySelector('.btn-primary[onclick="showPreview()"]').style.display = 'none'; // Hide main form button
-
-                mainButton.setText("ПРОВЕРИТЬ И ОТПРАВИТЬ");
-                mainButton.show();
-                // Use single state-based handler
-                mainButton.onClick(handleMainButton);
+            // Confetti Trigger
+            function fireConfetti() {
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 }
+                    });
+                }
             }
-        }
 
-        // Call on load
-        updateMainButton();
+            // 5. Telegram Native UI & Haptic Feedback
+            const mainButton = tg.MainButton;
 
-        // Haptic Feedback Helper
-        function haptic(type = 'light') {
-            if (!tg.HapticFeedback) return;
-
-            switch (type) {
-                case 'light':
-                case 'medium':
-                case 'heavy':
-                case 'rigid':
-                case 'soft':
-                    tg.HapticFeedback.impactOccurred(type);
-                    break;
-                case 'error':
-                case 'success':
-                case 'warning':
-                    tg.HapticFeedback.notificationOccurred(type);
-                    break;
-                case 'selection':
-                    tg.HapticFeedback.selectionChanged();
-                    break;
-                default:
-                    // Fallback for unknown types
-                    tg.HapticFeedback.impactOccurred('light');
+            // State Machine Button Handler
+            function handleMainButton() {
+                if (appState === 'editing') {
+                    showPreview();
+                } else if (appState === 'preview') {
+                    submitForm();
+                }
             }
-        }
 
-        // Add haptic to interactive elements
-        document.querySelectorAll('input, select').forEach(el => {
-            el.addEventListener('focus', () => haptic('light'));
-        });
+            function updateMainButton() {
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    // We are in Telegram
+                    document.getElementById('finalSubmitBtn').style.display = 'none'; // Hide HTML button in modal
+                    document.querySelector('.btn-primary[onclick="showPreview()"]').style.display = 'none'; // Hide main form button
 
-        document.querySelectorAll('.btn').forEach(btn => {
-            btn.addEventListener('click', () => haptic('medium'));
-        });
+                    mainButton.setText("ПРОВЕРИТЬ И ОТПРАВИТЬ");
+                    mainButton.show();
+                    // Use single state-based handler
+                    mainButton.onClick(handleMainButton);
+                }
+            }
 
-        function validateForm() {
-            let isValid = true;
-            let firstInvalidField = null; // Track first invalid for auto-scroll
-            const requiredIds = ['department', 'issue', 'ticket', 'date', 'region'];
+            // Call on load
+            updateMainButton();
 
-            requiredIds.forEach(id => {
-                const el = document.getElementById(id);
-                if (!el.value.trim()) {
-                    isValid = false;
-                    el.classList.add('invalid');
-                    if (!firstInvalidField) firstInvalidField = el;
-                    // Add listener to remove invalid class on input
-                    el.addEventListener('input', () => el.classList.remove('invalid'), { once: true });
-                } else {
-                    // Specific checks
-                    if (id === 'ticket' && el.value.length !== 11) {
+            // Haptic Feedback Helper
+            function haptic(type = 'light') {
+                if (!tg.HapticFeedback) return;
+
+                switch (type) {
+                    case 'light':
+                    case 'medium':
+                    case 'heavy':
+                    case 'rigid':
+                    case 'soft':
+                        tg.HapticFeedback.impactOccurred(type);
+                        break;
+                    case 'error':
+                    case 'success':
+                    case 'warning':
+                        tg.HapticFeedback.notificationOccurred(type);
+                        break;
+                    case 'selection':
+                        tg.HapticFeedback.selectionChanged();
+                        break;
+                    default:
+                        // Fallback for unknown types
+                        tg.HapticFeedback.impactOccurred('light');
+                }
+            }
+
+            // Add haptic to interactive elements
+            document.querySelectorAll('input, select').forEach(el => {
+                el.addEventListener('focus', () => haptic('light'));
+            });
+
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('click', () => haptic('medium'));
+            });
+
+            function validateForm() {
+                let isValid = true;
+                let firstInvalidField = null; // Track first invalid for auto-scroll
+                const requiredIds = ['department', 'issue', 'ticket', 'date', 'region'];
+
+                requiredIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (!el.value.trim()) {
                         isValid = false;
                         el.classList.add('invalid');
                         if (!firstInvalidField) firstInvalidField = el;
+                        // Add listener to remove invalid class on input
                         el.addEventListener('input', () => el.classList.remove('invalid'), { once: true });
+                    } else {
+                        // Specific checks
+                        if (id === 'ticket' && el.value.length !== 11) {
+                            isValid = false;
+                            el.classList.add('invalid');
+                            if (!firstInvalidField) firstInvalidField = el;
+                            el.addEventListener('input', () => el.classList.remove('invalid'), { once: true });
+                        }
                     }
-                }
-            });
+                });
 
-            // Validate item fields (description and evaluation)
-            document.querySelectorAll('.item-card').forEach((card) => {
-                const desc = card.querySelector('.desc');
-                const evalInput = card.querySelector('.eval');
+                // Validate item fields (description and evaluation)
+                document.querySelectorAll('.item-card').forEach((card) => {
+                    const desc = card.querySelector('.desc');
+                    const evalInput = card.querySelector('.eval');
 
-                if (desc && !desc.value.trim()) {
-                    isValid = false;
-                    desc.classList.add('invalid');
-                    if (!firstInvalidField) firstInvalidField = desc;
-                    desc.addEventListener('input', () => desc.classList.remove('invalid'), { once: true });
-                }
+                    if (desc && !desc.value.trim()) {
+                        isValid = false;
+                        desc.classList.add('invalid');
+                        if (!firstInvalidField) firstInvalidField = desc;
+                        desc.addEventListener('input', () => desc.classList.remove('invalid'), { once: true });
+                    }
 
-                if (evalInput && !evalInput.value.trim()) {
-                    isValid = false;
-                    evalInput.classList.add('invalid');
-                    if (!firstInvalidField) firstInvalidField = evalInput;
-                    evalInput.addEventListener('input', () => evalInput.classList.remove('invalid'), { once: true });
-                }
-            });
+                    if (evalInput && !evalInput.value.trim()) {
+                        isValid = false;
+                        evalInput.classList.add('invalid');
+                        if (!firstInvalidField) firstInvalidField = evalInput;
+                        evalInput.addEventListener('input', () => evalInput.classList.remove('invalid'), { once: true });
+                    }
+                });
 
-            if (!isValid) {
-                // Auto-scroll to first invalid field
-                if (firstInvalidField) {
-                    firstInvalidField.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
+                if (!isValid) {
+                    // Auto-scroll to first invalid field
+                    if (firstInvalidField) {
+                        firstInvalidField.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
 
-                    // Focus after scroll animation
-                    setTimeout(() => {
-                        firstInvalidField.focus();
-                    }, 500);
-                }
+                        // Focus after scroll animation
+                        setTimeout(() => {
+                            firstInvalidField.focus();
+                        }, 500);
+                    }
 
-                tg.showAlert("Пожалуйста, заполните все обязательные поля корректно.");
-                haptic('error');
-            }
-
-            return isValid;
-        }
-
-        function showPreview() {
-            haptic('medium');
-            // Centralized validation
-            if (!validateForm()) {
-                return;
-            }
-
-            // Check photos
-            let allPhotosSelected = true;
-            document.querySelectorAll('.item-card').forEach(div => {
-                const input = div.querySelector('.file-input');
-                if (!input.files || !input.files[0]) {
-                    allPhotosSelected = false;
-                    const container = div.querySelector('.photo-preview-container');
-                    container.style.borderColor = 'var(--danger-color)';
-                    container.style.animation = 'shake 0.4s cubic-bezier(.36, .07, .19, .97) both';
+                    tg.showAlert("Пожалуйста, заполните все обязательные поля корректно.");
                     haptic('error');
-
-                    // Remove error on click/drop
-                    input.addEventListener('change', () => {
-                        container.style.borderColor = 'rgba(0, 0, 0, 0.1)';
-                        container.style.animation = 'none';
-                    }, { once: true });
                 }
-            });
 
-            if (!allPhotosSelected) {
-                tg.showAlert("Пожалуйста, выберите фото для всех предметов!");
-                return;
+                return isValid;
             }
 
-            const isTest = document.getElementById('mode-test').checked;
-            const modeText = isTest ? "Черновик (Тест)" : "Оригинал (В группу)";
-            const modeExplanation = isTest
-                ? "Сообщение будет отправлено только вам для проверки."
-                : "Сообщение будет отправлено в рабочий чат. Изменить после отправки нельзя.";
-
-            // Calculate total cost (remove spaces before parsing)
-            let totalCost = 0;
-            const items = [];
-            document.querySelectorAll('.item-card').forEach(div => {
-                const evalInput = div.querySelector('.eval');
-                const descInput = div.querySelector('.desc');
-                if (evalInput && evalInput.value) {
-                    // Remove spaces and parse
-                    const cleanValue = evalInput.value.replace(/\s/g, '');
-                    const price = parseInt(cleanValue) || 0;
-                    totalCost += price;
-                    items.push({
-                        desc: descInput.value,
-                        price: price
-                    });
+            function showPreview() {
+                haptic('medium');
+                // Centralized validation
+                if (!validateForm()) {
+                    return;
                 }
-            });
 
-            // Get ticket value
-            const ticketValue = document.getElementById('ticket').value;
+                // Check photos
+                let allPhotosSelected = true;
+                document.querySelectorAll('.item-card').forEach(div => {
+                    const input = div.querySelector('.file-input');
+                    if (!input.files || !input.files[0]) {
+                        allPhotosSelected = false;
+                        const container = div.querySelector('.photo-preview-container');
+                        container.style.borderColor = 'var(--danger-color)';
+                        container.style.animation = 'shake 0.4s cubic-bezier(.36, .07, .19, .97) both';
+                        haptic('error');
 
-            // Build items list
-            let itemsList = '';
-            items.forEach((item, idx) => {
-                // Get image preview URL
-                const fileInput = document.querySelectorAll('.item-card')[idx].querySelector('.file-input');
-                const file = fileInput.files[0];
-                const imgUrl = file ? URL.createObjectURL(file) : '';
-                const imgTag = imgUrl ? `<img src="${imgUrl}" class="preview-image">` : '<div class="preview-image"></div>';
+                        // Remove error on click/drop
+                        input.addEventListener('change', () => {
+                            container.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+                            container.style.animation = 'none';
+                        }, { once: true });
+                    }
+                });
 
-                itemsList += `
+                if (!allPhotosSelected) {
+                    tg.showAlert("Пожалуйста, выберите фото для всех предметов!");
+                    return;
+                }
+
+                const isTest = document.getElementById('mode-test').checked;
+                const modeText = isTest ? "Черновик (Тест)" : "Оригинал (В группу)";
+                const modeExplanation = isTest
+                    ? "Сообщение будет отправлено только вам для проверки."
+                    : "Сообщение будет отправлено в рабочий чат. Изменить после отправки нельзя.";
+
+                // Calculate total cost (remove spaces before parsing)
+                let totalCost = 0;
+                const items = [];
+                document.querySelectorAll('.item-card').forEach(div => {
+                    const evalInput = div.querySelector('.eval');
+                    const descInput = div.querySelector('.desc');
+                    if (evalInput && evalInput.value) {
+                        // Remove spaces and parse
+                        const cleanValue = evalInput.value.replace(/\s/g, '');
+                        const price = parseInt(cleanValue) || 0;
+                        totalCost += price;
+                        items.push({
+                            desc: descInput.value,
+                            price: price
+                        });
+                    }
+                });
+
+                // Get ticket value
+                const ticketValue = document.getElementById('ticket').value;
+
+                // Build items list
+                let itemsList = '';
+                items.forEach((item, idx) => {
+                    // Get image preview URL
+                    const fileInput = document.querySelectorAll('.item-card')[idx].querySelector('.file-input');
+                    const file = fileInput.files[0];
+                    const imgUrl = file ? URL.createObjectURL(file) : '';
+                    const imgTag = imgUrl ? `<img src="${imgUrl}" class="preview-image">` : '<div class="preview-image"></div>';
+
+                    itemsList += `
                     <div class="preview-item">
                         ${imgTag}
                         <div class="preview-item-content">
@@ -2467,16 +2401,16 @@
                         </div>
                     </div>
                 `;
-            });
+                });
 
-            // Format Date
-            const dateValue = document.getElementById('date').value;
-            const dateParts = dateValue.split('-');
-            const formattedDate = dateParts.length === 3 ? `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}` : dateValue;
+                // Format Date
+                const dateValue = document.getElementById('date').value;
+                const dateParts = dateValue.split('-');
+                const formattedDate = dateParts.length === 3 ? `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}` : dateValue;
 
-            // Build preview with premium structure
-            const content = document.getElementById('previewContent');
-            content.innerHTML = `
+                // Build preview with premium structure
+                const content = document.getElementById('previewContent');
+                content.innerHTML = `
                 <!-- Mode Section -->
                 <div class="preview-card ${isTest ? 'mode-test' : 'mode-final'}">
                     <div class="preview-section-title" style="color: ${isTest ? '#FF8C00' : '#28a745'}; margin-bottom: 6px;">
@@ -2523,402 +2457,400 @@
                 </div>
             `;
 
-            document.getElementById('previewModal').style.display = 'block';
+                document.getElementById('previewModal').style.display = 'block';
 
-            // Update state to preview mode
-            appState = 'preview';
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                mainButton.setText("ОТПРАВИТЬ");
+                // Update state to preview mode
+                appState = 'preview';
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    mainButton.setText("ОТПРАВИТЬ");
+                }
             }
-        }
 
-        function closePreview() {
-            haptic('light');
-            document.getElementById('previewModal').style.display = 'none';
+            function closePreview() {
+                haptic('light');
+                document.getElementById('previewModal').style.display = 'none';
 
-            // Revert state to editing
-            appState = 'editing';
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                mainButton.setText("ПРОВЕРИТЬ И ОТПРАВИТЬ");
+                // Revert state to editing
+                appState = 'editing';
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    mainButton.setText("ПРОВЕРИТЬ И ОТПРАВИТЬ");
+                }
             }
-        }
 
-        // Image Compression Helper
-        function compressImage(file) {
-            return new Promise((resolve, reject) => {
-                const maxWidth = 1280;
-                const maxHeight = 1280;
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = function (event) {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = function () {
-                        let width = img.width;
-                        let height = img.height;
+            // Image Compression Helper
+            function compressImage(file) {
+                return new Promise((resolve, reject) => {
+                    const maxWidth = 1280;
+                    const maxHeight = 1280;
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = function (event) {
+                        const img = new Image();
+                        img.src = event.target.result;
+                        img.onload = function () {
+                            let width = img.width;
+                            let height = img.height;
 
-                        if (width > height) {
-                            if (width > maxWidth) {
-                                height *= maxWidth / width;
-                                width = maxWidth;
+                            if (width > height) {
+                                if (width > maxWidth) {
+                                    height *= maxWidth / width;
+                                    width = maxWidth;
+                                }
+                            } else {
+                                if (height > maxHeight) {
+                                    width *= maxHeight / height;
+                                    height = maxHeight;
+                                }
                             }
-                        } else {
-                            if (height > maxHeight) {
-                                width *= maxHeight / height;
-                                height = maxHeight;
-                            }
-                        }
 
-                        const canvas = document.createElement('canvas');
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
+                            const canvas = document.createElement('canvas');
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
 
-                        canvas.toBlob(function (blob) {
-                            resolve(blob);
-                        }, 'image/jpeg', 0.8); // 80% quality
+                            canvas.toBlob(function (blob) {
+                                resolve(blob);
+                            }, 'image/jpeg', 0.8); // 80% quality
+                        };
+                        img.onerror = reject;
                     };
-                    img.onerror = reject;
-                };
-                reader.onerror = reject;
-            });
-        }
-
-        async function submitForm() {
-            // Disable button
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                mainButton.showProgress();
-                mainButton.disable();
+                    reader.onerror = reject;
+                });
             }
 
-            const btn = document.getElementById('finalSubmitBtn');
-            btn.disabled = true;
-            btn.textContent = "Подготовка данных...";
+            async function submitForm() {
+                // Disable button
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    mainButton.showProgress();
+                    mainButton.disable();
+                }
 
-            const items = [];
-            const cards = document.querySelectorAll('.item-card');
+                const btn = document.getElementById('finalSubmitBtn');
+                btn.disabled = true;
+                btn.textContent = "Подготовка данных...";
 
-            // 🚀 NEW: Use pre-uploaded URLs instead of uploading again
-            let allUploaded = true;
-            for (let i = 0; i < cards.length; i++) {
-                const div = cards[i];
-                const photoUrl = div.dataset.photoUrl;
+                const items = [];
+                const cards = document.querySelectorAll('.item-card');
 
-                // Check if photo was uploaded
-                if (!photoUrl) {
-                    const fileInput = div.querySelector('.file-input');
-                    if (fileInput.files && fileInput.files[0]) {
-                        // Photo selected but not uploaded yet (shouldn't happen with background upload)
-                        allUploaded = false;
-                        tg.showAlert('⏳ Дождитесь загрузки всех фотографий');
+                // 🚀 NEW: Use pre-uploaded URLs instead of uploading again
+                let allUploaded = true;
+                for (let i = 0; i < cards.length; i++) {
+                    const div = cards[i];
+                    const photoUrl = div.dataset.photoUrl;
+
+                    // Check if photo was uploaded
+                    if (!photoUrl) {
+                        const fileInput = div.querySelector('.file-input');
+                        if (fileInput.files && fileInput.files[0]) {
+                            // Photo selected but not uploaded yet (shouldn't happen with background upload)
+                            allUploaded = false;
+                            tg.showAlert('⏳ Дождитесь загрузки всех фотографий');
+                            btn.disabled = false;
+                            btn.textContent = "Отправить";
+
+                            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                                mainButton.hideProgress();
+                                mainButton.enable();
+                            }
+                            return;
+                        }
+                        continue; // Skip items without photos
+                    }
+
+                    // Use pre-uploaded URL
+                    items.push({
+                        description: div.querySelector('.desc').value,
+                        evaluation: div.querySelector('.eval').value,
+                        photo_url: photoUrl
+                    });
+                }
+
+                if (items.length === 0) {
+                    tg.showAlert('❌ Нет загруженных фотографий');
+                    btn.disabled = false;
+                    btn.textContent = "Отправить";
+                    return;
+                }
+
+                btn.textContent = "Отправка данных...";
+
+                try {
+                    const isTest = document.getElementById('mode-test').checked;
+
+                    const data = {
+                        department_number: document.getElementById('department').value,
+                        issue_number: document.getElementById('issue').value,
+                        ticket_number: document.getElementById('ticket').value,
+                        date: document.getElementById('date').value.split('-').reverse().join('.'),
+                        region: document.getElementById('region').value,
+                        items: items,
+                        is_test: isTest
+                    };
+
+                    // CRITICAL: Validate date is not in the future (after formatting)
+                    const dateValue = document.getElementById('date').value; // YYYY-MM-DD
+                    const selectedDate = new Date(dateValue);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    selectedDate.setHours(0, 0, 0, 0);
+
+                    if (selectedDate > today) {
+                        tg.showAlert('⚠️ Ошибка: Нельзя выбрать будущую дату!\n\nВыберите сегодняшнюю или прошедшую дату.');
                         btn.disabled = false;
                         btn.textContent = "Отправить";
-
                         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                             mainButton.hideProgress();
                             mainButton.enable();
                         }
+                        haptic('error');
                         return;
                     }
-                    continue; // Skip items without photos
-                }
 
-                // Use pre-uploaded URL
-                items.push({
-                    description: div.querySelector('.desc').value,
-                    evaluation: div.querySelector('.eval').value,
-                    photo_url: photoUrl
-                });
-            }
+                    // Check if running in Telegram
+                    // iOS Telegram 9.x bug: initData may be empty even in WebApp
+                    // Instead, check for platform/version which are always present in Telegram
+                    console.log('tg.platform:', tg.platform);
+                    console.log('tg.version:', tg.version);
+                    console.log('tg.initData:', tg.initData);
+                    console.log('tg.initDataUnsafe:', tg.initDataUnsafe);
 
-            if (items.length === 0) {
-                tg.showAlert('❌ Нет загруженных фотографий');
-                btn.disabled = false;
-                btn.textContent = "Отправить";
-                return;
-            }
+                    // Check if we're in Telegram by platform/version presence
+                    const isInTelegram = (tg.platform && tg.platform.length > 0) ||
+                        (tg.version && tg.version.length > 0) ||
+                        (tg.initData && tg.initData.length > 0);
 
-            btn.textContent = "Отправка данных...";
+                    if (isInTelegram) {
+                        console.log('Detected Telegram WebApp - sending via tg.sendData()');
+                        btn.textContent = "Отправка в Telegram...";
+                        tg.sendData(JSON.stringify(data));
+                        haptic('success');
 
-            try {
-                const isTest = document.getElementById('mode-test').checked;
+                        // ✅ UX: Clear ticket for next form (always unique)
+                        document.getElementById('ticket').value = '';
+                        clearDraft();
 
-                const data = {
-                    department_number: document.getElementById('department').value,
-                    issue_number: document.getElementById('issue').value,
-                    ticket_number: document.getElementById('ticket').value,
-                    date: document.getElementById('date').value.split('-').reverse().join('.'),
-                    region: document.getElementById('region').value,
-                    items: items,
-                    is_test: isTest
-                };
+                        fireConfetti(); // 🎉 Celebration!
 
-                // Check if running in Telegram
-                // iOS Telegram 9.x bug: initData may be empty even in WebApp
-                // Instead, check for platform/version which are always present in Telegram
-                console.log('tg.platform:', tg.platform);
-                console.log('tg.version:', tg.version);
-                console.log('tg.initData:', tg.initData);
-                console.log('tg.initDataUnsafe:', tg.initDataUnsafe);
+                        // Close WebApp after sending data
+                        setTimeout(() => tg.close(), 1000);
+                    } else {
+                        // Standalone Mode
+                        if (!botUrl) {
+                            populateSettingsInputs();
+                            document.getElementById('settingsModal').style.display = 'block';
+                            tg.showAlert("Для работы в браузере нужно указать URL бота в настройках (например, ngrok адрес).");
+                            btn.disabled = false;
+                            btn.textContent = "Отправить";
+                            return;
+                        }
 
-                // Check if we're in Telegram by platform/version presence
-                const isInTelegram = (tg.platform && tg.platform.length > 0) ||
-                    (tg.version && tg.version.length > 0) ||
-                    (tg.initData && tg.initData.length > 0);
+                        btn.textContent = "Подключение к серверу...";
 
-                if (isInTelegram) {
-                    console.log('Detected Telegram WebApp - sending via tg.sendData()');
-                    btn.textContent = "Отправка в Telegram...";
-                    tg.sendData(JSON.stringify(data));
-                    haptic('success');
+                        // Add timeout to fetch
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
 
-                    // ✅ UX: Clear ticket for next form (always unique)
-                    document.getElementById('ticket').value = '';
-                    clearDraft();
+                        const response = await fetch(botUrl + '/api/generate', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data),
+                            signal: controller.signal
+                        });
 
-                    fireConfetti(); // 🎉 Celebration!
+                        clearTimeout(timeoutId);
 
-                    // Close WebApp after sending data
-                    setTimeout(() => tg.close(), 1000);
-                } else {
-                    // Standalone Mode
-                    if (!botUrl) {
-                        populateSettingsInputs();
-                        document.getElementById('settingsModal').style.display = 'block';
-                        tg.showAlert("Для работы в браузере нужно указать URL бота в настройках (например, ngrok адрес).");
+                        if (!response.ok) {
+                            btn.textContent = "Ошибка сервера...";
+                            const err = await response.json().catch(() => ({}));
+                            throw new Error(err.error || `Server Error: ${response.status}`);
+                        }
+
+                        btn.textContent = "Скачивание файла...";
+
+                        // Download File
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `Conclusion_${data.ticket_number}.docx`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+
+                        clearDraft();
+
+                        // ✅ UX: Clear ticket for next form (always unique)
+                        document.getElementById('ticket').value = '';
+
+                        fireConfetti(); // 🎉 Celebration!
+
+                        if (tg.showPopup) {
+                            tg.showPopup({ message: "✅ Документ готов и скачан!" });
+                        } else {
+                            alert("✅ Документ готов и скачан!");
+                        }
+                        closePreview();
                         btn.disabled = false;
                         btn.textContent = "Отправить";
-                        return;
+                    }
+                } catch (e) {
+                    console.error("Submission Error", e);
+                    haptic('error');
+
+                    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                        mainButton.hideProgress();
+                        mainButton.enable();
                     }
 
-                    btn.textContent = "Подключение к серверу...";
-
-                    // Add timeout to fetch
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
-
-                    const response = await fetch(botUrl + '/api/generate', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(data),
-                        signal: controller.signal
-                    });
-
-                    clearTimeout(timeoutId);
-
-                    if (!response.ok) {
-                        btn.textContent = "Ошибка сервера...";
-                        const err = await response.json().catch(() => ({}));
-                        throw new Error(err.error || `Server Error: ${response.status}`);
-                    }
-
-                    btn.textContent = "Скачивание файла...";
-
-                    // Download File
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `Conclusion_${data.ticket_number}.docx`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-
-                    clearDraft();
-
-                    // ✅ UX: Clear ticket for next form (always unique)
-                    document.getElementById('ticket').value = '';
-
-                    fireConfetti(); // 🎉 Celebration!
-
-                    if (tg.showPopup) {
-                        tg.showPopup({ message: "✅ Документ готов и скачан!" });
+                    if (e.name === 'AbortError') {
+                        if (tg.showPopup) {
+                            tg.showPopup({ message: "Ошибка: Превышено время ожидания (30с). Проверьте интернет или URL бота." });
+                        } else {
+                            alert("Ошибка: Превышено время ожидания (30с). Проверьте интернет или URL бота.");
+                        }
                     } else {
-                        alert("✅ Документ готов и скачан!");
+                        if (tg.showPopup) {
+                            tg.showPopup({ message: `Ошибка при отправке: ${e.message}` });
+                        } else {
+                            alert(`Ошибка при отправке: ${e.message}`);
+                        }
                     }
-                    closePreview();
                     btn.disabled = false;
                     btn.textContent = "Отправить";
                 }
-            } catch (e) {
-                console.error("Submission Error", e);
-                haptic('error');
+            }
 
-                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    mainButton.hideProgress();
-                    mainButton.enable();
+            // Initial item
+            addItem();
+
+            // ============================================
+            // AUTO-SAVE DRAFT & RESTORE
+            // ============================================
+            function saveDraft() {
+                const draft = {
+                    department: document.getElementById('department').value,
+                    issue: document.getElementById('issue').value,
+                    // ticket: excluded - always unique per form
+                    date: document.getElementById('date').value,
+                    region: document.getElementById('region').value,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem('formDraft', JSON.stringify(draft));
+            }
+
+            function restoreDraft() {
+                const draftStr = localStorage.getItem('formDraft');
+                if (!draftStr) return;
+
+                const draft = JSON.parse(draftStr);
+                // Only restore if draft is less than 24 hours old
+                const hoursSinceLastSave = (Date.now() - draft.timestamp) / (1000 * 60 * 60);
+                if (hoursSinceLastSave > 24) {
+                    localStorage.removeItem('formDraft');
+                    return;
                 }
 
-                if (e.name === 'AbortError') {
-                    if (tg.showPopup) {
-                        tg.showPopup({ message: "Ошибка: Превышено время ожидания (30с). Проверьте интернет или URL бота." });
-                    } else {
-                        alert("Ошибка: Превышено время ожидания (30с). Проверьте интернет или URL бота.");
-                    }
+                // Restore values (ticket excluded - always unique)
+                if (draft.department) document.getElementById('department').value = draft.department;
+                if (draft.issue) document.getElementById('issue').value = draft.issue;
+                // if (draft.ticket) document.getElementById('ticket').value = draft.ticket;  // ❌ Never restore
+                if (draft.date) document.getElementById('date').value = draft.date;
+
+                // Smart Auto-fill for Region
+                const regionSelect = document.getElementById('region');
+                if (draft.region) {
+                    regionSelect.value = draft.region;
                 } else {
-                    if (tg.showPopup) {
-                        tg.showPopup({ message: `Ошибка при отправке: ${e.message}` });
-                    } else {
-                        alert(`Ошибка при отправке: ${e.message}`);
+                    // Check smart history
+                    const history = JSON.parse(localStorage.getItem('region_history') || '{}');
+                    // Find region with > 5 consecutive uses
+                    const smartRegion = Object.keys(history).find(r => history[r] >= 5);
+                    if (smartRegion) {
+                        regionSelect.value = smartRegion;
+                        // Optional: Visual cue that it was auto-selected?
                     }
                 }
-                btn.disabled = false;
-                btn.textContent = "Отправить";
-            }
-        }
 
-        // Initial item
-        addItem();
-
-        // ============================================
-        // AUTO-SAVE DRAFT & RESTORE
-        // ============================================
-        function saveDraft() {
-            const draft = {
-                department: document.getElementById('department').value,
-                issue: document.getElementById('issue').value,
-                // ticket: excluded - always unique per form
-                date: document.getElementById('date').value,
-                region: document.getElementById('region').value,
-                timestamp: Date.now()
-            };
-            localStorage.setItem('formDraft', JSON.stringify(draft));
-        }
-
-        function restoreDraft() {
-            const draftStr = localStorage.getItem('formDraft');
-            if (!draftStr) return;
-
-            const draft = JSON.parse(draftStr);
-            // Only restore if draft is less than 24 hours old
-            const hoursSinceLastSave = (Date.now() - draft.timestamp) / (1000 * 60 * 60);
-            if (hoursSinceLastSave > 24) {
-                localStorage.removeItem('formDraft');
-                return;
-            }
-
-            // Restore values (ticket excluded - always unique)
-            if (draft.department) document.getElementById('department').value = draft.department;
-            if (draft.issue) document.getElementById('issue').value = draft.issue;
-            // if (draft.ticket) document.getElementById('ticket').value = draft.ticket;  // ❌ Never restore
-            if (draft.date) document.getElementById('date').value = draft.date;
-
-            // Smart Auto-fill for Region
-            const regionSelect = document.getElementById('region');
-            if (draft.region) {
-                regionSelect.value = draft.region;
-            } else {
-                // Check smart history
-                const history = JSON.parse(localStorage.getItem('region_history') || '{}');
-                // Find region with > 5 consecutive uses
-                const smartRegion = Object.keys(history).find(r => history[r] >= 5);
-                if (smartRegion) {
-                    regionSelect.value = smartRegion;
-                    // Optional: Visual cue that it was auto-selected?
-                }
-            }
-
-            // Show notice
-            const notice = document.getElementById('draftNotice');
-            notice.style.display = 'block';
-            setTimeout(() => {
-                notice.style.opacity = '0';
-                notice.style.transition = 'opacity 1s';
-                setTimeout(() => notice.style.display = 'none', 1000);
-            }, 3000);
-        }
-
-        // Track Region Selection
-        document.getElementById('region').addEventListener('change', (e) => {
-            const region = e.target.value;
-            if (!region) return;
-
-            const history = JSON.parse(localStorage.getItem('region_history') || '{}');
-
-            // Reset others, increment selected
-            Object.keys(history).forEach(key => {
-                if (key !== region) history[key] = 0;
-            });
-
-            history[region] = (history[region] || 0) + 1;
-            localStorage.setItem('region_history', JSON.stringify(history));
-        });
-
-        function clearDraft() {
-            localStorage.removeItem('formDraft');
-        }
-
-        // Update progress bar
-        function updateProgress(current, total) {
-            const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
-            const percent = (current / total) * 100;
-
-            progressContainer.style.display = 'block';
-            progressBar.style.width = percent + '%';
-
-            if (current === total) {
+                // Show notice
+                const notice = document.getElementById('draftNotice');
+                notice.style.display = 'block';
                 setTimeout(() => {
-                    progressContainer.style.display = 'none';
-                    progressBar.style.width = '0%';
-                }, 1000);
+                    notice.style.opacity = '0';
+                    notice.style.transition = 'opacity 1s';
+                    setTimeout(() => notice.style.display = 'none', 1000);
+                }, 3000);
             }
-        }
 
-        // Debounced auto-save (saves 1s after last input)
-        function debouncedAutosave() {
-            clearTimeout(autosaveTimeout);
-            autosaveTimeout = setTimeout(() => {
-                saveDraft();
-            }, 1000); // Save 1 second after last change
-        }
+            // Track Region Selection
+            document.getElementById('region').addEventListener('change', (e) => {
+                const region = e.target.value;
+                if (!region) return;
 
-        // Attach to all input/change events
-        document.getElementById('mainForm').addEventListener('input', debouncedAutosave);
-        document.getElementById('mainForm').addEventListener('change', debouncedAutosave);
+                const history = JSON.parse(localStorage.getItem('region_history') || '{}');
 
-        // Smart Region: Load saved region
-        const savedRegion = localStorage.getItem('last_region');
-        if (savedRegion) {
-            const regionSelect = document.getElementById('region');
-            if (regionSelect) {
-                regionSelect.value = savedRegion;
-            }
-        }
+                // Reset others, increment selected
+                Object.keys(history).forEach(key => {
+                    if (key !== region) history[key] = 0;
+                });
 
-        // Save region on change
-        document.getElementById('region').addEventListener('change', (e) => {
-            localStorage.setItem('last_region', e.target.value);
-        });
-
-        // 🛡️ ЗАЩИТА ОТ БУДУЩИХ ДАТ (Fool-proof Date Validation)
-        // Добавляем в конец скрипта, когда все элементы уже загружены
-        const dateInputField = document.getElementById('date');
-        if (dateInputField) {
-            const todayMaxDate = new Date().toISOString().split('T')[0];
-            dateInputField.setAttribute('max', todayMaxDate);
-
-            dateInputField.addEventListener('change', function () {
-                const selectedDate = this.value;
-                if (selectedDate > todayMaxDate) {
-                    tg.showAlert("⚠️ Нельзя выбрать будущую дату!");
-                    this.value = todayMaxDate;
-                    haptic('warning');
-                }
+                history[region] = (history[region] || 0) + 1;
+                localStorage.setItem('region_history', JSON.stringify(history));
             });
 
-            console.log('✅ Date validation initialized, max date:', todayMaxDate);
-        } else {
-            console.warn('⚠️ Date input field not found');
-        }
+            function clearDraft() {
+                localStorage.removeItem('formDraft');
+            }
 
-        // Restore draft on page load
-        restoreDraft();
-    </script>
+            // Update progress bar
+            function updateProgress(current, total) {
+                const progressContainer = document.getElementById('progressContainer');
+                const progressBar = document.getElementById('progressBar');
+                const percent = (current / total) * 100;
+
+                progressContainer.style.display = 'block';
+                progressBar.style.width = percent + '%';
+
+                if (current === total) {
+                    setTimeout(() => {
+                        progressContainer.style.display = 'none';
+                        progressBar.style.width = '0%';
+                    }, 1000);
+                }
+            }
+
+            // Debounced auto-save (saves 1s after last input)
+            function debouncedAutosave() {
+                clearTimeout(autosaveTimeout);
+                autosaveTimeout = setTimeout(() => {
+                    saveDraft();
+                }, 1000); // Save 1 second after last change
+            }
+
+            // Attach to all input/change events
+            document.getElementById('mainForm').addEventListener('input', debouncedAutosave);
+            document.getElementById('mainForm').addEventListener('change', debouncedAutosave);
+
+            // Smart Region: Load saved region
+            const savedRegion = localStorage.getItem('last_region');
+            if (savedRegion) {
+                const regionSelect = document.getElementById('region');
+                if (regionSelect) {
+                    regionSelect.value = savedRegion;
+                }
+            }
+
+            // Save region on change
+            document.getElementById('region').addEventListener('change', (e) => {
+                localStorage.setItem('last_region', e.target.value);
+            });
+
+            // Restore draft on page load
+            restoreDraft();
+        </script>
 </body>
 
 </html>
