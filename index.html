@@ -1511,7 +1511,7 @@
                 Разработка: Жуков Олег
             </div>
             <div class="footer-version">
-                Enterprise v4.9
+                Enterprise v2.1
             </div>
         </div>
     </form>
@@ -1650,20 +1650,40 @@
 
         async function initSeasonalTheme() {
             try {
-                // Determine API base
+                // Determine API base and theme from URL (robust for offline/local)
                 const urlParams = new URLSearchParams(window.location.search);
-                const urlBotUrl = (urlParams.get('bot_url') || '').trim();
-                let bUrl = urlBotUrl || APP_CONFIG.DEFAULT_BOT_URL || "";
+                const urlTheme = urlParams.get('theme');
+                const urlCV = urlParams.get('cv');
 
-                if (!bUrl && localStorage.getItem('bot_url')) {
-                    bUrl = localStorage.getItem('bot_url');
+                // Cache version handling (Hard Reset)
+                if (urlCV) {
+                    const lastCV = localStorage.getItem('app_cache_version');
+                    if (lastCV && lastCV !== urlCV) {
+                        localStorage.setItem('app_cache_version', urlCV);
+                        // Clean localStorage drafts if version changed significantly (optional)
+                        // localStorage.clear(); 
+                        forceUpdate(); // Reload to clear browser cache
+                        return;
+                    }
+                    localStorage.setItem('app_cache_version', urlCV);
                 }
 
-                if (!bUrl) return;
+                let theme = urlTheme || 'default';
 
-                const res = await fetch(`${bUrl}/api/system/theme`);
-                const data = await res.json();
-                const theme = data.theme || 'default';
+                // If no theme in URL, try fetch if public URL exists
+                if (theme === 'default') {
+                    const urlBotUrl = (urlParams.get('bot_url') || '').trim();
+                    let bUrl = urlBotUrl || APP_CONFIG.DEFAULT_BOT_URL || "";
+                    if (!bUrl && localStorage.getItem('bot_url')) bUrl = localStorage.getItem('bot_url');
+
+                    if (bUrl && bUrl.startsWith('http')) {
+                        try {
+                            const res = await fetch(`${bUrl}/api/system/theme`);
+                            const data = await res.json();
+                            theme = data.theme || 'default';
+                        } catch (e) { }
+                    }
+                }
 
                 if (theme === 'default') return;
 
