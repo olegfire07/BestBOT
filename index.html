@@ -7,8 +7,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Создание заключения v4.5</title>
-    <!-- Version: 4.5 (Cache Buster & Header Fix) -->
+    <title>Создание заключения v4.6</title>
+    <!-- Version: 4.6 (Force Refresh & Dashboard v2) -->
     <style>
         /* Motivation Modal Styles */
         .motivation-container {
@@ -1471,7 +1471,13 @@
                     </div>
                 </div>
             </div>
-            <button class="btn btn-primary" style="margin-top: 20px;" onclick="closeMotivation()">Понятно</button>
+            <div style="margin-top: 20px; text-align: center;">
+                <button class="btn btn-primary" style="margin-bottom: 10px; width: 100%;"
+                    onclick="closeMotivation()">Понятно</button>
+                <a href="javascript:void(0)" onclick="forceUpdate()"
+                    style="color: var(--text-secondary); font-size: 11px; text-decoration: underline;">Обновить версию
+                    (сбросить кэш)</a>
+            </div>
         </div>
     </div>
 
@@ -1604,6 +1610,13 @@
         function closeMotivation() {
             document.getElementById('motivationModal').style.display = 'none';
             haptic('light');
+        }
+
+        function forceUpdate() {
+            haptic('medium');
+            const url = new URL(window.location.href);
+            url.searchParams.set('v', Date.now());
+            window.location.href = url.toString();
         }
 
         // Theme handling
