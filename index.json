@@ -1,0 +1,1173 @@
+[
+  {
+    "archive_path": "2025-11/123, Заключение антиквариат № 1 (билет 18496464646), Санкт-Петербург, от 22.11.2025 23-47-23.docx",
+    "date": "22.11.2025",
+    "department_number": "123",
+    "issue_number": "1",
+    "ticket_number": "18496464646",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/f2UOvZZSC2CQHCgV.jpg",
+        "description": "Тест",
+        "evaluation": "1000"
+      }
+    ],
+    "created_at": "2025-11-22T23:47:23"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 68686868353), Санкт-Петербург, от 24.11.2025 14-51-39.docx",
+    "date": "24.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "68686868353",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/ca05EySiu2dESpAi.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T14:51:39"
+  },
+  {
+    "archive_path": "2025-11/123, Заключение антиквариат № 1 (билет 00000000001), Санкт-Петербург, от 24.11.2025 15-14-29.docx",
+    "date": "24.11.2025",
+    "department_number": "123",
+    "issue_number": "1",
+    "ticket_number": "00000000001",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/p8OjbchnKhRJBQKf.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T15:14:30"
+  },
+  {
+    "archive_path": "2025-11/111, Заключение антиквариат № 1 (билет 01110001111), Санкт-Петербург, от 25.11.2025 15-15-24.docx",
+    "date": "25.11.2025",
+    "department_number": "111",
+    "issue_number": "1",
+    "ticket_number": "01110001111",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/icQ6bUrM4GAWPrPe.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T15:15:25"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 11111111111), Санкт-Петербург, от 24.11.2025 15-17-40.docx",
+    "date": "24.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "11111111111",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/fKNFAkVGoBYxBheJ.jpg",
+        "description": "тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T15:17:41"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 68686868353), Санкт-Петербург, от 24.11.2025 15-31-20.docx",
+    "date": "24.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "68686868353",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/RALrrW3HMOFg3xXY.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T15:31:20"
+  },
+  {
+    "archive_path": "2025-11/111, Заключение антиквариат № 12 (билет 00003555444), Санкт-Петербург, от 24.11.2025 16-05-41.docx",
+    "date": "24.11.2025",
+    "department_number": "111",
+    "issue_number": "12",
+    "ticket_number": "00003555444",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/Yaw5S8qQabV7NTaA.jpg",
+        "description": "Дверь",
+        "evaluation": "112"
+      }
+    ],
+    "created_at": "2025-11-24T16:05:43"
+  },
+  {
+    "archive_path": "2025-11/735, Заключение антиквариат № 1 (билет 07380001255), Ростовская область, от 24.11.2025 16-19-36.docx",
+    "date": "24.11.2025",
+    "department_number": "735",
+    "issue_number": "1",
+    "ticket_number": "07380001255",
+    "region": "Ростовская область",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/Jzcp1CrZASnGMD82.jpg",
+        "description": "Кольцоо",
+        "evaluation": "1 500"
+      }
+    ],
+    "created_at": "2025-11-24T16:19:37"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 68686868353), Санкт-Петербург, от 24.11.2025 20-10-23.docx",
+    "date": "24.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "68686868353",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/tGY7BcmBQ3oENnXd.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T20:10:24"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 68686868564), Санкт-Петербург, от 24.11.2025 20-55-01.docx",
+    "date": "24.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "68686868564",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/PiNtHlvIKamx6PZb.jpg",
+        "description": "Ллв",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T20:55:02"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 13136646461), Санкт-Петербург, от 25.11.2025 20-58-45.docx",
+    "date": "25.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "13136646461",
+    "region": "Санкт-Петербург",
+    "items": [],
+    "created_at": "2025-11-24T20:58:46"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 13136646468), Санкт-Петербург, от 25.11.2025 21-06-24.docx",
+    "date": "25.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "13136646468",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/ec9329sR2HBlW05y.jpg",
+        "description": "Бло",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T21:06:25"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 13136646468), Санкт-Петербург, от 25.11.2025 21-35-37.docx",
+    "date": "25.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "13136646468",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/6FUdwzeVgaEx0ri5.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T21:35:38"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 00011100011), Санкт-Петербург, от 24.11.2025 21-37-06.docx",
+    "date": "24.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "00011100011",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/p6lmjkX1YcbkKb8r.jpg",
+        "description": "Тест",
+        "evaluation": "1000"
+      }
+    ],
+    "created_at": "2025-11-24T21:37:07"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 13136646465), Санкт-Петербург, от 25.11.2025 21-38-13.docx",
+    "date": "25.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "13136646465",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/GZwuvCzj2gvge9LE.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T21:38:14"
+  },
+  {
+    "archive_path": "2025-11/544, Заключение антиквариат № 1 (билет 13136646465), Санкт-Петербург, от 25.11.2025 22-08-07.docx",
+    "date": "25.11.2025",
+    "department_number": "544",
+    "issue_number": "1",
+    "ticket_number": "13136646465",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/ktH8I9jVHTZHUyHt.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T22:08:08"
+  },
+  {
+    "archive_path": "2025-11/544, Заключение антиквариат № 1 (билет 13136646465), Санкт-Петербург, от 25.11.2025 22-20-31.docx",
+    "date": "25.11.2025",
+    "department_number": "544",
+    "issue_number": "1",
+    "ticket_number": "13136646465",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/2HlZ1yI2GkOpW78X.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T22:20:32"
+  },
+  {
+    "archive_path": "2025-11/251, Заключение антиквариат № 1 (билет 13136646469), Санкт-Петербург, от 25.11.2025 22-31-04.docx",
+    "date": "25.11.2025",
+    "department_number": "251",
+    "issue_number": "1",
+    "ticket_number": "13136646469",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/kknjg8eh8pXaR3bu.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-24T22:31:05"
+  },
+  {
+    "archive_path": "2025-11/123, Заключение антиквариат № 1 (билет 13136646423), Санкт-Петербург, от 25.11.2025 11-21-53.docx",
+    "date": "25.11.2025",
+    "department_number": "123",
+    "issue_number": "1",
+    "ticket_number": "13136646423",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/dtts17vT3xwC8VSj.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-25T11:21:54"
+  },
+  {
+    "archive_path": "2025-11/654, Заключение антиквариат № 1 (билет 13136646421), Санкт-Петербург, от 25.11.2025 12-36-28.docx",
+    "date": "25.11.2025",
+    "department_number": "654",
+    "issue_number": "1",
+    "ticket_number": "13136646421",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/uzJcISgqwCvDxhCc.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-25T12:36:29"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 00011100011), Санкт-Петербург, от 25.11.2025 13-50-30.docx",
+    "date": "25.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "00011100011",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/Qfl6X5s8vlWlBvYk.jpg",
+        "description": "1000",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-25T13:50:31"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 00011100011), Санкт-Петербург, от 25.11.2025 23-01-15.docx",
+    "date": "25.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "00011100011",
+    "region": "Санкт-Петербург",
+    "items": [],
+    "created_at": "2025-11-25T23:01:16"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 00011100011), Санкт-Петербург, от 25.11.2025 09-06-06.docx",
+    "date": "25.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "00011100011",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/wVWyB1fan3BPDHMi.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-26T09:06:06"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 12345548484), Санкт-Петербург, от 25.11.2025 09-24-44.docx",
+    "date": "25.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "12345548484",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/pmVKeEgRPHtxakp6.jpg",
+        "description": "Тест",
+        "evaluation": "10 000"
+      }
+    ],
+    "created_at": "2025-11-26T09:24:45"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 00000000000), Санкт-Петербург, от 26.11.2025 10-39-25.docx",
+    "date": "26.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "00000000000",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/IX3sODJR2lFD3NEC.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-26T10:39:27"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 00011100011), Санкт-Петербург, от 26.11.2025 10-45-25.docx",
+    "date": "26.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "00011100011",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/DCxy6qQlFMVXop9a.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-26T10:45:26"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 54664646464), Санкт-Петербург, от 26.11.2025 14-05-16.docx",
+    "date": "26.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "54664646464",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/E2u7QAOfMD65whwI.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-26T14:05:17"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 00011100011), Санкт-Петербург, от 26.11.2025 14-15-02.docx",
+    "date": "26.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "00011100011",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/N2bIS46A1E2qpnM8.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-26T14:15:04"
+  },
+  {
+    "archive_path": "2025-11/385, Заключение антиквариат № 1 (билет 97949455464), Санкт-Петербург, от 26.11.2025 15-44-04.docx",
+    "date": "26.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "97949455464",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/WHkXPLxJch2tbvmq.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-26T15:44:06"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 84946464646), Санкт-Петербург, от 26.11.2025 21-12-43.docx",
+    "date": "26.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "84946464646",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/wRaY3IY2tLcJIaqI.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-26T21:12:44"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 00110011011), Санкт-Петербург, от 26.11.2025 21-49-30.docx",
+    "date": "26.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "00110011011",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/Rkk8N15uQTbY7tYi.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-26T21:49:31"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 87875454545), Санкт-Петербург, от 26.11.2025 14-08-23.docx",
+    "date": "26.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "87875454545",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/sbdkztLzCVS5w8xS.jpg",
+        "description": "Тест",
+        "evaluation": "8 000"
+      }
+    ],
+    "created_at": "2025-11-27T14:08:24"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 00011100011), Санкт-Петербург, от 27.11.2025 14-08-25.docx",
+    "date": "27.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "00011100011",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/aB8bwJ2waFMQ2Is5.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-27T14:08:26"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 00101010001), Санкт-Петербург, от 27.11.2025 14-45-08.docx",
+    "date": "27.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "00101010001",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/SbEVUolDFYL5kUuk.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      },
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/FthuMzI1PdDDFvgC.jpg",
+        "description": "Тест1",
+        "evaluation": "500"
+      }
+    ],
+    "created_at": "2025-11-27T14:45:10"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 80484848444), Санкт-Петербург, от 27.11.2025 14-54-49.docx",
+    "date": "27.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "80484848444",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/6080IrOrRYa3a0R9.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      },
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/b6IWe0fgqf4JFp9K.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      },
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/J67smuqhq9QRSkGK.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-27T14:54:52"
+  },
+  {
+    "archive_path": "2025-11/original/111, Заключение антиквариат № 1 (билет 87989869696), Санкт-Петербург, от 27.11.2025 15-21-18.docx",
+    "date": "27.11.2025",
+    "department_number": "111",
+    "issue_number": "1",
+    "ticket_number": "87989869696",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/3Q6668esOSUu1tIZ.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-27T15:21:20"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 11111111111), Магнитогорск, от 27.11.2025 15-23-17.docx",
+    "date": "27.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "11111111111",
+    "region": "Магнитогорск",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/HK0BX3khY4euK8Dt.jpg",
+        "description": "укуку",
+        "evaluation": "2 222"
+      }
+    ],
+    "created_at": "2025-11-27T15:23:18"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 04084849494), Санкт-Петербург, от 28.11.2025 09-31-26.docx",
+    "date": "28.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "04084849494",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/LZIAgxmXuY2b3ymO.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-28T09:31:27"
+  },
+  {
+    "archive_path": "2025-11/original/111, Заключение антиквариат № 1 (билет 11111111111), Санкт-Петербург, от 29.11.2025 13-30-59.docx",
+    "date": "29.11.2025",
+    "department_number": "111",
+    "issue_number": "1",
+    "ticket_number": "11111111111",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/7DJwQW677m6087pr.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-28T13:30:59"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 09878754545), Санкт-Петербург, от 29.11.2025 16-05-29.docx",
+    "date": "29.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "09878754545",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/M1yq9bTNAW5oMgAf.jpg",
+        "description": "Тест",
+        "evaluation": "10 000"
+      }
+    ],
+    "created_at": "2025-11-28T16:05:30"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 04084848494), Санкт-Петербург, от 29.11.2025 16-07-24.docx",
+    "date": "29.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "04084848494",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/lrGS9R5FlEdtYIBl.jpg",
+        "description": "Тест",
+        "evaluation": "10 000"
+      }
+    ],
+    "created_at": "2025-11-28T16:07:25"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 04884848484), Санкт-Петербург, от 29.11.2025 16-11-04.docx",
+    "date": "29.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "04884848484",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/yumAWgBFuQDTrA1t.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-28T16:11:06"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 08485454545), Санкт-Петербург, от 29.11.2025 16-13-44.docx",
+    "date": "29.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "08485454545",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/1CttC6jgBKBN1eeY.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-28T16:13:45"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 08494664646), Санкт-Петербург, от 29.11.2025 16-17-08.docx",
+    "date": "29.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "08494664646",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/hCuiJhJHEdUr2a38.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-28T16:17:09"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 94465646644), Санкт-Петербург, от 29.11.2025 16-18-17.docx",
+    "date": "29.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "94465646644",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/JWNUQmRCbSW9UHAc.jpg",
+        "description": "Тест",
+        "evaluation": "800"
+      }
+    ],
+    "created_at": "2025-11-28T16:18:17"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 10 (билет 10010181848), Санкт-Петербург, от 29.11.2025 16-20-21.docx",
+    "date": "29.11.2025",
+    "department_number": "385",
+    "issue_number": "10",
+    "ticket_number": "10010181848",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/uP3gwsRlaXM0Rgmb.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-28T16:20:23"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 04884848484), Санкт-Петербург, от 29.11.2025 16-24-40.docx",
+    "date": "29.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "04884848484",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/FjUeLqfu296yDiZK.jpg",
+        "description": "1000",
+        "evaluation": "500"
+      }
+    ],
+    "created_at": "2025-11-28T16:24:41"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 88558888856), Санкт-Петербург, от 29.11.2025 16-28-17.docx",
+    "date": "29.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "88558888856",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/8VfblEjTBELVx1FP.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-28T16:28:18"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 54654545494), Санкт-Петербург, от 29.11.2025 12-52-58.docx",
+    "date": "29.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "54654545494",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/E9ulFU9iFTl66lVO.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-29T12:52:59"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 68383838686), Санкт-Петербург, от 29.11.2025 13-01-31.docx",
+    "date": "29.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "68383838686",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/1isiCAvoAnR4m47t.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-29T13:01:32"
+  },
+  {
+    "archive_path": "2025-11/original/258, Заключение антиквариат № 1 (билет 68383838833), Санкт-Петербург, от 29.11.2025 13-06-16.docx",
+    "date": "29.11.2025",
+    "department_number": "258",
+    "issue_number": "1",
+    "ticket_number": "68383838833",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/T4wx3WKDq8AfA5HJ.jpg",
+        "description": "Тест",
+        "evaluation": "200"
+      }
+    ],
+    "created_at": "2025-11-29T13:06:16"
+  },
+  {
+    "archive_path": "2025-11/original/258, Заключение антиквариат № 1 (билет 08555555555), Санкт-Петербург, от 29.11.2025 13-14-01.docx",
+    "date": "29.11.2025",
+    "department_number": "258",
+    "issue_number": "1",
+    "ticket_number": "08555555555",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/RzBcf6R2yCQXGgkc.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-29T13:14:02"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 84946466464), Санкт-Петербург, от 29.11.2025 14-17-59.docx",
+    "date": "29.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "84946466464",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/photos/JSCWhK9jRiGTXB9d.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-11-29T14:18:00"
+  },
+  {
+    "archive_path": "2025-12/original/385, Заключение антиквариат № 112 (билет 01120015455), Санкт-Петербург, от 02.12.2025 09-03-17.docx",
+    "date": "02.12.2025",
+    "department_number": "385",
+    "issue_number": "112",
+    "ticket_number": "01120015455",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/nDIW2F5oTwAPdRrt.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-12-02T09:03:17"
+  },
+  {
+    "archive_path": "2025-12/original/385, Заключение антиквариат № 1 (билет 58585888888), Санкт-Петербург, от 02.12.2025 12-45-16.docx",
+    "date": "02.12.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "58585888888",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/vwjurQHnTUVA2rzz.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-12-02T12:45:18"
+  },
+  {
+    "archive_path": "2025-12/original/385, Заключение антиквариат № 1 (билет 54994646464), Санкт-Петербург, от 02.12.2025 18-36-18.docx",
+    "date": "02.12.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "54994646464",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/rXKdGsV26OpMkDIi.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-12-02T18:36:19"
+  },
+  {
+    "archive_path": "2025-12/original/385, Заключение антиквариат № 1 (билет 04848455454), Санкт-Петербург, от 02.12.2025 18-39-46.docx",
+    "date": "02.12.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "04848455454",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/D3DzS1CWGtQgpNxa.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-12-02T18:39:52"
+  },
+  {
+    "archive_path": "2025-12/original/385, Заключение антиквариат № 1 (билет 84545456464), Санкт-Петербург, от 02.12.2025 18-40-24.docx",
+    "date": "02.12.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "84545456464",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/e9oT8Ydxqxo60erE.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-12-02T18:40:25"
+  },
+  {
+    "archive_path": "2025-12/original/111, Заключение антиквариат № 1 (билет 31313131313), Санкт-Петербург, от 02.12.2025 19-28-04.docx",
+    "date": "02.12.2025",
+    "department_number": "111",
+    "issue_number": "1",
+    "ticket_number": "31313131313",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/UZz4vqtwYqvhd3eO.jpg",
+        "description": "Тест",
+        "evaluation": "55"
+      }
+    ],
+    "created_at": "2025-12-02T19:28:05"
+  },
+  {
+    "archive_path": "2025-11/original/264, Заключение антиквариат № 1 (билет 02640006576), Санкт-Петербург, от 29.11.2025 19-29-38.docx",
+    "date": "29.11.2025",
+    "department_number": "264",
+    "issue_number": "1",
+    "ticket_number": "02640006576",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/MJRthDhHZez81B7M.jpg",
+        "description": "Сахарница серого цвета ",
+        "evaluation": "20 000"
+      }
+    ],
+    "created_at": "2025-12-02T19:29:39"
+  },
+  {
+    "archive_path": "2025-12/original/385, Заключение антиквариат № 1 (билет 68438438438), Санкт-Петербург, от 02.12.2025 19-34-01.docx",
+    "date": "02.12.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "68438438438",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/la5Y8lhEIj72IS1w.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-12-02T19:34:03"
+  },
+  {
+    "archive_path": "2025-12/original/123, Заключение антиквариат № 1 (билет 55555555555), Санкт-Петербург, от 02.12.2025 19-43-05.docx",
+    "date": "02.12.2025",
+    "department_number": "123",
+    "issue_number": "1",
+    "ticket_number": "55555555555",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/UHywu9pJaKqVLT9m.jpg",
+        "description": "Тест",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-12-02T19:43:06"
+  },
+  {
+    "archive_path": "2025-12/original/11, Заключение антиквариат № 1 (билет 12345678901), Ростовская область, от 02.12.2025 19-45-10.docx",
+    "date": "02.12.2025",
+    "department_number": "11",
+    "issue_number": "1",
+    "ticket_number": "12345678901",
+    "region": "Ростовская область",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/hJtkJjQzGgcDFRMm.jpg",
+        "description": "ВВ",
+        "evaluation": "1"
+      }
+    ],
+    "created_at": "2025-12-02T19:45:12"
+  },
+  {
+    "archive_path": "2025-11/original/111, Заключение антиквариат № 11 (билет 11111111111), Санкт-Петербург, от 12.11.2025 19-55-28.docx",
+    "date": "12.11.2025",
+    "department_number": "111",
+    "issue_number": "11",
+    "ticket_number": "11111111111",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/LjKbZ2d04QZYXW18.jpg",
+        "description": "Тест",
+        "evaluation": "12"
+      }
+    ],
+    "created_at": "2025-12-02T19:55:29"
+  },
+  {
+    "archive_path": "2025-11/original/397, Заключение антиквариат № 1 (билет 03970003381), Санкт-Петербург, от 23.11.2025 19-56-17.docx",
+    "date": "23.11.2025",
+    "department_number": "397",
+    "issue_number": "1",
+    "ticket_number": "03970003381",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/rwEiKSZ2B8lmTirR.jpg",
+        "description": "Столовая ложка 51 грамм",
+        "evaluation": "1 500"
+      }
+    ],
+    "created_at": "2025-12-02T19:56:19"
+  },
+  {
+    "archive_path": "2025-11/original/385, Заключение антиквариат № 1 (билет 03850006162), Санкт-Петербург, от 04.11.2025 20-05-22.docx",
+    "date": "04.11.2025",
+    "department_number": "385",
+    "issue_number": "1",
+    "ticket_number": "03850006162",
+    "region": "Санкт-Петербург",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/prod bot/photos/Bswe6ZkZHWPPdMVt.jpg",
+        "description": "Набор предметы металл белого цвета количество 25 штук общий чистый вес 1269 грамм",
+        "evaluation": "44 415"
+      }
+    ],
+    "created_at": "2025-12-02T20:05:23"
+  },
+  {
+    "archive_path": "2025-12/original/147, Заключение антиквариат № 1 (билет 01470006269), Челябинская область, от 17.12.2025 11-45-07.docx",
+    "date": "17.12.2025",
+    "department_number": "147",
+    "issue_number": "1",
+    "ticket_number": "01470006269",
+    "region": "Челябинская область",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/y4k68iskGiWMmgnY.jpg",
+        "description": "Металл серого цвета 16.50",
+        "evaluation": "500"
+      }
+    ],
+    "created_at": "2025-12-17T11:45:08"
+  },
+  {
+    "archive_path": "2025-12/original/337, Заключение антиквариат № 1 (билет 03370009625), Нижний Новгород, от 17.12.2025 15-02-30.docx",
+    "date": "17.12.2025",
+    "department_number": "337",
+    "issue_number": "1",
+    "ticket_number": "03370009625",
+    "region": "Нижний Новгород",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/T84ZzWzkYXUEbV3f.jpg",
+        "description": "Икона медная,Богородица",
+        "evaluation": "3 500"
+      }
+    ],
+    "created_at": "2025-12-17T15:02:31"
+  },
+  {
+    "archive_path": "2025-12/original/462, Заключение антиквариат № 1 (билет 04620006616), Нижний Новгород, от 13.12.2025 17-42-29.docx",
+    "date": "13.12.2025",
+    "department_number": "462",
+    "issue_number": "1",
+    "ticket_number": "04620006616",
+    "region": "Нижний Новгород",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/UxmdufkvAXVXtsYK.jpg",
+        "description": "Сито серого цвета вес 21,70 гр",
+        "evaluation": "1 000"
+      }
+    ],
+    "created_at": "2025-12-17T17:42:29"
+  },
+  {
+    "archive_path": "2025-12/original/462, Заключение антиквариат № 2 (билет 04620006618), Нижний Новгород, от 13.12.2025 17-43-54.docx",
+    "date": "13.12.2025",
+    "department_number": "462",
+    "issue_number": "2",
+    "ticket_number": "04620006618",
+    "region": "Нижний Новгород",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/TLDWGdGQYPXDdA9u.jpg",
+        "description": "Монета желтого цвета вес 0,85 гр",
+        "evaluation": "10 000"
+      }
+    ],
+    "created_at": "2025-12-17T17:43:55"
+  },
+  {
+    "archive_path": "2025-12/original/462, Заключение антиквариат № 3 (билет 04620006632), Нижний Новгород, от 13.12.2025 17-45-27.docx",
+    "date": "13.12.2025",
+    "department_number": "462",
+    "issue_number": "3",
+    "ticket_number": "04620006632",
+    "region": "Нижний Новгород",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/3YSALidpwcwBuM1i.jpg",
+        "description": "Монеты серого цвета 2 шт вес 39,65 гр",
+        "evaluation": "2 000"
+      }
+    ],
+    "created_at": "2025-12-17T17:45:28"
+  },
+  {
+    "archive_path": "2025-12/original/586, Заключение антиквариат № 1 (билет 05770000811), ХМАО-Югра, от 17.12.2025 17-47-34.docx",
+    "date": "17.12.2025",
+    "department_number": "586",
+    "issue_number": "1",
+    "ticket_number": "05770000811",
+    "region": "ХМАО-Югра",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/FNxcGrp9coLd3zFD.jpg",
+        "description": "Цепь серогоцвета имп запил 45см. 17,72гр",
+        "evaluation": "531"
+      }
+    ],
+    "created_at": "2025-12-17T17:47:36"
+  },
+  {
+    "archive_path": "2025-12/original/462, Заключение антиквариат № 1 (билет 04620006674), Нижний Новгород, от 17.12.2025 19-15-04.docx",
+    "date": "17.12.2025",
+    "department_number": "462",
+    "issue_number": "1",
+    "ticket_number": "04620006674",
+    "region": "Нижний Новгород",
+    "items": [
+      {
+        "photo": "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/dHpKRVXWWWYzPVA1.jpg",
+        "description": "Монета желтого цвета  1 фунт стерлинга вес 7,95 гр",
+        "evaluation": "60 000"
+      }
+    ],
+    "created_at": "2025-12-17T19:15:06"
+  }
+]

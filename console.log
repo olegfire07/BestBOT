@@ -1,0 +1,124 @@
+INFO:Restarter:🚀 Starting bot...
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/modern_bot/main.py:209: PTBUserWarning: If 'per_message=False', 'CallbackQueryHandler' will not be tracked for every message. Read this FAQ entry to learn more about the per_* settings: https://github.com/python-telegram-bot/python-telegram-bot/wiki/Frequently-Asked-Questions#what-do-the-per_-settings-in-conversationhandler-do.
+  reconciliation_handler = ConversationHandler(
+/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/modern_bot/main.py:232: PTBUserWarning: If 'per_message=False', 'CallbackQueryHandler' will not be tracked for every message. Read this FAQ entry to learn more about the per_* settings: https://github.com/python-telegram-bot/python-telegram-bot/wiki/Frequently-Asked-Questions#what-do-the-per_-settings-in-conversationhandler-do.
+  search_handler = ConversationHandler(
+2025-12-15 10:15:39,879 - modern_bot - INFO - Bot started.
+INFO:modern_bot:Bot started.
+2025-12-15 10:15:40,142 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/user_data.db
+INFO:modern_bot.database.db:Database initialized at /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/user_data.db
+2025-12-15 10:15:40,253 - modern_bot - INFO - 🗑 Deleted old default commands
+INFO:modern_bot:🗑 Deleted old default commands
+2025-12-15 10:15:40,829 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+INFO:modern_bot:✅ Set 3 default commands for regular users
+2025-12-15 10:15:41,396 - modern_bot - INFO - ✅ Set admin commands for 466509784
+INFO:modern_bot:✅ Set admin commands for 466509784
+2025-12-15 10:15:41,657 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+WARNING:modern_bot:Failed to set admin commands for 636601018: Chat not found
+2025-12-15 10:15:42,077 - modern_bot - INFO - ✅ Set admin commands for 2064900
+INFO:modern_bot:✅ Set admin commands for 2064900
+2025-12-15 10:15:42,077 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+INFO:modern_bot:✅ Set 8 admin commands for 3 admins
+2025-12-15 10:15:42,218 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+ERROR:modern_bot:Failed to notify admin 636601018: Chat not found
+2025-12-15 10:15:42,292 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+INFO:modern_bot.api:API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+INFO:apscheduler.scheduler:Added job "clean_temp_files_job" to job store "default"
+INFO:apscheduler.scheduler:Added job "clean_archives_job" to job store "default"
+INFO:apscheduler.scheduler:Added job "backup_database_job" to job store "default"
+INFO:apscheduler.scheduler:Added job "network_recovery_job" to job store "default"
+INFO:apscheduler.scheduler:Scheduler started
+INFO:telegram.ext.Application:Application started
+INFO:aiohttp.access:127.0.0.1 [15/Dec/2025:10:15:45 +0300] "GET /health HTTP/1.1" 200 257 "-" "curl/8.7.1"
+INFO:apscheduler.executors.default:Running job "clean_temp_files_job (trigger: interval[1:00:00], next run at: 2025-12-15 08:16:39 UTC)" (scheduled at 2025-12-15 07:16:39.847552+00:00)
+INFO:apscheduler.executors.default:Running job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:17:39 UTC)" (scheduled at 2025-12-15 07:16:39.848084+00:00)
+INFO:apscheduler.executors.default:Job "clean_temp_files_job (trigger: interval[1:00:00], next run at: 2025-12-15 08:16:39 UTC)" executed successfully
+INFO:apscheduler.executors.default:Job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:17:39 UTC)" executed successfully
+INFO:apscheduler.executors.default:Running job "clean_archives_job (trigger: interval[1 day, 0:00:00], next run at: 2025-12-16 07:17:39 UTC)" (scheduled at 2025-12-15 07:17:39.847896+00:00)
+INFO:apscheduler.executors.default:Running job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:18:39 UTC)" (scheduled at 2025-12-15 07:17:39.848084+00:00)
+INFO:apscheduler.executors.default:Job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:18:39 UTC)" executed successfully
+INFO:apscheduler.executors.default:Job "clean_archives_job (trigger: interval[1 day, 0:00:00], next run at: 2025-12-16 07:17:39 UTC)" executed successfully
+2025-12-15 10:17:48,987 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1416514362 | Name: Ольга | Is Admin: False
+INFO:modern_bot.handlers.commands:⭐ User ID: 1416514362 | Name: Ольга | Is Admin: False
+INFO:apscheduler.executors.default:Running job "backup_database_job (trigger: interval[1 day, 0:00:00], next run at: 2025-12-16 07:18:39 UTC)" (scheduled at 2025-12-15 07:18:39.847950+00:00)
+INFO:apscheduler.executors.default:Running job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:19:39 UTC)" (scheduled at 2025-12-15 07:18:39.848084+00:00)
+INFO:apscheduler.executors.default:Job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:19:39 UTC)" executed successfully
+2025-12-15 10:18:39,849 - modern_bot.utils.files - INFO - Database backed up to /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/backups/user_data_2025-12-15.db
+INFO:modern_bot.utils.files:Database backed up to /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/backups/user_data_2025-12-15.db
+2025-12-15 10:18:39,851 - modern_bot.utils.files - INFO - Persistence backed up to /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/backups/persistence_2025-12-15.pickle
+INFO:modern_bot.utils.files:Persistence backed up to /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/backups/persistence_2025-12-15.pickle
+2025-12-15 10:18:39,851 - modern_bot.utils.files - INFO - Backup completed: 2 files
+INFO:modern_bot.utils.files:Backup completed: 2 files
+INFO:apscheduler.executors.default:Job "backup_database_job (trigger: interval[1 day, 0:00:00], next run at: 2025-12-16 07:18:39 UTC)" executed successfully
+INFO:apscheduler.executors.default:Running job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:20:39 UTC)" (scheduled at 2025-12-15 07:19:39.848084+00:00)
+INFO:apscheduler.executors.default:Job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:20:39 UTC)" executed successfully
+INFO:apscheduler.executors.default:Running job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:21:39 UTC)" (scheduled at 2025-12-15 07:20:39.848084+00:00)
+INFO:apscheduler.executors.default:Job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:21:39 UTC)" executed successfully
+INFO:apscheduler.executors.default:Running job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:22:39 UTC)" (scheduled at 2025-12-15 07:21:39.848084+00:00)
+INFO:apscheduler.executors.default:Job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:22:39 UTC)" executed successfully
+INFO:apscheduler.executors.default:Running job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:23:39 UTC)" (scheduled at 2025-12-15 07:22:39.848084+00:00)
+INFO:apscheduler.executors.default:Job "network_recovery_job (trigger: interval[0:01:00], next run at: 2025-12-15 07:23:39 UTC)" executed successfully
+INFO:telegram.ext.Application:Application is stopping. This might take a moment.
+INFO:apscheduler.scheduler:Scheduler has been shut down
+INFO:telegram.ext.Application:Application.stop() complete
+2025-12-15 10:23:35,666 - modern_bot.database.db - INFO - Database connection closed.
+INFO:modern_bot.database.db:Database connection closed.
+INFO:Restarter:🚀 Starting bot...
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-15 10:23:35,683 - modern_bot - INFO - Bot started.
+INFO:modern_bot:Bot started.
+ERROR:Restarter:⚠️ Bot crashed (attempt #1): Event loop is closed
+ERROR:Restarter:Traceback:
+Traceback (most recent call last):
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/run_modern_bot.py", line 129, in main
+    bot_main()
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/modern_bot/main.py", line 247, in main
+    application.run_polling()
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_application.py", line 839, in run_polling
+    return self.__run(
+           ^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_application.py", line 1044, in __run
+    loop.add_signal_handler(sig, self._raise_system_exit)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/unix_events.py", line 99, in add_signal_handler
+    self._check_closed()
+  File "/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 520, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+
+INFO:Restarter:🔄 Restarting in 5 seconds...
+/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/run_modern_bot.py:142: RuntimeWarning: coroutine 'Updater.start_polling' was never awaited
+  time.sleep(5)
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+INFO:Restarter:🚀 Starting bot...
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+INFO:apscheduler.scheduler:Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-12-15 10:23:40,702 - modern_bot - INFO - Bot started.
+INFO:modern_bot:Bot started.
+ERROR:Restarter:⚠️ Bot crashed (attempt #2): Event loop is closed
+ERROR:Restarter:Traceback:
+Traceback (most recent call last):
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/run_modern_bot.py", line 129, in main
+    bot_main()
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/modern_bot/main.py", line 247, in main
+    application.run_polling()
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_application.py", line 839, in run_polling
+    return self.__run(
+           ^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_application.py", line 1044, in __run
+    loop.add_signal_handler(sig, self._raise_system_exit)
+  File "/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/unix_events.py", line 99, in add_signal_handler
+    self._check_closed()
+  File "/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/asyncio/base_events.py", line 520, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+
+INFO:Restarter:🔄 Restarting in 5 seconds...

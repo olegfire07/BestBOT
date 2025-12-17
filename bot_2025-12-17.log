@@ -1,0 +1,258 @@
+2025-12-17 09:42:44,513 - modern_bot - INFO - Bot started.
+2025-12-17 09:42:44,672 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/user_data.db
+2025-12-17 09:42:44,724 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-17 09:42:45,283 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-17 09:42:45,710 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-17 09:42:45,831 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-17 09:42:46,296 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-17 09:42:46,296 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-17 09:42:46,967 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-17 09:42:48,666 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+2025-12-17 09:43:44,468 - modern_bot.utils.files - INFO - Removed temp file: P0jv7IqyJAH3uZkA.jpg
+2025-12-17 09:45:44,466 - modern_bot.utils.files - INFO - Database backed up to /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/backups/user_data_2025-12-17.db
+2025-12-17 09:45:44,467 - modern_bot.utils.files - INFO - Persistence backed up to /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/backups/persistence_2025-12-17.pickle
+2025-12-17 09:45:44,467 - modern_bot.utils.files - INFO - Backup completed: 2 files
+2025-12-17 11:45:06,817 - modern_bot.handlers.conversation - INFO - Processing 1 items with photos from Web App
+2025-12-17 11:45:06,831 - modern_bot.handlers.conversation - INFO - Item 1/1: photo_url=https://i.ibb.co/kgjpJZcf/image.jpg..., description=Металл серого цвета 16.50, evaluation=500
+2025-12-17 11:45:06,831 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/kgjpJZcf/image.jpg (Attempt 1/3)
+2025-12-17 11:45:07,380 - modern_bot.handlers.conversation - INFO - Photo saved successfully, size: 418855 bytes
+2025-12-17 11:45:07,380 - modern_bot.handlers.conversation - INFO - Added photo entry to db_data: {'photo': '/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/y4k68iskGiWMmgnY.jpg', 'description': 'Металл серого цвета 16.50', 'evaluation': '500'}
+2025-12-17 11:45:07,672 - modern_bot.services.docx_gen - INFO - Populating table with 1 photo entries
+2025-12-17 11:45:07,673 - modern_bot.services.docx_gen - INFO - Processing item 1: photo_path=/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/y4k68iskGiWMmgnY.jpg, exists=True
+2025-12-17 11:45:07,673 - modern_bot.services.docx_gen - INFO - Adding photo to document: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/y4k68iskGiWMmgnY.jpg
+2025-12-17 11:45:07,675 - modern_bot.services.docx_gen - INFO - Photo added successfully
+2025-12-17 11:45:07,693 - modern_bot.services.docx_gen - INFO - Document saved: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/documents/147, Заключение антиквариат № 1 (билет 01470006269), Челябинская область, от 17.12.2025 11-45-07.docx
+2025-12-17 11:45:08,546 - modern_bot.services.excel - INFO - Excel file updated.
+2025-12-17 13:43:44,471 - modern_bot.utils.files - INFO - Removed temp file: y4k68iskGiWMmgnY.jpg
+2025-12-17 15:02:25,276 - modern_bot.handlers.conversation - INFO - Processing 1 items with photos from Web App
+2025-12-17 15:02:25,284 - modern_bot.handlers.conversation - INFO - Item 1/1: photo_url=https://i.ibb.co/2JwznCS/image.jpg..., description=Икона медная,Богородица, evaluation=3 500
+2025-12-17 15:02:25,284 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/2JwznCS/image.jpg (Attempt 1/3)
+2025-12-17 15:02:30,033 - modern_bot.handlers.conversation - INFO - Photo saved successfully, size: 261499 bytes
+2025-12-17 15:02:30,033 - modern_bot.handlers.conversation - INFO - Added photo entry to db_data: {'photo': '/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/T84ZzWzkYXUEbV3f.jpg', 'description': 'Икона медная,Богородица', 'evaluation': '3 500'}
+2025-12-17 15:02:30,376 - modern_bot.services.docx_gen - INFO - Populating table with 1 photo entries
+2025-12-17 15:02:30,377 - modern_bot.services.docx_gen - INFO - Processing item 1: photo_path=/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/T84ZzWzkYXUEbV3f.jpg, exists=True
+2025-12-17 15:02:30,377 - modern_bot.services.docx_gen - INFO - Adding photo to document: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/T84ZzWzkYXUEbV3f.jpg
+2025-12-17 15:02:30,378 - modern_bot.services.docx_gen - INFO - Photo added successfully
+2025-12-17 15:02:30,392 - modern_bot.services.docx_gen - INFO - Document saved: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/documents/337, Заключение антиквариат № 1 (билет 03370009625), Нижний Новгород, от 17.12.2025 15-02-30.docx
+2025-12-17 15:02:31,225 - modern_bot.services.excel - INFO - Excel file updated.
+2025-12-17 16:43:44,469 - modern_bot.utils.files - INFO - Removed temp file: T84ZzWzkYXUEbV3f.jpg
+2025-12-17 17:41:05,574 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1325892805 | Name: Татьяна Перминова | Is Admin: False
+2025-12-17 17:42:27,488 - modern_bot.handlers.conversation - INFO - Processing 1 items with photos from Web App
+2025-12-17 17:42:27,496 - modern_bot.handlers.conversation - INFO - Item 1/1: photo_url=https://i.ibb.co/CpVykFwL/image.jpg..., description=Сито серого цвета вес 21,70 гр, evaluation=1 000
+2025-12-17 17:42:27,496 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/CpVykFwL/image.jpg (Attempt 1/3)
+2025-12-17 17:42:28,595 - modern_bot.handlers.conversation - INFO - Photo saved successfully, size: 215409 bytes
+2025-12-17 17:42:28,595 - modern_bot.handlers.conversation - INFO - Added photo entry to db_data: {'photo': '/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/UxmdufkvAXVXtsYK.jpg', 'description': 'Сито серого цвета вес 21,70 гр', 'evaluation': '1 000'}
+2025-12-17 17:42:29,067 - modern_bot.services.docx_gen - INFO - Populating table with 1 photo entries
+2025-12-17 17:42:29,067 - modern_bot.services.docx_gen - INFO - Processing item 1: photo_path=/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/UxmdufkvAXVXtsYK.jpg, exists=True
+2025-12-17 17:42:29,067 - modern_bot.services.docx_gen - INFO - Adding photo to document: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/UxmdufkvAXVXtsYK.jpg
+2025-12-17 17:42:29,068 - modern_bot.services.docx_gen - INFO - Photo added successfully
+2025-12-17 17:42:29,076 - modern_bot.services.docx_gen - INFO - Document saved: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/documents/462, Заключение антиквариат № 1 (билет 04620006616), Нижний Новгород, от 13.12.2025 17-42-29.docx
+2025-12-17 17:42:29,856 - modern_bot.services.excel - INFO - Excel file updated.
+2025-12-17 17:42:49,142 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1325892805 | Name: Татьяна Перминова | Is Admin: False
+2025-12-17 17:43:53,511 - modern_bot.handlers.conversation - INFO - Processing 1 items with photos from Web App
+2025-12-17 17:43:53,517 - modern_bot.handlers.conversation - INFO - Item 1/1: photo_url=https://i.ibb.co/NgkM9W9c/image.jpg..., description=Монета желтого цвета вес 0,85 гр, evaluation=10 000
+2025-12-17 17:43:53,517 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/NgkM9W9c/image.jpg (Attempt 1/3)
+2025-12-17 17:43:54,366 - modern_bot.handlers.conversation - INFO - Photo saved successfully, size: 204298 bytes
+2025-12-17 17:43:54,366 - modern_bot.handlers.conversation - INFO - Added photo entry to db_data: {'photo': '/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/TLDWGdGQYPXDdA9u.jpg', 'description': 'Монета желтого цвета вес 0,85 гр', 'evaluation': '10 000'}
+2025-12-17 17:43:54,658 - modern_bot.services.docx_gen - INFO - Populating table with 1 photo entries
+2025-12-17 17:43:54,658 - modern_bot.services.docx_gen - INFO - Processing item 1: photo_path=/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/TLDWGdGQYPXDdA9u.jpg, exists=True
+2025-12-17 17:43:54,659 - modern_bot.services.docx_gen - INFO - Adding photo to document: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/TLDWGdGQYPXDdA9u.jpg
+2025-12-17 17:43:54,659 - modern_bot.services.docx_gen - INFO - Photo added successfully
+2025-12-17 17:43:54,669 - modern_bot.services.docx_gen - INFO - Document saved: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/documents/462, Заключение антиквариат № 2 (билет 04620006618), Нижний Новгород, от 13.12.2025 17-43-54.docx
+2025-12-17 17:43:55,396 - modern_bot.services.excel - INFO - Excel file updated.
+2025-12-17 17:44:06,828 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1325892805 | Name: Татьяна Перминова | Is Admin: False
+2025-12-17 17:44:31,913 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1744060306 | Name: Аимгуль Сатаркулова | Is Admin: False
+2025-12-17 17:45:25,518 - modern_bot.handlers.conversation - INFO - Processing 1 items with photos from Web App
+2025-12-17 17:45:25,523 - modern_bot.handlers.conversation - INFO - Item 1/1: photo_url=https://i.ibb.co/3925YD2q/image.jpg..., description=Монеты серого цвета 2 шт вес 39,65 гр, evaluation=2 000
+2025-12-17 17:45:25,523 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/3925YD2q/image.jpg (Attempt 1/3)
+2025-12-17 17:45:27,145 - modern_bot.handlers.conversation - INFO - Photo saved successfully, size: 86336 bytes
+2025-12-17 17:45:27,145 - modern_bot.handlers.conversation - INFO - Added photo entry to db_data: {'photo': '/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/3YSALidpwcwBuM1i.jpg', 'description': 'Монеты серого цвета 2 шт вес 39,65 гр', 'evaluation': '2 000'}
+2025-12-17 17:45:27,399 - modern_bot.services.docx_gen - INFO - Populating table with 1 photo entries
+2025-12-17 17:45:27,400 - modern_bot.services.docx_gen - INFO - Processing item 1: photo_path=/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/3YSALidpwcwBuM1i.jpg, exists=True
+2025-12-17 17:45:27,400 - modern_bot.services.docx_gen - INFO - Adding photo to document: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/3YSALidpwcwBuM1i.jpg
+2025-12-17 17:45:27,401 - modern_bot.services.docx_gen - INFO - Photo added successfully
+2025-12-17 17:45:27,411 - modern_bot.services.docx_gen - INFO - Document saved: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/documents/462, Заключение антиквариат № 3 (билет 04620006632), Нижний Новгород, от 13.12.2025 17-45-27.docx
+2025-12-17 17:45:28,048 - modern_bot.services.excel - INFO - Excel file updated.
+2025-12-17 17:47:09,979 - modern_bot.handlers.conversation - INFO - Processing 1 items with photos from Web App
+2025-12-17 17:47:09,984 - modern_bot.handlers.conversation - INFO - Item 1/1: photo_url=https://i.ibb.co/3YmcDrcs/image.jpg..., description=Цепь серогоцвета имп запил 45см. 17,72гр, evaluation=531
+2025-12-17 17:47:09,984 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/3YmcDrcs/image.jpg (Attempt 1/3)
+2025-12-17 17:47:33,752 - modern_bot.handlers.conversation - INFO - Photo saved successfully, size: 971016 bytes
+2025-12-17 17:47:33,752 - modern_bot.handlers.conversation - INFO - Added photo entry to db_data: {'photo': '/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/FNxcGrp9coLd3zFD.jpg', 'description': 'Цепь серогоцвета имп запил 45см. 17,72гр', 'evaluation': '531'}
+2025-12-17 17:47:34,100 - modern_bot.services.docx_gen - INFO - Populating table with 1 photo entries
+2025-12-17 17:47:34,101 - modern_bot.services.docx_gen - INFO - Processing item 1: photo_path=/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/FNxcGrp9coLd3zFD.jpg, exists=True
+2025-12-17 17:47:34,101 - modern_bot.services.docx_gen - INFO - Adding photo to document: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/FNxcGrp9coLd3zFD.jpg
+2025-12-17 17:47:34,102 - modern_bot.services.docx_gen - INFO - Photo added successfully
+2025-12-17 17:47:34,130 - modern_bot.services.docx_gen - INFO - Document saved: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/documents/586, Заключение антиквариат № 1 (билет 05770000811), ХМАО-Югра, от 17.12.2025 17-47-34.docx
+2025-12-17 17:47:36,187 - modern_bot.services.excel - INFO - Excel file updated.
+2025-12-17 18:43:44,470 - modern_bot.utils.files - INFO - Removed temp file: UxmdufkvAXVXtsYK.jpg
+2025-12-17 19:12:55,212 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1325892805 | Name: Татьяна Перминова | Is Admin: False
+2025-12-17 19:14:28,463 - modern_bot.handlers.conversation - INFO - Processing 1 items with photos from Web App
+2025-12-17 19:14:28,475 - modern_bot.handlers.conversation - INFO - Item 1/1: photo_url=https://i.ibb.co/JRY0dcDw/image.jpg..., description=Монета желтого цвета  1 фунт стерлинга вес 7,95 гр, evaluation=60 000
+2025-12-17 19:14:28,475 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/JRY0dcDw/image.jpg (Attempt 1/3)
+2025-12-17 19:15:04,224 - modern_bot.handlers.conversation - INFO - Photo saved successfully, size: 910785 bytes
+2025-12-17 19:15:04,224 - modern_bot.handlers.conversation - INFO - Added photo entry to db_data: {'photo': '/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/dHpKRVXWWWYzPVA1.jpg', 'description': 'Монета желтого цвета  1 фунт стерлинга вес 7,95 гр', 'evaluation': '60 000'}
+2025-12-17 19:15:04,546 - modern_bot.services.docx_gen - INFO - Populating table with 1 photo entries
+2025-12-17 19:15:04,547 - modern_bot.services.docx_gen - INFO - Processing item 1: photo_path=/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/dHpKRVXWWWYzPVA1.jpg, exists=True
+2025-12-17 19:15:04,547 - modern_bot.services.docx_gen - INFO - Adding photo to document: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/dHpKRVXWWWYzPVA1.jpg
+2025-12-17 19:15:04,549 - modern_bot.services.docx_gen - INFO - Photo added successfully
+2025-12-17 19:15:04,584 - modern_bot.services.docx_gen - INFO - Document saved: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/documents/462, Заключение антиквариат № 1 (билет 04620006674), Нижний Новгород, от 17.12.2025 19-15-04.docx
+2025-12-17 19:15:06,691 - modern_bot.services.excel - INFO - Excel file updated.
+2025-12-17 19:43:44,471 - modern_bot.utils.files - INFO - Removed temp file: FNxcGrp9coLd3zFD.jpg
+2025-12-17 19:43:44,473 - modern_bot.utils.files - INFO - Removed temp file: 3YSALidpwcwBuM1i.jpg
+2025-12-17 19:43:44,473 - modern_bot.utils.files - INFO - Removed temp file: TLDWGdGQYPXDdA9u.jpg
+2025-12-17 20:43:44,467 - modern_bot.utils.files - INFO - Removed temp file: dHpKRVXWWWYzPVA1.jpg
+2025-12-17 21:27:12,007 - modern_bot - INFO - Bot started.
+2025-12-17 21:27:12,725 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/user_data.db
+2025-12-17 21:27:12,811 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-17 21:27:13,510 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-17 21:27:14,000 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-17 21:27:14,305 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-17 21:27:15,258 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-17 21:27:15,258 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-17 21:27:15,827 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-17 21:27:16,005 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+2025-12-17 21:37:44,131 - modern_bot - INFO - Bot started.
+2025-12-17 21:37:44,885 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/user_data.db
+2025-12-17 21:37:45,158 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-17 21:37:45,777 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-17 21:37:46,502 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-17 21:37:46,667 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-17 21:37:47,608 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-17 21:37:47,608 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-17 21:37:47,857 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-17 21:37:48,029 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+2025-12-17 21:38:11,912 - modern_bot.api - INFO - Uploading photo test_image.jpg (19 bytes) to Telegram chat -1002381542769
+2025-12-17 21:38:12,203 - modern_bot.api - ERROR - Upload Error: Wrong remote file identifier specified: wrong string length
+Traceback (most recent call last):
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/modern_bot/api.py", line 148, in handle_upload_photo
+    msg = await bot.send_photo(
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_extbot.py", line 3163, in send_photo
+    return await super().send_photo(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/_bot.py", line 1534, in send_photo
+    return await self._send_message(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_extbot.py", line 634, in _send_message
+    result = await super()._send_message(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/_bot.py", line 819, in _send_message
+    result = await self._post(
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_extbot.py", line 372, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.BadRequest: Wrong remote file identifier specified: wrong string length
+2025-12-17 21:38:46,305 - modern_bot.handlers.conversation - INFO - Processing 1 items with photos from Web App
+2025-12-17 21:38:46,316 - modern_bot.handlers.conversation - INFO - Item 1/1: photo_url=https://i.ibb.co/h1dV52hL/image.jpg..., description=Тест, evaluation=1
+2025-12-17 21:38:46,317 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/h1dV52hL/image.jpg (Attempt 1/3)
+2025-12-17 21:38:48,674 - modern_bot.handlers.conversation - INFO - Photo saved successfully, size: 68708 bytes
+2025-12-17 21:38:48,674 - modern_bot.handlers.conversation - INFO - Added photo entry to db_data: {'photo': '/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/photos/gJbMqPzzzWpr8WAI.jpg', 'description': 'Тест', 'evaluation': '1'}
+2025-12-17 21:38:49,080 - modern_bot.services.docx_gen - INFO - Populating table with 1 photo entries
+2025-12-17 21:38:49,081 - modern_bot.services.docx_gen - INFO - Processing item 1: photo_path=/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/photos/gJbMqPzzzWpr8WAI.jpg, exists=True
+2025-12-17 21:38:49,081 - modern_bot.services.docx_gen - INFO - Adding photo to document: /Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/photos/gJbMqPzzzWpr8WAI.jpg
+2025-12-17 21:38:49,081 - modern_bot.services.docx_gen - INFO - Photo added successfully
+2025-12-17 21:38:49,088 - modern_bot.services.docx_gen - INFO - Document saved: /Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/documents/385, Заключение антиквариат № 1 (билет 11221121221), Санкт-Петербург, от 17.12.2025 21-38-49.docx
+2025-12-17 21:39:14,828 - modern_bot.api - INFO - Uploading photo real_test_image.jpg (9957 bytes) to Telegram chat -1002381542769
+2025-12-17 21:39:15,350 - modern_bot.api - ERROR - Upload Error: Wrong remote file identifier specified: wrong character in the string
+Traceback (most recent call last):
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/modern_bot/api.py", line 148, in handle_upload_photo
+    msg = await bot.send_photo(
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_extbot.py", line 3163, in send_photo
+    return await super().send_photo(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/_bot.py", line 1534, in send_photo
+    return await self._send_message(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_extbot.py", line 634, in _send_message
+    result = await super()._send_message(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/_bot.py", line 819, in _send_message
+    result = await self._post(
+             ^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_extbot.py", line 372, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/request/_baserequest.py", line 375, in _request_wrapper
+    raise exception
+telegram.error.BadRequest: Wrong remote file identifier specified: wrong character in the string
+2025-12-17 21:39:43,152 - modern_bot - INFO - Bot started.
+2025-12-17 21:39:43,676 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111/user_data.db
+2025-12-17 21:39:43,775 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-17 21:39:44,537 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-17 21:39:45,238 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-17 21:39:45,500 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-17 21:39:46,650 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-17 21:39:46,650 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-17 21:39:47,428 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-17 21:39:47,525 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+2025-12-17 21:39:48,149 - modern_bot.api - INFO - Uploading photo real_test_image.jpg (9957 bytes) to Telegram chat -1002381542769
+2025-12-17 21:39:48,351 - modern_bot.api - INFO - Photo uploaded to Telegram. File ID: AgACAgIAAyEGAASN83VxAAIMGmlC-PQrbH83U-4ouIrziE3hMgIVAAJRDmsbDx4YSiMVPrDPZDzIAQADAgADbQADNgQ
+2025-12-17 21:46:29,872 - modern_bot - INFO - Bot started.
+2025-12-17 21:46:30,201 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111321/user_data.db
+2025-12-17 21:46:30,333 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-17 21:46:30,944 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-17 21:46:31,377 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-17 21:46:31,503 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-17 21:46:31,978 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-17 21:46:31,979 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-17 21:46:32,212 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-17 21:46:32,304 - modern_bot.database.db - INFO - Database connection closed.
+2025-12-17 21:48:27,141 - modern_bot - INFO - Bot started.
+2025-12-17 21:48:27,473 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111321/user_data.db
+2025-12-17 21:48:27,526 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-17 21:48:28,109 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-17 21:48:28,535 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-17 21:48:28,628 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-17 21:48:29,074 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-17 21:48:29,074 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-17 21:48:29,274 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-17 21:48:29,345 - modern_bot.database.db - INFO - Database connection closed.
+2025-12-17 21:49:01,292 - modern_bot - INFO - Bot started.
+2025-12-17 21:49:01,480 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111321/user_data.db
+2025-12-17 21:49:01,649 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-17 21:49:02,330 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-17 21:49:02,932 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-17 21:49:03,009 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-17 21:49:03,447 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-17 21:49:03,448 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-17 21:49:03,617 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-17 21:49:03,755 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+2025-12-17 21:52:01,274 - modern_bot.utils.files - INFO - Database backed up to /Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111321/backups/user_data_2025-12-17.db
+2025-12-17 21:52:01,275 - modern_bot.utils.files - INFO - Persistence backed up to /Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111321/backups/persistence_2025-12-17.pickle
+2025-12-17 21:52:01,275 - modern_bot.utils.files - INFO - Backup completed: 2 files
+2025-12-17 21:53:53,411 - modern_bot.database.db - INFO - Database connection closed.
+2025-12-17 21:53:56,038 - modern_bot - INFO - Bot started.
+2025-12-17 21:53:56,246 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111321/user_data.db
+2025-12-17 21:53:56,305 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-17 21:53:56,863 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-17 21:53:57,322 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-17 21:53:57,585 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-17 21:53:58,017 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-17 21:53:58,018 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-17 21:53:58,264 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-17 21:53:58,354 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+2025-12-17 21:56:56,009 - modern_bot.utils.files - INFO - Database backed up to /Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111321/backups/user_data_2025-12-17.db
+2025-12-17 21:56:56,011 - modern_bot.utils.files - INFO - Persistence backed up to /Users/oleg/Project_SKLAD/бот тест/bot_backup_2025-12-03111321/backups/persistence_2025-12-17.pickle
+2025-12-17 21:56:56,012 - modern_bot.utils.files - INFO - Backup completed: 2 files

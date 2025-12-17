@@ -1,0 +1,210 @@
+2025-12-14 12:54:34,457 - modern_bot - INFO - Bot started.
+2025-12-14 12:54:35,081 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/user_data.db
+2025-12-14 12:54:35,282 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-14 12:54:36,014 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-14 12:54:36,660 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-14 12:54:36,905 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-14 12:54:37,575 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-14 12:54:37,575 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-14 12:54:37,990 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-14 12:54:38,147 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+2025-12-14 12:55:13,734 - modern_bot - INFO - Bot started.
+2025-12-14 12:55:14,107 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/user_data.db
+2025-12-14 12:55:14,237 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-14 12:55:14,872 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-14 12:55:15,444 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-14 12:55:15,596 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-14 12:55:16,166 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-14 12:55:16,166 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-14 12:55:16,464 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-14 12:55:16,617 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+2025-12-14 12:55:38,352 - modern_bot.handlers.conversation - INFO - Processing 1 items with photos from Web App
+2025-12-14 12:55:38,361 - modern_bot.handlers.conversation - INFO - Item 1/1: photo_url=https://i.ibb.co/kgHRNXYQ/image.jpg..., description=Тест, evaluation=1
+2025-12-14 12:55:38,361 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/kgHRNXYQ/image.jpg (Attempt 1/3)
+2025-12-14 12:55:48,955 - modern_bot.handlers.conversation - ERROR - Timeout downloading photo (Attempt 1/3): 
+2025-12-14 12:55:50,957 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/kgHRNXYQ/image.jpg (Attempt 2/3)
+2025-12-14 12:56:01,445 - modern_bot.handlers.conversation - ERROR - Timeout downloading photo (Attempt 2/3): 
+2025-12-14 12:56:03,446 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/kgHRNXYQ/image.jpg (Attempt 3/3)
+2025-12-14 12:56:13,705 - modern_bot.utils.files - INFO - Removed temp file: hJtkJjQzGgcDFRMm.jpg
+2025-12-14 12:56:13,705 - modern_bot.utils.files - INFO - Removed temp file: LjKbZ2d04QZYXW18.jpg
+2025-12-14 12:56:13,705 - modern_bot.utils.files - INFO - Removed temp file: Bswe6ZkZHWPPdMVt.jpg
+2025-12-14 12:56:13,706 - modern_bot.utils.files - INFO - Removed temp file: UHywu9pJaKqVLT9m.jpg
+2025-12-14 12:56:13,706 - modern_bot.utils.files - INFO - Removed temp file: rwEiKSZ2B8lmTirR.jpg
+2025-12-14 12:56:13,706 - modern_bot.utils.files - INFO - Removed temp file: la5Y8lhEIj72IS1w.jpg
+2025-12-14 12:56:14,099 - modern_bot.handlers.conversation - ERROR - Timeout downloading photo (Attempt 3/3): 
+2025-12-14 12:56:14,510 - modern_bot.services.docx_gen - INFO - Populating table with 0 photo entries
+2025-12-14 12:56:14,514 - modern_bot.services.docx_gen - INFO - Document saved: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/documents/385, Заключение антиквариат № 1 (билет 12212121212), Санкт-Петербург, от 14.12.2025 12-56-14.docx
+2025-12-14 12:56:25,496 - modern_bot.database.db - INFO - Database connection closed.
+2025-12-14 12:56:25,517 - modern_bot - INFO - Bot started.
+2025-12-14 12:56:30,564 - modern_bot - INFO - Bot started.
+2025-12-14 12:56:35,590 - modern_bot - INFO - Bot started.
+2025-12-14 12:57:12,360 - modern_bot - INFO - Bot started.
+2025-12-14 12:57:12,849 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/user_data.db
+2025-12-14 12:57:12,981 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-14 12:57:13,674 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-14 12:57:14,266 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-14 12:57:14,422 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-14 12:57:15,000 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-14 12:57:15,000 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-14 12:57:15,322 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-14 12:57:15,479 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+2025-12-14 12:57:54,048 - modern_bot.handlers.conversation - INFO - Processing 1 items with photos from Web App
+2025-12-14 12:57:54,054 - modern_bot.handlers.conversation - INFO - Item 1/1: photo_url=https://i.ibb.co/67ZTgGkX/image.jpg..., description=Тест, evaluation=1
+2025-12-14 12:57:54,054 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/67ZTgGkX/image.jpg (Attempt 1/3)
+2025-12-14 12:58:04,539 - modern_bot.handlers.conversation - ERROR - Timeout downloading photo (Attempt 1/3): 
+2025-12-14 12:58:06,541 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/67ZTgGkX/image.jpg (Attempt 2/3)
+2025-12-14 12:58:17,159 - modern_bot.handlers.conversation - ERROR - Timeout downloading photo (Attempt 2/3): 
+2025-12-14 12:58:19,161 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/67ZTgGkX/image.jpg (Attempt 3/3)
+2025-12-14 12:58:29,855 - modern_bot.handlers.conversation - ERROR - Timeout downloading photo (Attempt 3/3): 
+2025-12-14 12:58:30,682 - modern_bot.services.docx_gen - INFO - Populating table with 0 photo entries
+2025-12-14 12:58:30,688 - modern_bot.services.docx_gen - INFO - Document saved: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/documents/385, Заключение антиквариат № 1 (билет 21212121212), Санкт-Петербург, от 14.12.2025 12-58-30.docx
+2025-12-14 12:58:31,431 - modern_bot.handlers.commands - INFO - ⭐ User ID: 2064900 | Name: Oleg | Is Admin: True
+2025-12-14 12:59:30,437 - modern_bot.handlers.conversation - INFO - Processing 1 items with photos from Web App
+2025-12-14 12:59:30,445 - modern_bot.handlers.conversation - INFO - Item 1/1: photo_url=https://i.ibb.co/qYZqwXV4/image.jpg..., description=Тест, evaluation=1
+2025-12-14 12:59:30,445 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/qYZqwXV4/image.jpg (Attempt 1/3)
+2025-12-14 12:59:40,695 - modern_bot.handlers.conversation - ERROR - Timeout downloading photo (Attempt 1/3): 
+2025-12-14 12:59:42,698 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/qYZqwXV4/image.jpg (Attempt 2/3)
+2025-12-14 12:59:45,122 - modern_bot.handlers.conversation - INFO - Photo saved successfully, size: 349148 bytes
+2025-12-14 12:59:45,122 - modern_bot.handlers.conversation - INFO - Added photo entry to db_data: {'photo': '/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/LCoBQJH7d4LmYYef.jpg', 'description': 'Тест', 'evaluation': '1'}
+2025-12-14 12:59:45,872 - modern_bot.services.docx_gen - INFO - Populating table with 1 photo entries
+2025-12-14 12:59:45,874 - modern_bot.services.docx_gen - INFO - Processing item 1: photo_path=/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/LCoBQJH7d4LmYYef.jpg, exists=True
+2025-12-14 12:59:45,874 - modern_bot.services.docx_gen - INFO - Adding photo to document: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/LCoBQJH7d4LmYYef.jpg
+2025-12-14 12:59:45,876 - modern_bot.services.docx_gen - INFO - Photo added successfully
+2025-12-14 12:59:45,899 - modern_bot.services.docx_gen - INFO - Document saved: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/documents/385, Заключение антиквариат № 1 (билет 21212121221), Санкт-Петербург, от 14.12.2025 12-59-45.docx
+2025-12-14 13:00:12,344 - modern_bot.utils.files - INFO - Database backed up to /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/backups/user_data_2025-12-14.db
+2025-12-14 13:00:12,345 - modern_bot.utils.files - INFO - Persistence backed up to /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/backups/persistence_2025-12-14.pickle
+2025-12-14 13:00:12,346 - modern_bot.utils.files - INFO - Backup completed: 2 files
+2025-12-14 13:00:24,890 - modern_bot.handlers.conversation - INFO - Processing 2 items with photos from Web App
+2025-12-14 13:00:24,903 - modern_bot.handlers.conversation - INFO - Item 1/2: photo_url=https://i.ibb.co/FkyQ2MCk/image.jpg..., description=Тест, evaluation=1
+2025-12-14 13:00:24,904 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/FkyQ2MCk/image.jpg (Attempt 1/3)
+2025-12-14 13:00:27,169 - modern_bot.handlers.conversation - INFO - Photo saved successfully, size: 92244 bytes
+2025-12-14 13:00:27,170 - modern_bot.handlers.conversation - INFO - Added photo entry to db_data: {'photo': '/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/Y1l2I2xJ1ZyioxYB.jpg', 'description': 'Тест', 'evaluation': '1'}
+2025-12-14 13:00:27,170 - modern_bot.handlers.conversation - INFO - Item 2/2: photo_url=https://i.ibb.co/yFjRq1Nq/image.jpg..., description=Тест, evaluation=1
+2025-12-14 13:00:27,170 - modern_bot.handlers.conversation - INFO - Downloading photo from https://i.ibb.co/yFjRq1Nq/image.jpg (Attempt 1/3)
+2025-12-14 13:00:28,220 - modern_bot.handlers.conversation - INFO - Photo saved successfully, size: 349148 bytes
+2025-12-14 13:00:28,220 - modern_bot.handlers.conversation - INFO - Added photo entry to db_data: {'photo': '/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/5QxVhUSM0lWR0dEE.jpg', 'description': 'Тест', 'evaluation': '1'}
+2025-12-14 13:00:28,931 - modern_bot.services.docx_gen - INFO - Populating table with 2 photo entries
+2025-12-14 13:00:28,932 - modern_bot.services.docx_gen - INFO - Processing item 1: photo_path=/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/Y1l2I2xJ1ZyioxYB.jpg, exists=True
+2025-12-14 13:00:28,932 - modern_bot.services.docx_gen - INFO - Adding photo to document: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/Y1l2I2xJ1ZyioxYB.jpg
+2025-12-14 13:00:28,933 - modern_bot.services.docx_gen - INFO - Photo added successfully
+2025-12-14 13:00:28,935 - modern_bot.services.docx_gen - INFO - Processing item 2: photo_path=/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/5QxVhUSM0lWR0dEE.jpg, exists=True
+2025-12-14 13:00:28,935 - modern_bot.services.docx_gen - INFO - Adding photo to document: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/photos/5QxVhUSM0lWR0dEE.jpg
+2025-12-14 13:00:28,937 - modern_bot.services.docx_gen - INFO - Photo added successfully
+2025-12-14 13:00:28,961 - modern_bot.services.docx_gen - INFO - Document saved: /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/documents/385, Заключение антиквариат № 1 (билет 24334346166), Санкт-Петербург, от 14.12.2025 13-00-28.docx
+2025-12-14 14:58:35,808 - modern_bot.handlers.commands - INFO - ⭐ User ID: 562383710 | Name: #126 СПБ, пр Непокоренных 2а Ломбард-126 | Is Admin: False
+2025-12-14 14:58:36,137 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1084794978 | Name: Татьяна Сергеевна | Is Admin: False
+2025-12-14 14:58:36,529 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1084794978 | Name: Татьяна Сергеевна | Is Admin: False
+2025-12-14 14:58:36,694 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1084794978 | Name: Татьяна Сергеевна | Is Admin: False
+2025-12-14 15:58:12,345 - modern_bot.utils.files - INFO - Removed temp file: LCoBQJH7d4LmYYef.jpg
+2025-12-14 15:58:12,348 - modern_bot.utils.files - INFO - Removed temp file: 5QxVhUSM0lWR0dEE.jpg
+2025-12-14 15:58:12,349 - modern_bot.utils.files - INFO - Removed temp file: Y1l2I2xJ1ZyioxYB.jpg
+2025-12-14 17:26:10,577 - modern_bot.handlers.commands - INFO - ⭐ User ID: 5544725828 | Name: 626 Ломбард | Is Admin: False
+2025-12-14 17:27:49,707 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1879082670 | Name: Ломбард 584 Воровского 53 | Is Admin: False
+2025-12-14 17:33:13,985 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1879082670 | Name: Ломбард 584 Воровского 53 | Is Admin: False
+2025-12-14 17:35:19,382 - modern_bot.handlers.commands - INFO - ⭐ User ID: 5544725828 | Name: 626 Ломбард | Is Admin: False
+2025-12-14 17:35:42,977 - modern_bot.handlers.commands - INFO - ⭐ User ID: 5544725828 | Name: 626 Ломбард | Is Admin: False
+2025-12-14 17:38:07,210 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1879082670 | Name: Ломбард 584 Воровского 53 | Is Admin: False
+2025-12-14 17:38:14,676 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1879082670 | Name: Ломбард 584 Воровского 53 | Is Admin: False
+2025-12-14 17:38:41,358 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1098094722 | Name: Tasya | Is Admin: False
+2025-12-14 17:39:46,069 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1879082670 | Name: Ломбард 584 Воровского 53 | Is Admin: False
+2025-12-14 17:41:39,037 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1879082670 | Name: Ломбард 584 Воровского 53 | Is Admin: False
+2025-12-14 17:43:02,198 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1879082670 | Name: Ломбард 584 Воровского 53 | Is Admin: False
+2025-12-14 17:54:41,729 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1879082670 | Name: Ломбард 584 Воровского 53 | Is Admin: False
+2025-12-14 18:09:26,064 - modern_bot.handlers.commands - INFO - ⭐ User ID: 5589481575 | Name: Алëна | Is Admin: False
+2025-12-14 20:01:34,517 - modern_bot.handlers.commands - INFO - ⭐ User ID: 562383710 | Name: #126 СПБ, пр Непокоренных 2а Ломбард-126 | Is Admin: False
+2025-12-14 20:02:10,259 - modern_bot.handlers.commands - INFO - ⭐ User ID: 989024228 | Name: Saveliy Bozhkov | Is Admin: False
+2025-12-14 20:04:02,096 - modern_bot.handlers.commands - INFO - ⭐ User ID: 989024228 | Name: Saveliy Bozhkov | Is Admin: False
+2025-12-14 20:05:37,022 - modern_bot.handlers.commands - INFO - ⭐ User ID: 989024228 | Name: Saveliy Bozhkov | Is Admin: False
+2025-12-14 20:08:49,685 - modern_bot.handlers.commands - INFO - ⭐ User ID: 989024228 | Name: Saveliy Bozhkov | Is Admin: False
+2025-12-14 20:09:10,407 - modern_bot.handlers.commands - INFO - ⭐ User ID: 989024228 | Name: Saveliy Bozhkov | Is Admin: False
+2025-12-14 20:11:39,549 - modern_bot.handlers.commands - INFO - ⭐ User ID: 989024228 | Name: Saveliy Bozhkov | Is Admin: False
+2025-12-14 20:11:50,751 - modern_bot.handlers.commands - INFO - ⭐ User ID: 989024228 | Name: Saveliy Bozhkov | Is Admin: False
+2025-12-14 23:53:49,274 - modern_bot - ERROR - Update None caused error httpx.RemoteProtocolError: Server disconnected without sending a response.
+Traceback (most recent call last):
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpcore/_async/connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpcore/_async/connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpcore/_async/connection.py", line 103, in handle_async_request
+    return await self._connection.handle_async_request(request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpcore/_async/http11.py", line 136, in handle_async_request
+    raise exc
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpcore/_async/http11.py", line 106, in handle_async_request
+    ) = await self._receive_response_headers(**kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpcore/_async/http11.py", line 177, in _receive_response_headers
+    event = await self._receive_event(timeout=timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpcore/_async/http11.py", line 231, in _receive_event
+    raise RemoteProtocolError(msg)
+httpcore.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/request/_httpxrequest.py", line 279, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpx/_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpx/_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpx/_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "/opt/homebrew/Cellar/python@3.11/3.11.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.RemoteProtocolError: Server disconnected without sending a response.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_utils/networkloop.py", line 134, in network_retry_loop
+    await do_action()
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_utils/networkloop.py", line 127, in do_action
+    action_cb_task.result()
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_extbot.py", line 676, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/_bot.py", line 4780, in get_updates
+    await self._post(
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/ext/_extbot.py", line 372, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/request/_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/request/_baserequest.py", line 305, in _request_wrapper
+    code, payload = await self.do_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/.venv/lib/python3.11/site-packages/telegram/request/_httpxrequest.py", line 303, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.RemoteProtocolError: Server disconnected without sending a response.

@@ -1,0 +1,67 @@
+2025-12-15 10:12:19,027 - modern_bot - INFO - Bot started.
+2025-12-15 10:12:19,216 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/user_data.db
+2025-12-15 10:12:19,476 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-15 10:12:20,116 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-15 10:12:20,624 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-15 10:12:20,709 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-15 10:12:21,470 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-15 10:12:21,470 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-15 10:12:22,121 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-15 10:12:22,334 - modern_bot.database.db - INFO - Database connection closed.
+2025-12-15 10:12:59,001 - modern_bot - INFO - Bot started.
+2025-12-15 10:13:04,329 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/user_data.db
+2025-12-15 10:13:04,506 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-15 10:13:05,089 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-15 10:13:05,513 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-15 10:13:05,607 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-15 10:13:06,185 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-15 10:13:06,185 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-15 10:13:06,341 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-15 10:13:06,419 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+2025-12-15 10:13:06,628 - modern_bot.database.db - INFO - Database connection closed.
+2025-12-15 10:13:11,644 - modern_bot - INFO - Bot started.
+2025-12-15 10:13:16,659 - modern_bot - INFO - Bot started.
+2025-12-15 10:13:21,685 - modern_bot - INFO - Bot started.
+2025-12-15 10:13:26,702 - modern_bot - INFO - Bot started.
+2025-12-15 10:13:31,720 - modern_bot - INFO - Bot started.
+2025-12-15 10:13:36,737 - modern_bot - INFO - Bot started.
+2025-12-15 10:13:41,758 - modern_bot - INFO - Bot started.
+2025-12-15 10:13:46,777 - modern_bot - INFO - Bot started.
+2025-12-15 10:13:51,803 - modern_bot - INFO - Bot started.
+2025-12-15 10:13:56,826 - modern_bot - INFO - Bot started.
+2025-12-15 10:14:01,844 - modern_bot - INFO - Bot started.
+2025-12-15 10:14:06,866 - modern_bot - INFO - Bot started.
+2025-12-15 10:14:11,885 - modern_bot - INFO - Bot started.
+2025-12-15 10:14:16,910 - modern_bot - INFO - Bot started.
+2025-12-15 10:14:21,942 - modern_bot - INFO - Bot started.
+2025-12-15 10:14:26,961 - modern_bot - INFO - Bot started.
+2025-12-15 10:14:31,981 - modern_bot - INFO - Bot started.
+2025-12-15 10:14:37,000 - modern_bot - INFO - Bot started.
+2025-12-15 10:14:42,017 - modern_bot - INFO - Bot started.
+2025-12-15 10:14:44,843 - modern_bot - INFO - Bot started.
+2025-12-15 10:14:45,097 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/user_data.db
+2025-12-15 10:14:45,184 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-15 10:14:45,745 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-15 10:14:46,281 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-15 10:14:46,380 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-15 10:14:46,789 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-15 10:14:46,789 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-15 10:14:46,956 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-15 10:14:47,040 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+2025-12-15 10:15:39,879 - modern_bot - INFO - Bot started.
+2025-12-15 10:15:40,142 - modern_bot.database.db - INFO - Database initialized at /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/user_data.db
+2025-12-15 10:15:40,253 - modern_bot - INFO - 🗑 Deleted old default commands
+2025-12-15 10:15:40,829 - modern_bot - INFO - ✅ Set 3 default commands for regular users
+2025-12-15 10:15:41,396 - modern_bot - INFO - ✅ Set admin commands for 466509784
+2025-12-15 10:15:41,657 - modern_bot - WARNING - Failed to set admin commands for 636601018: Chat not found
+2025-12-15 10:15:42,077 - modern_bot - INFO - ✅ Set admin commands for 2064900
+2025-12-15 10:15:42,077 - modern_bot - INFO - ✅ Set 8 admin commands for 3 admins
+2025-12-15 10:15:42,218 - modern_bot - ERROR - Failed to notify admin 636601018: Chat not found
+2025-12-15 10:15:42,292 - modern_bot.api - INFO - API Server started on http://127.0.0.1:8080 (max 2097152 bytes)
+2025-12-15 10:17:48,987 - modern_bot.handlers.commands - INFO - ⭐ User ID: 1416514362 | Name: Ольга | Is Admin: False
+2025-12-15 10:18:39,849 - modern_bot.utils.files - INFO - Database backed up to /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/backups/user_data_2025-12-15.db
+2025-12-15 10:18:39,851 - modern_bot.utils.files - INFO - Persistence backed up to /Users/oleg/Project_SKLAD/bot_backup_2025-12-03111/backups/persistence_2025-12-15.pickle
+2025-12-15 10:18:39,851 - modern_bot.utils.files - INFO - Backup completed: 2 files
+2025-12-15 10:23:35,666 - modern_bot.database.db - INFO - Database connection closed.
+2025-12-15 10:23:35,683 - modern_bot - INFO - Bot started.
+2025-12-15 10:23:40,702 - modern_bot - INFO - Bot started.
