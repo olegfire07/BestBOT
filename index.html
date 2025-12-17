@@ -1648,46 +1648,63 @@
             DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || ""
         };
 
-        const ACTIVE_THEME = 'default';
+        async function initSeasonalTheme() {
+            try {
+                // Determine API base
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlBotUrl = (urlParams.get('bot_url') || '').trim();
+                let bUrl = urlBotUrl || APP_CONFIG.DEFAULT_BOT_URL || "";
 
-        function initSeasonalTheme() {
-            if (ACTIVE_THEME === 'default') return;
-
-            document.body.classList.add('theme-' + ACTIVE_THEME);
-
-            const overlay = document.createElement('div');
-            overlay.className = 'seasonal-overlay';
-            document.body.appendChild(overlay);
-
-            if (ACTIVE_THEME === 'summer') {
-                const sun = document.createElement('div');
-                sun.className = 'sun-ray';
-                document.body.appendChild(sun);
-            }
-
-            const particleCount = 25;
-            const symbols = {
-                'winter': '❄️',
-                'spring': '🌸',
-                'autumn': '🍂',
-                'holiday': '🎊'
-            };
-
-            const symbol = symbols[ACTIVE_THEME] || '●';
-
-            for (let i = 0; i < particleCount; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                if (symbol !== '●') {
-                    p.innerText = symbol;
-                    p.style.backgroundColor = 'transparent';
-                    p.style.fontSize = Math.random() * 20 + 10 + 'px';
+                if (!bUrl && localStorage.getItem('bot_url')) {
+                    bUrl = localStorage.getItem('bot_url');
                 }
-                p.style.left = Math.random() * 100 + 'vw';
-                p.style.animationDuration = Math.random() * 5 + 5 + 's';
-                p.style.animationDelay = Math.random() * 5 + 's';
-                p.style.opacity = Math.random() * 0.5 + 0.3;
-                overlay.appendChild(p);
+
+                if (!bUrl) return;
+
+                const res = await fetch(`${bUrl}/api/system/theme`);
+                const data = await res.json();
+                const theme = data.theme || 'default';
+
+                if (theme === 'default') return;
+
+                document.body.classList.add('theme-' + theme);
+
+                const overlay = document.createElement('div');
+                overlay.className = 'seasonal-overlay';
+                document.body.appendChild(overlay);
+
+                if (theme === 'summer') {
+                    const sun = document.createElement('div');
+                    sun.className = 'sun-ray';
+                    document.body.appendChild(sun);
+                }
+
+                const particleCount = 25;
+                const symbols = {
+                    'winter': '❄️',
+                    'spring': '🌸',
+                    'autumn': '🍂',
+                    'holiday': '🎊'
+                };
+
+                const symbol = symbols[theme] || '●';
+
+                for (let i = 0; i < particleCount; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'particle';
+                    if (symbol !== '●') {
+                        p.innerText = symbol;
+                        p.style.backgroundColor = 'transparent';
+                        p.style.fontSize = Math.random() * 20 + 10 + 'px';
+                    }
+                    p.style.left = Math.random() * 100 + 'vw';
+                    p.style.animationDuration = Math.random() * 5 + 5 + 's';
+                    p.style.animationDelay = Math.random() * 5 + 's';
+                    p.style.opacity = Math.random() * 0.5 + 0.3;
+                    overlay.appendChild(p);
+                }
+            } catch (e) {
+                console.warn('Seasonal theme load failed:', e);
             }
         }
 
