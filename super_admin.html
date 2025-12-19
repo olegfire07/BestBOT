@@ -505,9 +505,6 @@
                 <div class="status-pill">
                     ☁️ DB: <span id="val-db-size">--</span> MB
                 </div>
-                <div class="status-pill" id="active-theme-pill" style="border-color: var(--warning);">
-                    🎨 Тема: <b id="val-current-theme">Стандарт</b>
-                </div>
             </div>
         </div>
 
@@ -629,41 +626,6 @@
         <!-- SYSTEM PANE -->
         <div id="pane-system" class="pane">
             <div class="content-box">
-                <h3 style="margin-bottom: 20px;">🎨 Установка атмосферы (Seasonal Engine)</h3>
-                <div class="theme-grid" id="theme-selector">
-                    <div class="theme-card" data-theme="default" onclick="setTheme('default')">
-                        <div class="theme-preview" style="background: #F4F7FA;">⚪</div>
-                        <div class="theme-name">Стандарт</div>
-                    </div>
-                    <div class="theme-card" data-theme="winter" onclick="setTheme('winter')">
-                        <div class="theme-preview" style="background: linear-gradient(135deg, #E0EAFC, #CFDEF3);">❄️
-                        </div>
-                        <div class="theme-name">Зима</div>
-                    </div>
-                    <div class="theme-card" data-theme="spring" onclick="setTheme('spring')">
-                        <div class="theme-preview" style="background: linear-gradient(135deg, #a8e063, #56ab2f);">🌸
-                        </div>
-                        <div class="theme-name">Весна</div>
-                    </div>
-                    <div class="theme-card" data-theme="summer" onclick="setTheme('summer')">
-                        <div class="theme-preview" style="background: linear-gradient(135deg, #FFB75E, #ED8F03);">☀️
-                        </div>
-                        <div class="theme-name">Лето</div>
-                    </div>
-                    <div class="theme-card" data-theme="autumn" onclick="setTheme('autumn')">
-                        <div class="theme-preview" style="background: linear-gradient(135deg, #e67e22, #d35400);">🍁
-                        </div>
-                        <div class="theme-name">Осень</div>
-                    </div>
-                    <div class="theme-card" data-theme="holiday" onclick="setTheme('holiday')">
-                        <div class="theme-preview" style="background: linear-gradient(135deg, #c0392b, #8e44ad);">🎊
-                        </div>
-                        <div class="theme-name">Праздник</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="content-box">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3>Системные логи (Deep Trace)</h3>
                     <button class="btn btn-outline" style="padding: 6px 12px; font-size: 11px;" onclick="loadLogs()">🔄
@@ -760,8 +722,6 @@
                 if (a) renderArchives(a);
             } else if (pane === 'system') {
                 loadLogs();
-                const themeData = await fFetch(`${API_BASE}/system/get-theme`);
-                if (themeData) markActiveTheme(themeData.theme);
             }
         }
 
@@ -823,32 +783,7 @@
             `).join('');
         }
 
-        function markActiveTheme(theme) {
-            if (!theme) theme = 'default';
-            document.querySelectorAll('.theme-card').forEach(c => {
-                c.classList.toggle('active', c.dataset.theme === theme);
-            });
-            document.getElementById('val-current-theme').innerText = themeLabels[theme] || theme;
 
-            // Immediate feedback: apply theme class to body
-            document.body.className = document.body.className.replace(/\btheme-\S+/g, '');
-            document.body.classList.add('theme-switching');
-            document.body.classList.add('theme-' + theme);
-        }
-
-        async function setTheme(theme) {
-            const res = await fFetch(`${API_BASE}/system/set-theme`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ theme: theme })
-            });
-            if (res && res.status === 'ok') {
-                markActiveTheme(theme);
-                notify('Тема обновлена', 'success');
-            } else {
-                notify('Ошибка обновления темы', 'error');
-            }
-        }
 
         async function loadLogs() {
             const d = await fFetch(`${API_BASE}/logs`);
