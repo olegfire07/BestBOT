@@ -1572,7 +1572,8 @@
         }
 
         const APP_CONFIG = {
-            DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || ""
+            DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || "",
+            IMAGEBAN_CLIENT_ID: window.APP_IMAGEBAN_CLIENT_ID || "wlbeebCGLMGRtwNpk5YS"
         };
 
         // Initialize
@@ -1584,6 +1585,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const urlBotUrl = (urlParams.get('bot_url') || '').trim();
         const isInTelegram = Boolean(tg.initDataUnsafe && tg.initDataUnsafe.user);
+        const imagebanClientId = (urlParams.get('imageban_client') || APP_CONFIG.IMAGEBAN_CLIENT_ID || '').trim();
 
         // Load Bot URL (for standalone mode)
         let botUrl = urlBotUrl || APP_CONFIG.DEFAULT_BOT_URL;
@@ -2183,40 +2185,58 @@
 
         // New function to handle Bot API upload
         async function uploadImageToBot(file) {
-            // File is already compressed by handleFileSelect (library)
-            // const compressedBlob = await compressImage(file);
-            const compressedBlob = file; // Use directly
+            if (imagebanClientId) {
+                return await uploadImageToImageBan(file);
+            }
 
+            const compressedBlob = file;
             const formData = new FormData();
             formData.append('image', compressedBlob, 'image.jpg');
 
-            // Use configured botUrl if available (for GitHub Pages), otherwise relative path
             const baseUrl = typeof botUrl !== 'undefined' ? botUrl : '';
-            // Ensure no double slash if botUrl ends with /
             const cleanBase = baseUrl.replace(/\/$/, "");
             const uploadUrl = `${cleanBase}/api/upload-photo`;
 
             const response = await fetch(uploadUrl, {
                 method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка сервера: ${response.status}`);
+            }
+
+            const result = await response.json();
+            if (result && result.data && result.data.url) {
+                return result.data.url;
+            }
+            throw new Error(result?.error || "Неизвестная ошибка загрузки");
+        }
+
+        async function uploadImageToImageBan(file) {
+            const formData = new FormData();
+            formData.append('image', file, file.name || 'image.jpg');
+
+            const response = await fetch('https://api.imageban.ru/v1', {
+                method: 'POST',
                 headers: {
-                    // 'X-API-KEY': 'YOUR_TOKEN' // If auth needed
+                    'Authorization': `TOKEN ${imagebanClientId}`
                 },
                 body: formData
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Ошибка сервера: ${response.status}`);
+                throw new Error(`ImageBan: HTTP ${response.status}`);
             }
 
             const result = await response.json();
-
-            if (result && result.data && result.data.url) {
-                // Ensure we return the tg: URL
-                return result.data.url;
-            } else {
-                throw new Error(result.error || "Неизвестная ошибка загрузки");
+            const link = result?.data?.[0]?.link || result?.data?.link;
+            if (result?.success && link) {
+                return link;
             }
+
+            const message = result?.message || result?.error || "Ошибка загрузки в ImageBan";
+            throw new Error(message);
         }
 
         // Lightbox Functions

@@ -4,119 +4,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Gold Admin v5.1 | BestBOT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    <title>Enterprise Gold Admin v5.2 | BestBOT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
-            --bg: #F4F7FA;
-            --sidebar: #1D1D1F;
-            --sidebar-active: #2C2C2E;
-            --card: #ffffff;
-            --primary: #0071E3;
-            --primary-glow: rgba(0, 113, 227, 0.3);
-            --success: #34C759;
-            --error: #FF3B30;
-            --warning: #FF9500;
-            --text-main: #1D1D1F;
-            --text-mute: #86868B;
-            --border: rgba(0, 0, 0, 0.05);
-            --radius-lg: 20px;
-            --radius-md: 14px;
-            --shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+            --bg: #f4f1ea;
+            --bg-alt: #eef3f7;
+            --sidebar: #0f1418;
+            --sidebar-active: #1f2a32;
+            --card: rgba(255, 255, 255, 0.78);
+            --card-solid: #ffffff;
+            --primary: #0f766e;
+            --primary-strong: #0b5f58;
+            --primary-glow: rgba(15, 118, 110, 0.28);
+            --accent: #ff8a3d;
+            --success: #16a34a;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --text-main: #111827;
+            --text-mute: #6b7280;
+            --border: rgba(15, 23, 42, 0.08);
+            --radius-lg: 22px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
+            --shadow: 0 24px 60px rgba(15, 23, 42, 0.16);
+            --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.12);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
-            background: var(--bg);
+            background-color: var(--bg);
+            background-image: linear-gradient(135deg, var(--bg) 0%, var(--bg-alt) 50%, #fbf8f3 100%);
             color: var(--text-main);
             display: flex;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: -30%;
+            background:
+                radial-gradient(500px 500px at 8% 12%, rgba(15, 118, 110, 0.22), transparent 60%),
+                radial-gradient(420px 420px at 92% 18%, rgba(255, 138, 61, 0.2), transparent 60%),
+                radial-gradient(360px 360px at 60% 88%, rgba(2, 132, 199, 0.18), transparent 60%);
+            opacity: 0.9;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                repeating-linear-gradient(135deg, rgba(15, 23, 42, 0.035) 0, rgba(15, 23, 42, 0.035) 1px, transparent 1px, transparent 7px);
+            opacity: 0.6;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 300px;
+            background: linear-gradient(180deg, #0b1014 0%, #141c24 100%);
+            color: #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            padding: 26px;
+            z-index: 2;
+            box-shadow: 18px 0 40px rgba(15, 23, 42, 0.25);
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            position: relative;
             overflow: hidden;
         }
 
-        /* Sidebar Glassmorphism */
-        .sidebar {
-            width: 280px;
-            background: var(--sidebar);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            padding: 24px;
-            z-index: 100;
-            box-shadow: 10px 0 30px rgba(0, 0, 0, 0.05);
+        .sidebar::before {
+            content: "";
+            position: absolute;
+            top: -120px;
+            right: -80px;
+            width: 240px;
+            height: 240px;
+            background: radial-gradient(circle, rgba(15, 118, 110, 0.35), transparent 70%);
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        .sidebar > * {
+            position: relative;
+            z-index: 1;
         }
 
         .sidebar-header {
-            margin-bottom: 40px;
-            padding-left: 10px;
+            margin-bottom: 36px;
+            padding-left: 6px;
         }
 
         .sidebar-header h1 {
-            font-size: 22px;
-            font-weight: 800;
-            letter-spacing: -1px;
-            background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.6px;
+            background: linear-gradient(120deg, #ffffff 0%, #b5f3e7 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .sidebar-header span {
-            font-size: 11px;
-            color: #666;
+            font-size: 10px;
+            color: rgba(229, 231, 235, 0.5);
             text-transform: uppercase;
             font-weight: 700;
-            letter-spacing: 2px;
+            letter-spacing: 2.4px;
         }
 
         .nav-links {
             list-style: none;
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 14px 18px;
-            border-radius: 12px;
+            padding: 12px 16px;
+            border-radius: 14px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 8px;
-            color: #A1A1AA;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            color: rgba(229, 231, 235, 0.7);
             font-weight: 600;
             font-size: 14px;
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.02);
         }
 
         .nav-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
+            background: rgba(255, 255, 255, 0.06);
+            color: #ffffff;
+            transform: translateX(2px);
+            border-color: rgba(255, 255, 255, 0.08);
         }
 
         .nav-item.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 15px var(--primary-glow);
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.95), rgba(34, 197, 94, 0.9));
+            color: #ffffff;
+            box-shadow: 0 12px 30px rgba(15, 118, 110, 0.4);
+            border-color: rgba(255, 255, 255, 0.18);
+            transform: translateX(2px);
         }
 
         .nav-icon {
             font-size: 18px;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+        }
+
+        .sidebar-footer {
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-footer p {
+            font-size: 11px;
+            color: rgba(229, 231, 235, 0.6);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
         }
 
         /* Main Content */
         .main-content {
             flex: 1;
-            padding: 40px;
+            padding: 36px 40px 40px;
             overflow-y: auto;
             position: relative;
+            min-height: 0;
+            z-index: 1;
+        }
+
+        .pane {
+            display: none;
+        }
+
+        .pane.active {
+            display: block;
+            animation: slideIn 0.2s ease;
         }
 
         .top-bar {
@@ -124,35 +214,48 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 32px;
+            gap: 16px;
+            padding: 18px 22px;
+            border-radius: var(--radius-lg);
+            background: var(--card);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-soft);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            width: 100%;
         }
 
         .page-title h2 {
             font-size: 28px;
-            font-weight: 800;
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
 
         .page-title p {
             color: var(--text-mute);
-            font-size: 14px;
+            font-size: 13px;
             margin-top: 4px;
         }
 
         .system-status {
             display: flex;
-            gap: 16px;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         .status-pill {
-            background: white;
-            padding: 10px 18px;
-            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 16px;
+            border-radius: 999px;
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-soft);
             border: 1px solid var(--border);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
         }
 
         .pulse {
@@ -160,8 +263,67 @@
             height: 10px;
             background: var(--success);
             border-radius: 50%;
-            box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.7);
+            box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6);
             animation: pulse 2s infinite;
+        }
+
+        .grid-kpi {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .card-kpi {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-soft);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-kpi::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(255, 255, 255, 0.28), transparent 45%);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .card-kpi:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .kpi-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 12px;
+            background: rgba(15, 118, 110, 0.12);
+            color: var(--primary);
+        }
+
+        .kpi-val {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-mute);
+            margin-top: 6px;
         }
 
         @keyframes pulse {
@@ -197,7 +359,7 @@
                 position: sticky;
                 top: 0;
                 gap: 10px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             }
 
             .sidebar-header {
@@ -214,6 +376,7 @@
                 display: flex;
                 gap: 8px;
                 flex: initial;
+                flex-direction: row;
             }
 
             .nav-item {
@@ -247,6 +410,88 @@
             .theme-grid {
                 grid-template-columns: 1fr 1fr;
             }
+        }
+
+        @media (max-width: 500px) {
+            .grid-kpi {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                padding: 10px;
+                gap: 5px;
+            }
+
+            .nav-item {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(244, 241, 234, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(15, 23, 42, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Connection Status Badge */
+        .connection-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-soft);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+        }
+
+        .connection-badge.online {
+            background: var(--success);
+            color: white;
+        }
+
+        .connection-badge.offline {
+            background: var(--error);
+            color: white;
+            cursor: pointer;
         }
 
         @media (max-width: 500px) {
@@ -301,12 +546,14 @@
         }
 
         .content-box {
-            background: white;
+            background: var(--card);
             border-radius: var(--radius-lg);
             padding: 32px;
-            box-shadow: var(--shadow);
+            box-shadow: var(--shadow-soft);
             border: 1px solid var(--border);
             margin-bottom: 30px;
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
         }
 
         /* Theme Engine UI */
@@ -324,6 +571,7 @@
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
+            background: rgba(255, 255, 255, 0.6);
         }
 
         .theme-card:hover {
@@ -333,7 +581,7 @@
 
         .theme-card.active {
             border-color: var(--primary);
-            background: var(--primary-glow);
+            background: rgba(15, 118, 110, 0.12);
         }
 
         .theme-preview {
@@ -354,23 +602,27 @@
         /* Tables */
         .table-container {
             overflow-x: auto;
-            border-radius: 12px;
+            border-radius: var(--radius-md);
             border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
+            background: transparent;
         }
 
         th {
             text-align: left;
             padding: 18px;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-mute);
-            background: #fafafa;
+            background: rgba(255, 255, 255, 0.6);
             border-bottom: 1px solid var(--border);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
         }
 
         td {
@@ -380,43 +632,425 @@
             font-weight: 500;
         }
 
+        tbody tr:nth-child(even) td {
+            background: rgba(15, 23, 42, 0.02);
+        }
+
         tr:hover td {
-            background: #fcfcfc;
+            background: rgba(15, 118, 110, 0.06);
+        }
+
+        .table-empty td {
+            text-align: center;
+            color: var(--text-mute);
+            font-size: 13px;
+            padding: 28px 18px;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+            background: rgba(15, 118, 110, 0.12);
+            color: var(--primary-strong);
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+
+        th.sortable {
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+        }
+
+        th.sortable::after {
+            content: "↕";
+            font-size: 10px;
+            margin-left: 6px;
+            color: var(--text-mute);
+        }
+
+        th.sortable.sort-asc::after {
+            content: "↑";
+            color: var(--primary-strong);
+        }
+
+        th.sortable.sort-desc::after {
+            content: "↓";
+            color: var(--primary-strong);
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .chip-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 10px 0 18px;
+        }
+
+        .chip {
+            padding: 6px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.85);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .chip:hover {
+            transform: translateY(-1px);
+        }
+
+        .chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 10px 22px var(--primary-glow);
+        }
+
+        .table-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 14px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .page-indicator {
+            font-size: 12px;
+            color: var(--text-mute);
+            font-weight: 600;
+            padding: 0 4px;
+        }
+
+        .table-meta {
+            font-size: 12px;
+            color: var(--text-mute);
+            font-weight: 600;
+        }
+
+        .table-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .update-stamp {
+            font-size: 11px;
+            color: var(--text-mute);
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-icon {
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        .row-main {
+            cursor: pointer;
+        }
+
+        .row-main.expanded td {
+            background: rgba(15, 118, 110, 0.08);
+        }
+
+        .row-details {
+            display: none;
+        }
+
+        .row-details.active {
+            display: table-row;
+        }
+
+        .detail-panel {
+            padding: 16px 18px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .detail-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text-mute);
+        }
+
+        .detail-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-top: 6px;
+        }
+
+        .detail-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .inline-edit {
+            display: none;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            background: rgba(15, 23, 42, 0.04);
+            border: 1px dashed rgba(15, 23, 42, 0.12);
+        }
+
+        .inline-edit.active {
+            display: block;
+        }
+
+        .inline-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .inline-field label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-mute);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .inline-field input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+            outline: none;
+        }
+
+        .inline-field input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.18);
+        }
+
+        .inline-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .quick-actions {
+            margin-top: 24px;
+        }
+
+        .quick-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .quick-actions-note {
+            margin-top: 14px;
+            font-size: 12px;
+            color: var(--text-mute);
+            font-weight: 600;
+        }
+
+        .access-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .access-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        .access-card {
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .access-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            color: var(--text-mute);
+            font-weight: 700;
+        }
+
+        .access-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 260px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .access-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            background: rgba(15, 23, 42, 0.03);
+        }
+
+        .access-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .access-meta {
+            font-size: 12px;
+            color: var(--text-mute);
+        }
+
+        .access-tag {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: rgba(255, 138, 61, 0.16);
+            color: #b45309;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .access-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .access-input {
+            min-width: 160px;
+            flex: 1;
+        }
+
+        .access-hint {
+            font-size: 11px;
+            color: var(--text-mute);
+            font-weight: 600;
+        }
+
+        .access-empty {
+            font-size: 13px;
+            color: var(--text-mute);
+            padding: 8px 6px;
+        }
+
+        #live-indicator.live {
+            background: rgba(15, 118, 110, 0.12);
+            color: var(--primary-strong);
+        }
+
+        #live-indicator.offline {
+            background: rgba(239, 68, 68, 0.12);
+            color: #b91c1c;
         }
 
         /* Buttons */
         .btn {
-            padding: 12px 24px;
-            border-radius: 12px;
-            border: none;
-            font-weight: 700;
+            padding: 10px 18px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            font-size: 14px;
+            font-size: 13px;
+            background: var(--card-solid);
+            box-shadow: var(--shadow-soft);
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #22c55e);
             color: white;
-            box-shadow: 0 4px 12px var(--primary-glow);
+            border: none;
+            box-shadow: 0 14px 28px rgba(15, 118, 110, 0.35);
         }
 
         .btn-outline {
-            background: transparent;
-            border: 1.5px solid var(--border);
+            background: rgba(255, 255, 255, 0.8);
             color: var(--text-main);
         }
 
         .btn-outline:hover {
-            background: #f5f5f5;
+            background: rgba(15, 118, 110, 0.08);
         }
 
         .btn-danger {
-            background: #FF3B3015;
-            color: var(--error);
+            background: rgba(239, 68, 68, 0.12);
+            color: #b91c1c;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
         }
 
         /* Form Controls */
@@ -424,15 +1058,16 @@
             display: flex;
             gap: 12px;
             margin-bottom: 24px;
+            flex-wrap: wrap;
         }
 
         .input-pro {
             flex: 1;
             padding: 12px 20px;
-            border-radius: 12px;
+            border-radius: 14px;
             border: 1px solid var(--border);
-            background: #fdfdfd;
-            font-weight: 500;
+            background: rgba(255, 255, 255, 0.85);
+            font-weight: 600;
             outline: none;
             transition: 0.3s;
         }
@@ -440,24 +1075,26 @@
         .input-pro:focus {
             border-color: var(--primary);
             background: white;
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.18);
         }
 
         /* Terminal Logs */
         .terminal {
-            background: #1c1c1e;
-            color: #d1d1d6;
+            background: #0b1115;
+            color: #e5e7eb;
             padding: 24px;
-            border-radius: 16px;
-            font-family: 'SF Mono', 'Menlo', monospace;
+            border-radius: var(--radius-md);
+            font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
             font-size: 13px;
             height: 400px;
             overflow-y: auto;
             line-height: 1.5;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
         }
 
         .log-line {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             padding: 4px 0;
         }
     </style>
@@ -470,24 +1107,24 @@
             <span>Enterprise Control</span>
         </div>
         <ul class="nav-links">
-            <li class="nav-item active" onclick="goTab('dashboard', this)">
+            <li class="nav-item active" data-tab="dashboard" onclick="goTab('dashboard', this)">
                 <span class="nav-icon">📊</span> Обзор
             </li>
-            <li class="nav-item" onclick="goTab('management', this)">
+            <li class="nav-item" data-tab="management" onclick="goTab('management', this)">
                 <span class="nav-icon">👮‍♂️</span> Персонал
             </li>
-            <li class="nav-item" onclick="goTab('tickets', this)">
+            <li class="nav-item" data-tab="tickets" onclick="goTab('tickets', this)">
                 <span class="nav-icon">🎫</span> Реестр
             </li>
-            <li class="nav-item" onclick="goTab('storage', this)">
+            <li class="nav-item" data-tab="storage" onclick="goTab('storage', this)">
                 <span class="nav-icon">📂</span> Хранилище
             </li>
-            <li class="nav-item" onclick="goTab('system', this)">
+            <li class="nav-item" data-tab="system" onclick="goTab('system', this)">
                 <span class="nav-icon">⚙️</span> Система
             </li>
         </ul>
-        <div class="sidebar-footer" style="padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
-            <p style="font-size: 10px; color: #555;">v5.1 Enterprise Gold Edition</p>
+        <div class="sidebar-footer">
+            <p>v5.1 Enterprise Gold Edition</p>
         </div>
     </div>
 
@@ -504,6 +1141,9 @@
                 </div>
                 <div class="status-pill">
                     ☁️ DB: <span id="val-db-size">--</span> MB
+                </div>
+                <div class="status-pill" id="live-indicator">
+                    ⚡ Live: <span id="live-status">--</span>
                 </div>
             </div>
         </div>
@@ -547,6 +1187,22 @@
                     </div>
                 </div>
             </div>
+
+            <div class="content-box quick-actions">
+                <div class="quick-header">
+                    <h3>Быстрые действия</h3>
+                    <span class="update-stamp" id="dashboard-last-updated">Обновлено: --</span>
+                </div>
+                <div class="quick-actions-grid">
+                    <button class="btn btn-primary" onclick="refresh(currentPane)">🔄 Обновить текущую вкладку</button>
+                    <button class="btn btn-outline" onclick="exportData('user-body', 'users_export.csv')">📥 Экспорт пользователей</button>
+                    <button class="btn btn-outline" onclick="exportData('ticket-body', 'tickets_export.csv')">📊 Экспорт заключений</button>
+                    <button class="btn btn-outline" onclick="goTab('system', document.querySelector('.nav-item[data-tab=&quot;system&quot;]'))">🧾 Логи системы</button>
+                    <button class="btn btn-outline" onclick="doClearCache()">🧹 Очистить кэш</button>
+                    <button class="btn btn-danger" onclick="doRestart()">⚡ Перезапуск</button>
+                </div>
+                <div class="quick-actions-note">Горячие клавиши: Alt+1..5 — вкладки, / — поиск, Alt+R — обновить.</div>
+            </div>
         </div>
 
         <!-- MANAGEMENT PANE (Users) -->
@@ -558,19 +1214,35 @@
                     <button class="btn btn-outline" onclick="exportData('user-body', 'users_export.csv')">📥
                         Экспорт</button>
                 </div>
+                <div class="chip-group" id="user-filters">
+                    <button class="chip active" data-target="users" data-filter="all">Все</button>
+                    <button class="chip" data-target="users" data-filter="top">Топ 10</button>
+                    <button class="chip" data-target="users" data-filter="zero">0 баллов</button>
+                </div>
+                <div class="table-meta-row">
+                    <span class="update-stamp" id="users-last-updated">Обновлено: --</span>
+                </div>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th>TG ID</th>
-                                <th>Имя</th>
-                                <th>Ранг</th>
-                                <th>Баллы</th>
+                                <th class="sortable" data-table="users" data-sort="user_id">TG ID</th>
+                                <th class="sortable" data-table="users" data-sort="name">Имя</th>
+                                <th class="sortable" data-table="users" data-sort="rank">Ранг</th>
+                                <th class="sortable" data-table="users" data-sort="points">Баллы</th>
                                 <th align="right">Действие</th>
                             </tr>
                         </thead>
                         <tbody id="user-body"></tbody>
                     </table>
+                </div>
+                <div class="table-footer">
+                    <div class="pagination" data-table="users">
+                        <button class="btn btn-outline btn-ghost" data-page="prev" data-table="users">← Назад</button>
+                        <span class="page-indicator" id="users-page-info">1 / 1</span>
+                        <button class="btn btn-outline btn-ghost" data-page="next" data-table="users">Вперёд →</button>
+                    </div>
+                    <div class="table-meta" id="users-count">0 записей</div>
                 </div>
             </div>
         </div>
@@ -584,19 +1256,36 @@
                     <button class="btn btn-outline" onclick="exportData('ticket-body', 'tickets_export.csv')">📊 Отчет
                         CSV</button>
                 </div>
+                <div class="chip-group" id="ticket-filters">
+                    <button class="chip active" data-target="tickets" data-filter="all">Все</button>
+                    <button class="chip" data-target="tickets" data-filter="today">Сегодня</button>
+                    <button class="chip" data-target="tickets" data-filter="7d">7 дней</button>
+                    <button class="chip" data-target="tickets" data-filter="30d">30 дней</button>
+                </div>
+                <div class="table-meta-row">
+                    <span class="update-stamp" id="tickets-last-updated">Обновлено: --</span>
+                </div>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th>Билет</th>
-                                <th>№ Закл.</th>
-                                <th>Дата</th>
-                                <th>Оператор</th>
+                                <th class="sortable" data-table="tickets" data-sort="ticket">Билет</th>
+                                <th class="sortable" data-table="tickets" data-sort="issue">№ Закл.</th>
+                                <th class="sortable" data-table="tickets" data-sort="date">Дата</th>
+                                <th class="sortable" data-table="tickets" data-sort="user_id">Оператор</th>
                                 <th align="right">Действие</th>
                             </tr>
                         </thead>
                         <tbody id="ticket-body"></tbody>
                     </table>
+                </div>
+                <div class="table-footer">
+                    <div class="pagination" data-table="tickets">
+                        <button class="btn btn-outline btn-ghost" data-page="prev" data-table="tickets">← Назад</button>
+                        <span class="page-indicator" id="tickets-page-info">1 / 1</span>
+                        <button class="btn btn-outline btn-ghost" data-page="next" data-table="tickets">Вперёд →</button>
+                    </div>
+                    <div class="table-meta" id="tickets-count">0 записей</div>
                 </div>
             </div>
         </div>
@@ -607,18 +1296,41 @@
                 <h3>Файловое облако (Реестры и Архивы)</h3>
                 <p style="color: var(--text-mute); margin-bottom: 20px;">Все сгенерированные ZIP-архивы и
                     Excel-ведомости</p>
+                <div class="search-wrap">
+                    <input type="text" class="input-pro" id="search-archives" placeholder="Поиск по имени файла..."
+                        onkeyup="filterT('archive-body', this.value)">
+                    <button class="btn btn-outline" onclick="exportData('archive-body', 'archives_export.csv')">⬇️
+                        Экспорт</button>
+                </div>
+                <div class="chip-group" id="archive-filters">
+                    <button class="chip active" data-target="archives" data-filter="all">Все</button>
+                    <button class="chip" data-target="archives" data-filter="7d">7 дней</button>
+                    <button class="chip" data-target="archives" data-filter="30d">30 дней</button>
+                    <button class="chip" data-target="archives" data-filter="big">> 50 MB</button>
+                </div>
+                <div class="table-meta-row">
+                    <span class="update-stamp" id="archives-last-updated">Обновлено: --</span>
+                </div>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th>Имя файла</th>
-                                <th>Размер</th>
-                                <th>Дата</th>
+                                <th class="sortable" data-table="archives" data-sort="name">Имя файла</th>
+                                <th class="sortable" data-table="archives" data-sort="size">Размер</th>
+                                <th class="sortable" data-table="archives" data-sort="mtime">Дата</th>
                                 <th align="right">Скачать</th>
                             </tr>
                         </thead>
                         <tbody id="archive-body"></tbody>
                     </table>
+                </div>
+                <div class="table-footer">
+                    <div class="pagination" data-table="archives">
+                        <button class="btn btn-outline btn-ghost" data-page="prev" data-table="archives">← Назад</button>
+                        <span class="page-indicator" id="archives-page-info">1 / 1</span>
+                        <button class="btn btn-outline btn-ghost" data-page="next" data-table="archives">Вперёд →</button>
+                    </div>
+                    <div class="table-meta" id="archives-count">0 записей</div>
                 </div>
             </div>
         </div>
@@ -632,6 +1344,35 @@
                         Обновить</button>
                 </div>
                 <div class="terminal" id="log-console">Жду данных от сервера...</div>
+            </div>
+
+            <div class="content-box">
+                <div class="access-header">
+                    <h3>Доступ и роли</h3>
+                    <span class="update-stamp" id="access-last-updated">Обновлено: --</span>
+                </div>
+                <div class="access-grid">
+                    <div class="access-card">
+                        <div class="access-title">Администраторы</div>
+                        <div class="access-list" id="admins-list">Загрузка...</div>
+                        <div class="access-actions">
+                            <input type="text" class="input-pro access-input" id="admin-add-id"
+                                placeholder="ID администратора">
+                            <button class="btn btn-primary" data-action="add-admin">Добавить</button>
+                        </div>
+                        <div class="access-hint">Супер-админ защищен от удаления.</div>
+                    </div>
+                    <div class="access-card">
+                        <div class="access-title">Пользователи</div>
+                        <div class="access-list" id="users-list">Загрузка...</div>
+                        <div class="access-actions">
+                            <input type="text" class="input-pro access-input" id="user-add-id"
+                                placeholder="ID пользователя">
+                            <button class="btn btn-outline" data-action="add-user">Добавить</button>
+                        </div>
+                        <div class="access-hint">Удаление удаляет из реестра и статистики, но не блокирует бота.</div>
+                    </div>
+                </div>
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
@@ -664,77 +1405,251 @@
         </div>
     </div>
 
+    <!-- Connection Status Badge -->
+    <div id="conn-badge" class="connection-badge online">✅ Подключено</div>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const botUrl = urlParams.get('bot_url') || '';
         const API_BASE = botUrl ? `${botUrl}/api/super-admin` : '/api/super-admin';
 
         let charts = {};
+        let currentPane = 'dashboard';
+        let refreshTimer = null;
+        let liveStream = null;
 
-        // Active Theme Mapping
-        const themeLabels = {
-            'default': 'Стандарт ⚪',
-            'winter': 'Зима ❄️',
-            'spring': 'Весна 🌸',
-            'summer': 'Лето ☀️',
-            'autumn': 'Осень 🍂',
-            'holiday': 'Праздник 🎊'
+        const UI_STATE_KEY = 'super_admin_ui_state';
+
+        const state = {
+            users: [],
+            tickets: [],
+            archives: [],
+            search: { users: '', tickets: '', archives: '' },
+            filters: { users: 'all', tickets: 'all', archives: 'all' },
+            sort: {
+                users: { key: null, dir: null },
+                tickets: { key: null, dir: null },
+                archives: { key: null, dir: null }
+            },
+            page: { users: 1, tickets: 1, archives: 1 },
+            pageSize: { users: 10, tickets: 10, archives: 10 }
         };
 
+        const accessState = {
+            admins: [],
+            users: [],
+            superAdminId: null
+        };
+
+        const expanded = {
+            users: new Set(),
+            tickets: new Set()
+        };
+
+        function showLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (overlay) overlay.classList.remove('active');
+        }
+
+        function setLiveStatus(status) {
+            const indicator = document.getElementById('live-indicator');
+            const label = document.getElementById('live-status');
+            if (!indicator || !label) return;
+
+            indicator.classList.remove('live', 'offline');
+            if (status === 'live') {
+                indicator.classList.add('live');
+                label.textContent = 'Live';
+            } else if (status === 'polling') {
+                label.textContent = 'Polling';
+            } else {
+                indicator.classList.add('offline');
+                label.textContent = 'Offline';
+            }
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function csvEscape(value) {
+            const str = String(value ?? '');
+            if (/[",\n]/.test(str)) {
+                return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+        }
+
+        function formatNumber(value) {
+            const num = Number(value) || 0;
+            return num.toLocaleString('ru-RU');
+        }
+
+        function formatDateTime(value) {
+            if (!value) return '—';
+            const d = new Date(value);
+            if (Number.isNaN(d.getTime())) return value;
+            return d.toLocaleString('ru-RU');
+        }
+
+        function parseDateDDMMYYYY(value) {
+            if (!value) return null;
+            const parts = value.split('.');
+            if (parts.length !== 3) return null;
+            const day = Number(parts[0]);
+            const month = Number(parts[1]);
+            const year = Number(parts[2]);
+            if (!day || !month || !year) return null;
+            const d = new Date(year, month - 1, day);
+            if (d.getFullYear() !== year || d.getMonth() !== month - 1 || d.getDate() !== day) return null;
+            return d;
+        }
+
+        function saveUiState() {
+            try {
+                const payload = {
+                    pane: currentPane,
+                    search: state.search,
+                    filters: state.filters,
+                    sort: state.sort
+                };
+                localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
+            } catch (e) { }
+        }
+
+        function restoreUiState() {
+            try {
+                const raw = localStorage.getItem(UI_STATE_KEY);
+                if (!raw) return;
+                const saved = JSON.parse(raw);
+                if (saved?.search) state.search = { ...state.search, ...saved.search };
+                if (saved?.filters) state.filters = { ...state.filters, ...saved.filters };
+                if (saved?.sort) state.sort = { ...state.sort, ...saved.sort };
+                if (saved?.pane) currentPane = saved.pane;
+            } catch (e) { }
+
+            const userSearch = document.getElementById('search-users');
+            if (userSearch) userSearch.value = state.search.users || '';
+            const ticketSearch = document.getElementById('search-tickets');
+            if (ticketSearch) ticketSearch.value = state.search.tickets || '';
+            const archiveSearch = document.getElementById('search-archives');
+            if (archiveSearch) archiveSearch.value = state.search.archives || '';
+
+            setActiveChip('users', state.filters.users);
+            setActiveChip('tickets', state.filters.tickets);
+            setActiveChip('archives', state.filters.archives);
+
+            updateSortIndicators('users');
+            updateSortIndicators('tickets');
+            updateSortIndicators('archives');
+        }
+
+        function setActiveChip(target, filter) {
+            document.querySelectorAll(`.chip[data-target="${target}"]`).forEach(chip => {
+                chip.classList.toggle('active', chip.dataset.filter === filter);
+            });
+        }
+
         async function goTab(pane, el) {
+            currentPane = pane;
+            saveUiState();
             document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById('pane-' + pane).classList.add('active');
-            el.classList.add('active');
+            if (el) el.classList.add('active');
 
-            // Update Title
             const titles = {
                 'dashboard': ['Панель управления', 'Реалтайм мониторинг'],
                 'management': ['Управление персоналом', 'Статистика и достижения сотрудников'],
                 'tickets': ['Реестр заключений', 'Поиск и коррекция данных'],
                 'storage': ['Хранилище данных', 'Доступ к архивам'],
-                'system': ['Настройки системы', 'Конфигурация и визуальные темы']
+                'system': ['Настройки системы', 'Логи и конфигурация']
             };
             document.getElementById('current-page-title').innerText = titles[pane][0];
             document.getElementById('current-page-desc').innerText = titles[pane][1];
 
-            refresh(pane);
+            await refresh(pane);
         }
 
-        async function refresh(pane) {
-            const now = Date.now();
-            if (pane === 'dashboard') {
-                const [stats, act, grow] = await Promise.all([
-                    fFetch(`${API_BASE}/stats`),
-                    fFetch(`${API_BASE}/charts/activity`),
-                    fFetch(`${API_BASE}/charts/growth`)
-                ]);
-                if (stats) renderKPI(stats);
-                if (act && grow) renderCharts(act, grow);
-            } else if (pane === 'management') {
-                const users = await fFetch(`${API_BASE}/users`);
-                if (users) renderUsers(users);
-            } else if (pane === 'tickets') {
-                const t = await fFetch(`${API_BASE}/tickets`);
-                if (t) renderTickets(t);
-            } else if (pane === 'storage') {
-                const a = await fFetch(`${API_BASE}/archives`);
-                if (a) renderArchives(a);
-            } else if (pane === 'system') {
-                loadLogs();
+        async function refresh(pane, opts = {}) {
+            const silent = Boolean(opts.silent);
+            if (!silent) showLoading();
+            try {
+                if (pane === 'dashboard') {
+                    const [stats, act, grow] = await Promise.all([
+                        fFetch(`${API_BASE}/stats`),
+                        fFetch(`${API_BASE}/charts/activity`),
+                        fFetch(`${API_BASE}/charts/growth`)
+                    ]);
+                    if (stats) {
+                        renderKPI(stats);
+                        markUpdated('dashboard');
+                    }
+                    if (act && grow) {
+                        renderCharts(act, grow);
+                        markUpdated('dashboard');
+                    }
+                } else if (pane === 'management') {
+                    const users = await fFetch(`${API_BASE}/users`);
+                    if (users) renderUsers(users);
+                } else if (pane === 'tickets') {
+                    const t = await fFetch(`${API_BASE}/tickets`);
+                    if (t) renderTickets(t);
+                } else if (pane === 'storage') {
+                    const a = await fFetch(`${API_BASE}/archives`);
+                    if (a) renderArchives(a);
+                } else if (pane === 'system') {
+                    await Promise.all([
+                        loadLogs(),
+                        loadAccessLists()
+                    ]);
+                }
+            } finally {
+                if (!silent) hideLoading();
             }
         }
 
-        // Generic fetch with error handling to fix "Load failed"
         async function fFetch(url, opts = {}) {
             try {
                 const res = await fetch(url, opts);
-                if (!res.ok) throw new Error('HTTP Error: ' + res.status);
-                return await res.json();
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                updateConnectionStatus(true);
+                const contentType = res.headers.get('content-type') || '';
+                if (contentType.includes('application/json')) {
+                    return await res.json();
+                }
+                return null;
             } catch (e) {
                 console.error('Fetch error:', e);
-                notify('Ошибка связи с сервером: ' + e.message, 'error');
+                updateConnectionStatus(false);
                 return null;
+            }
+        }
+
+        function updateConnectionStatus(online) {
+            const badge = document.getElementById('conn-badge');
+            if (!badge) return;
+            if (online) {
+                badge.className = 'connection-badge online';
+                badge.innerHTML = '✅ Подключено';
+                badge.onclick = null;
+            } else {
+                badge.className = 'connection-badge offline';
+                badge.innerHTML = '❌ Нет связи - Нажмите для повтора';
+                badge.onclick = () => refresh(currentPane);
             }
         }
 
@@ -746,50 +1661,784 @@
         }
 
         function renderUsers(d) {
-            if (!d) return;
-            document.getElementById('user-body').innerHTML = d.map(u => `
-                <tr>
-                    <td><code>${u.user_id}</code></td>
-                    <td><b>${u.first_name || 'Сотрудник'}</b></td>
-                    <td><span class="status-pill">${u.rank || 'Новичок'}</span></td>
-                    <td>${u.points || 0} баллов</td>
-                    <td align="right"><button class="btn btn-danger" style="padding:4px 10px;" onclick="killUser(${u.user_id})">🗑️</button></td>
-                </tr>
-            `).join('');
+            state.users = Array.isArray(d) ? d : [];
+            applyUsers();
         }
 
         function renderTickets(d) {
-            if (!d) return;
-            document.getElementById('ticket-body').innerHTML = d.map(t => `
-                <tr>
-                    <td><code>${t.ticket}</code></td>
-                    <td><b>#${t.issue || '???'}</b></td>
-                    <td>${t.date || '---'}</td>
-                    <td>${t.user_id || '---'}</td>
-                    <td align="right"><button class="btn btn-danger" style="padding:4px 10px;" onclick="killTicket('${t.ticket}')">🗑️</button></td>
-                </tr>
-            `).join('');
+            state.tickets = Array.isArray(d) ? d : [];
+            applyTickets();
         }
 
         function renderArchives(d) {
-            if (!d) return;
-            document.getElementById('archive-body').innerHTML = d.map(a => `
-                <tr>
-                    <td><b>${a.name}</b></td>
-                    <td>${(a.size / 1024 / 1024).toFixed(2)} MB</td>
-                    <td>${new Date(a.mtime * 1000).toLocaleDateString()}</td>
-                    <td align="right"><a href="${API_BASE}/archives/download?file=${a.path}" class="btn btn-outline" style="text-decoration:none">⬇️</a></td>
-                </tr>
-            `).join('');
+            state.archives = Array.isArray(d) ? d : [];
+            applyArchives();
         }
 
+        function getUserSortValue(u, key) {
+            switch (key) {
+                case 'user_id':
+                    return Number(u.user_id) || 0;
+                case 'points':
+                    return Number(u.points) || 0;
+                case 'rank':
+                    return String(u.rank || '');
+                case 'name':
+                    return String(u.first_name || '');
+                default:
+                    return '';
+            }
+        }
 
+        function getTicketSortValue(t, key) {
+            switch (key) {
+                case 'ticket':
+                    return String(t.ticket || '');
+                case 'issue':
+                    return String(t.issue || '');
+                case 'user_id':
+                    return Number(t.user_id) || 0;
+                case 'date': {
+                    const d = parseDateDDMMYYYY(t.date) || (t.created_at ? new Date(t.created_at) : null);
+                    return d ? d.getTime() : 0;
+                }
+                default:
+                    return '';
+            }
+        }
+
+        function getArchiveSortValue(a, key) {
+            switch (key) {
+                case 'name':
+                    return String(a.name || '');
+                case 'size':
+                    return Number(a.size) || 0;
+                case 'mtime':
+                    return Number(a.mtime) || 0;
+                default:
+                    return '';
+            }
+        }
+
+        function sortList(list, key, dir, valueFn) {
+            const order = dir === 'desc' ? -1 : 1;
+            return list.sort((a, b) => {
+                const av = valueFn(a, key);
+                const bv = valueFn(b, key);
+                const aNum = typeof av === 'number' && !Number.isNaN(av);
+                const bNum = typeof bv === 'number' && !Number.isNaN(bv);
+                if (aNum && bNum) return (av - bv) * order;
+                return String(av).localeCompare(String(bv), 'ru', { numeric: true, sensitivity: 'base' }) * order;
+            });
+        }
+
+        function paginateList(list, type) {
+            const size = state.pageSize[type] || 10;
+            const totalPages = Math.max(1, Math.ceil(list.length / size));
+            if (state.page[type] > totalPages) state.page[type] = totalPages;
+            if (state.page[type] < 1) state.page[type] = 1;
+            const start = (state.page[type] - 1) * size;
+            return { list: list.slice(start, start + size), totalPages };
+        }
+
+        function buildUsersView({ paginate = true } = {}) {
+            let list = [...state.users];
+            const query = (state.search.users || '').toLowerCase().trim();
+            if (query) {
+                list = list.filter(u => {
+                    const hay = `${u.user_id} ${u.first_name || ''} ${u.rank || ''} ${u.points || 0}`.toLowerCase();
+                    return hay.includes(query);
+                });
+            }
+
+            const filter = state.filters.users;
+            if (filter === 'zero') {
+                list = list.filter(u => Number(u.points) === 0);
+            }
+
+            if (filter === 'top') {
+                list = list.sort((a, b) => (Number(b.points) || 0) - (Number(a.points) || 0)).slice(0, 10);
+            } else if (state.sort.users.key) {
+                list = sortList(list, state.sort.users.key, state.sort.users.dir || 'asc', getUserSortValue);
+            }
+
+            const total = list.length;
+            let totalPages = 1;
+            if (paginate) {
+                const paged = paginateList(list, 'users');
+                list = paged.list;
+                totalPages = paged.totalPages;
+            }
+            return { list, total, totalPages };
+        }
+
+        function buildTicketsView({ paginate = true } = {}) {
+            let list = [...state.tickets];
+            const query = (state.search.tickets || '').toLowerCase().trim();
+            if (query) {
+                list = list.filter(t => {
+                    const hay = `${t.ticket || ''} ${t.issue || ''} ${t.date || ''} ${t.user_id || ''}`.toLowerCase();
+                    return hay.includes(query);
+                });
+            }
+
+            const filter = state.filters.tickets;
+            if (filter !== 'all') {
+                const now = new Date();
+                now.setHours(0, 0, 0, 0);
+                let days = 0;
+                if (filter === 'today') days = 1;
+                if (filter === '7d') days = 7;
+                if (filter === '30d') days = 30;
+                const cutoff = new Date(now);
+                cutoff.setDate(now.getDate() - (days - 1));
+                list = list.filter(t => {
+                    const dt = parseDateDDMMYYYY(t.date) || (t.created_at ? new Date(t.created_at) : null);
+                    if (!dt || Number.isNaN(dt.getTime())) return false;
+                    dt.setHours(0, 0, 0, 0);
+                    return dt >= cutoff && dt <= now;
+                });
+            }
+
+            if (state.sort.tickets.key) {
+                list = sortList(list, state.sort.tickets.key, state.sort.tickets.dir || 'asc', getTicketSortValue);
+            }
+
+            const total = list.length;
+            let totalPages = 1;
+            if (paginate) {
+                const paged = paginateList(list, 'tickets');
+                list = paged.list;
+                totalPages = paged.totalPages;
+            }
+            return { list, total, totalPages };
+        }
+
+        function buildArchivesView({ paginate = true } = {}) {
+            let list = [...state.archives];
+            const query = (state.search.archives || '').toLowerCase().trim();
+            if (query) {
+                list = list.filter(a => String(a.name || '').toLowerCase().includes(query));
+            }
+
+            const filter = state.filters.archives;
+            if (filter === 'big') {
+                list = list.filter(a => (a.size || 0) / (1024 * 1024) > 50);
+            } else if (filter === '7d' || filter === '30d') {
+                const days = filter === '7d' ? 7 : 30;
+                const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+                list = list.filter(a => (a.mtime || 0) * 1000 >= cutoff);
+            }
+
+            if (state.sort.archives.key) {
+                list = sortList(list, state.sort.archives.key, state.sort.archives.dir || 'asc', getArchiveSortValue);
+            }
+
+            const total = list.length;
+            let totalPages = 1;
+            if (paginate) {
+                const paged = paginateList(list, 'archives');
+                list = paged.list;
+                totalPages = paged.totalPages;
+            }
+            return { list, total, totalPages };
+        }
+
+        function applyUsers() {
+            const view = buildUsersView();
+            renderUsersTable(view.list);
+            updatePagination('users', view.total, view.totalPages);
+            markUpdated('users');
+        }
+
+        function applyTickets() {
+            const view = buildTicketsView();
+            renderTicketsTable(view.list);
+            updatePagination('tickets', view.total, view.totalPages);
+            markUpdated('tickets');
+        }
+
+        function applyArchives() {
+            const view = buildArchivesView();
+            renderArchivesTable(view.list);
+            updatePagination('archives', view.total, view.totalPages);
+            markUpdated('archives');
+        }
+
+        function renderUsersTable(list) {
+            const body = document.getElementById('user-body');
+            if (!body) return;
+            if (!list.length) {
+                body.innerHTML = '<tr class="table-empty"><td colspan="5">Нет данных</td></tr>';
+                return;
+            }
+            body.innerHTML = list.map(u => {
+                const userId = u.user_id;
+                const name = escapeHtml(u.first_name || 'Сотрудник');
+                const rank = escapeHtml(u.rank || 'Новичок');
+                const points = Number(u.points) || 0;
+                const totalTickets = Number(u.total_tickets) || 0;
+                const totalValue = Number(u.total_value) || 0;
+                const highestValue = Number(u.highest_single_value) || 0;
+                const weeklyTickets = Number(u.weekly_tickets) || 0;
+                const weeklyPoints = Number(u.weekly_points) || 0;
+                const lastUpdated = u.last_updated ? formatDateTime(u.last_updated) : '—';
+                return `
+                    <tr class="row-main" data-type="users" data-id="${userId}" data-row-id="users-${userId}">
+                        <td><code>${userId}</code></td>
+                        <td><b>${name}</b></td>
+                        <td><span class="status-pill">${rank}</span></td>
+                        <td>${points} баллов</td>
+                        <td align="right">
+                            <button class="btn btn-outline btn-icon" data-action="toggle-row" data-type="users" data-id="${userId}">⌄</button>
+                            <button class="btn btn-danger btn-icon" data-action="delete-user" data-user-id="${userId}">🗑️</button>
+                        </td>
+                    </tr>
+                    <tr class="row-details" data-detail-for="users-${userId}">
+                        <td colspan="5">
+                            <div class="detail-panel">
+                                <div class="detail-grid">
+                                    <div>
+                                        <div class="detail-label">ID</div>
+                                        <div class="detail-value">${userId}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Ранг</div>
+                                        <div class="detail-value">${rank}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Баллы</div>
+                                        <div class="detail-value">${points}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Всего заключений</div>
+                                        <div class="detail-value">${formatNumber(totalTickets)}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Сумма</div>
+                                        <div class="detail-value">${formatNumber(totalValue)} ₽</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Лучшее</div>
+                                        <div class="detail-value">${formatNumber(highestValue)} ₽</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Неделя</div>
+                                        <div class="detail-value">${formatNumber(weeklyTickets)} / ${formatNumber(weeklyPoints)}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Обновлено</div>
+                                        <div class="detail-value">${lastUpdated}</div>
+                                    </div>
+                                </div>
+                                <div class="detail-actions">
+                                    <button class="btn btn-outline btn-icon" data-action="edit-user" data-user-id="${userId}">✏️</button>
+                                    <button class="btn btn-outline" data-action="copy-user" data-user-id="${userId}">📋 Скопировать ID</button>
+                                </div>
+                                <div class="inline-edit" data-edit-for="users-${userId}">
+                                    <div class="inline-form">
+                                        <div class="inline-field">
+                                            <label>Ранг</label>
+                                            <input type="text" data-field="rank_title" value="${rank}">
+                                        </div>
+                                        <div class="inline-field">
+                                            <label>Баллы</label>
+                                            <input type="number" min="0" step="1" data-field="points" value="${points}">
+                                        </div>
+                                    </div>
+                                    <div class="inline-actions">
+                                        <button class="btn btn-primary" data-action="save-user" data-user-id="${userId}">Сохранить</button>
+                                        <button class="btn btn-outline" data-action="cancel-edit" data-type="users" data-id="${userId}">Отмена</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            restoreExpandedRows('users');
+        }
+
+        function renderTicketsTable(list) {
+            const body = document.getElementById('ticket-body');
+            if (!body) return;
+            if (!list.length) {
+                body.innerHTML = '<tr class="table-empty"><td colspan="5">Нет данных</td></tr>';
+                return;
+            }
+            body.innerHTML = list.map(t => {
+                const ticket = escapeHtml(t.ticket || '');
+                const issue = escapeHtml(t.issue || '???');
+                const date = escapeHtml(t.date || '---');
+                const userId = t.user_id || '---';
+                const createdAt = t.created_at ? formatDateTime(t.created_at) : '—';
+                return `
+                    <tr class="row-main" data-type="tickets" data-id="${ticket}" data-row-id="tickets-${ticket}">
+                        <td><code>${ticket}</code></td>
+                        <td><b>#${issue}</b></td>
+                        <td>${date}</td>
+                        <td>${userId}</td>
+                        <td align="right">
+                            <button class="btn btn-outline btn-icon" data-action="toggle-row" data-type="tickets" data-id="${ticket}">⌄</button>
+                            <button class="btn btn-danger btn-icon" data-action="delete-ticket" data-ticket="${ticket}">🗑️</button>
+                        </td>
+                    </tr>
+                    <tr class="row-details" data-detail-for="tickets-${ticket}">
+                        <td colspan="5">
+                            <div class="detail-panel">
+                                <div class="detail-grid">
+                                    <div>
+                                        <div class="detail-label">Билет</div>
+                                        <div class="detail-value">${ticket}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">№ Закл.</div>
+                                        <div class="detail-value">${issue}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Дата</div>
+                                        <div class="detail-value">${date}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Создано</div>
+                                        <div class="detail-value">${createdAt}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Оператор</div>
+                                        <div class="detail-value">${userId}</div>
+                                    </div>
+                                </div>
+                                <div class="detail-actions">
+                                    <button class="btn btn-outline btn-icon" data-action="edit-ticket" data-ticket="${ticket}">✏️</button>
+                                    <button class="btn btn-outline" data-action="copy-ticket" data-ticket="${ticket}">📋 Скопировать</button>
+                                </div>
+                                <div class="inline-edit" data-edit-for="tickets-${ticket}">
+                                    <div class="inline-form">
+                                        <div class="inline-field">
+                                            <label>№ Закл.</label>
+                                            <input type="text" data-field="issue_number" value="${issue}">
+                                        </div>
+                                        <div class="inline-field">
+                                            <label>Дата (ДД.ММ.ГГГГ)</label>
+                                            <input type="text" data-field="date" value="${date}">
+                                        </div>
+                                    </div>
+                                    <div class="inline-actions">
+                                        <button class="btn btn-primary" data-action="save-ticket" data-ticket="${ticket}">Сохранить</button>
+                                        <button class="btn btn-outline" data-action="cancel-edit" data-type="tickets" data-id="${ticket}">Отмена</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            restoreExpandedRows('tickets');
+        }
+
+        function renderArchivesTable(list) {
+            const body = document.getElementById('archive-body');
+            if (!body) return;
+            if (!list.length) {
+                body.innerHTML = '<tr class="table-empty"><td colspan="4">Нет данных</td></tr>';
+                return;
+            }
+            body.innerHTML = list.map(a => {
+                const sizeMb = (a.size / 1024 / 1024).toFixed(2);
+                const date = new Date(a.mtime * 1000).toLocaleDateString('ru-RU');
+                return `
+                    <tr>
+                        <td><b>${escapeHtml(a.name)}</b></td>
+                        <td>${sizeMb} MB</td>
+                        <td>${date}</td>
+                        <td align="right"><a href="${API_BASE}/archives/download?file=${encodeURIComponent(a.path)}" class="btn btn-outline" style="text-decoration:none">⬇️</a></td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function loadAccessLists() {
+            const [adminsPayload, usersPayload] = await Promise.all([
+                fFetch(`${API_BASE}/admins`),
+                fFetch(`${API_BASE}/users/list`)
+            ]);
+
+            if (adminsPayload) renderAdminsList(adminsPayload);
+            if (usersPayload) renderUsersList(usersPayload);
+            markUpdated('access');
+        }
+
+        function renderAdminsList(payload) {
+            const list = payload?.admins || [];
+            accessState.admins = list;
+            accessState.superAdminId = payload?.super_admin_id;
+
+            const container = document.getElementById('admins-list');
+            if (!container) return;
+            if (!list.length) {
+                container.innerHTML = '<div class="access-empty">Нет администраторов</div>';
+                return;
+            }
+
+            container.innerHTML = list.map(admin => {
+                const fullName = [admin.first_name, admin.last_name].filter(Boolean).join(' ');
+                const name = fullName || (admin.username ? `@${admin.username}` : `ID ${admin.user_id}`);
+                const metaParts = [];
+                if (admin.username) metaParts.push(`@${admin.username}`);
+                metaParts.push(`ID ${admin.user_id}`);
+                const meta = metaParts.join(' • ');
+                const isSuper = admin.is_super || admin.user_id === accessState.superAdminId;
+                const removeBtn = isSuper
+                    ? `<span class="access-tag">Super</span>`
+                    : `<button class="btn btn-danger btn-icon" data-action="remove-admin" data-admin-id="${admin.user_id}">🗑️</button>`;
+                return `
+                    <div class="access-item">
+                        <div>
+                            <div class="access-name">${escapeHtml(name)}</div>
+                            <div class="access-meta">${escapeHtml(meta)}</div>
+                        </div>
+                        ${removeBtn}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderUsersList(list) {
+            accessState.users = Array.isArray(list) ? list : [];
+            const container = document.getElementById('users-list');
+            if (!container) return;
+            if (!accessState.users.length) {
+                container.innerHTML = '<div class="access-empty">Нет пользователей</div>';
+                return;
+            }
+
+            container.innerHTML = accessState.users.map(user => {
+                const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ');
+                const name = fullName || (user.username ? `@${user.username}` : `ID ${user.user_id}`);
+                const metaParts = [];
+                if (user.username) metaParts.push(`@${user.username}`);
+                metaParts.push(`ID ${user.user_id}`);
+                if (user.last_active) metaParts.push(`Активен: ${formatDateTime(user.last_active)}`);
+                const meta = metaParts.join(' • ');
+                return `
+                    <div class="access-item">
+                        <div>
+                            <div class="access-name">${escapeHtml(name)}</div>
+                            <div class="access-meta">${escapeHtml(meta)}</div>
+                        </div>
+                        <button class="btn btn-danger btn-icon" data-action="remove-user" data-user-id="${user.user_id}">🗑️</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updatePagination(type, total, totalPages) {
+            const info = document.getElementById(`${type}-page-info`);
+            if (info) info.textContent = `${state.page[type]} / ${totalPages}`;
+            const count = document.getElementById(`${type}-count`);
+            if (count) count.textContent = `${total} записей`;
+            document.querySelectorAll(`.pagination button[data-table="${type}"]`).forEach(btn => {
+                if (btn.dataset.page === 'prev') btn.disabled = state.page[type] <= 1;
+                if (btn.dataset.page === 'next') btn.disabled = state.page[type] >= totalPages;
+            });
+        }
+
+        function markUpdated(type) {
+            const stamp = document.getElementById(`${type}-last-updated`);
+            if (!stamp) return;
+            const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            stamp.textContent = `Обновлено: ${time}`;
+        }
+
+        function updateSortIndicators(type) {
+            document.querySelectorAll(`th.sortable[data-table="${type}"]`).forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+                const active = state.sort[type];
+                if (active.key && th.dataset.sort === active.key) {
+                    th.classList.add(active.dir === 'desc' ? 'sort-desc' : 'sort-asc');
+                }
+            });
+        }
+
+        function applyType(type) {
+            if (type === 'users') return applyUsers();
+            if (type === 'tickets') return applyTickets();
+            if (type === 'archives') return applyArchives();
+        }
+
+        function setFilter(type, value) {
+            state.filters[type] = value;
+            state.page[type] = 1;
+            setActiveChip(type, value);
+            saveUiState();
+            applyType(type);
+        }
+
+        function setSearch(type, value) {
+            state.search[type] = value || '';
+            state.page[type] = 1;
+            saveUiState();
+            applyType(type);
+        }
+
+        function setSort(type, key) {
+            const current = state.sort[type];
+            if (current.key === key) {
+                current.dir = current.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                current.key = key;
+                current.dir = 'asc';
+            }
+            state.page[type] = 1;
+            saveUiState();
+            updateSortIndicators(type);
+            applyType(type);
+        }
+
+        function setPage(type, direction) {
+            const view = type === 'users'
+                ? buildUsersView({ paginate: false })
+                : type === 'tickets'
+                    ? buildTicketsView({ paginate: false })
+                    : buildArchivesView({ paginate: false });
+            const totalPages = Math.max(1, Math.ceil(view.list.length / (state.pageSize[type] || 10)));
+            if (direction === 'prev') state.page[type] = Math.max(1, state.page[type] - 1);
+            if (direction === 'next') state.page[type] = Math.min(totalPages, state.page[type] + 1);
+            applyType(type);
+        }
+
+        function toggleRow(type, id) {
+            const key = `${type}-${id}`;
+            const main = document.querySelector(`tr.row-main[data-row-id="${key}"]`);
+            const detail = document.querySelector(`tr.row-details[data-detail-for="${key}"]`);
+            if (!main || !detail) return;
+            const isOpen = detail.classList.contains('active');
+            detail.classList.toggle('active', !isOpen);
+            main.classList.toggle('expanded', !isOpen);
+            if (type === 'users') {
+                if (!isOpen) expanded.users.add(id); else expanded.users.delete(id);
+            } else if (type === 'tickets') {
+                if (!isOpen) expanded.tickets.add(id); else expanded.tickets.delete(id);
+            }
+        }
+
+        function restoreExpandedRows(type) {
+            const set = type === 'users' ? expanded.users : expanded.tickets;
+            set.forEach(id => {
+                const key = `${type}-${id}`;
+                const main = document.querySelector(`tr.row-main[data-row-id="${key}"]`);
+                const detail = document.querySelector(`tr.row-details[data-detail-for="${key}"]`);
+                if (main && detail) {
+                    main.classList.add('expanded');
+                    detail.classList.add('active');
+                }
+            });
+        }
+
+        function openInlineEdit(type, id) {
+            const detail = document.querySelector(`tr.row-details[data-detail-for="${type}-${id}"]`);
+            if (!detail) return;
+            const edit = detail.querySelector('.inline-edit');
+            if (edit) edit.classList.add('active');
+        }
+
+        function closeInlineEdit(type, id) {
+            const detail = document.querySelector(`tr.row-details[data-detail-for="${type}-${id}"]`);
+            if (!detail) return;
+            const edit = detail.querySelector('.inline-edit');
+            if (edit) edit.classList.remove('active');
+        }
+
+        async function copyText(text) {
+            const safeText = String(text ?? '');
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(safeText);
+                return;
+            }
+            const area = document.createElement('textarea');
+            area.value = safeText;
+            area.style.position = 'fixed';
+            area.style.opacity = '0';
+            document.body.appendChild(area);
+            area.select();
+            document.execCommand('copy');
+            document.body.removeChild(area);
+        }
+
+        async function addAdmin() {
+            const input = document.getElementById('admin-add-id');
+            if (!input) return;
+            const raw = input.value.trim();
+            const id = Number(raw);
+            if (!raw || !Number.isInteger(id)) {
+                notify('Введите корректный ID администратора', 'error');
+                return;
+            }
+
+            const res = await fFetch(`${API_BASE}/admins`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'add', user_id: id })
+            });
+
+            if (res?.admins) {
+                renderAdminsList(res);
+                input.value = '';
+                notify('Администратор добавлен', 'success');
+            } else {
+                notify('Не удалось добавить администратора', 'error');
+            }
+        }
+
+        async function removeAdmin(adminId) {
+            if (!confirm('Удалить администратора?')) return;
+            const res = await fFetch(`${API_BASE}/admins`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'remove', user_id: adminId })
+            });
+
+            if (res?.admins) {
+                renderAdminsList(res);
+                notify('Администратор удален', 'success');
+            } else {
+                notify('Не удалось удалить администратора', 'error');
+            }
+        }
+
+        async function addUser() {
+            const input = document.getElementById('user-add-id');
+            if (!input) return;
+            const raw = input.value.trim();
+            const id = Number(raw);
+            if (!raw || !Number.isInteger(id)) {
+                notify('Введите корректный ID пользователя', 'error');
+                return;
+            }
+
+            const res = await fFetch(`${API_BASE}/user/add`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: id })
+            });
+
+            if (res?.status === 'ok') {
+                input.value = '';
+                notify('Пользователь добавлен', 'success');
+                await loadAccessLists();
+                refresh('management', { silent: true });
+            } else {
+                notify('Не удалось добавить пользователя', 'error');
+            }
+        }
+
+        async function removeUser(userId) {
+            if (!confirm('Удалить пользователя?')) return;
+            const res = await fFetch(`${API_BASE}/user/remove`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId })
+            });
+
+            if (res?.status === 'ok') {
+                notify('Пользователь удалён', 'success');
+                await loadAccessLists();
+                refresh('management', { silent: true });
+            } else {
+                notify('Не удалось удалить пользователя', 'error');
+            }
+        }
+
+        function bindAccessInputs() {
+            const adminInput = document.getElementById('admin-add-id');
+            if (adminInput) {
+                adminInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') addAdmin();
+                });
+            }
+            const userInput = document.getElementById('user-add-id');
+            if (userInput) {
+                userInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') addUser();
+                });
+            }
+        }
+
+        async function saveUserEdit(userId, actionEl) {
+            const detail = actionEl.closest('tr.row-details');
+            if (!detail) return;
+            const rankInput = detail.querySelector('input[data-field="rank_title"]');
+            const pointsInput = detail.querySelector('input[data-field="points"]');
+            const rank = rankInput ? rankInput.value.trim() : '';
+            const points = pointsInput ? Math.max(0, Number(pointsInput.value || 0)) : 0;
+
+            if (!rank) {
+                notify('Укажите ранг', 'error');
+                return;
+            }
+
+            const payload = { user_id: Number(userId), rank_title: rank, points: points };
+            const res = await fFetch(`${API_BASE}/user/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res && res.status === 'ok') {
+                const user = state.users.find(u => Number(u.user_id) === Number(userId));
+                if (user) {
+                    user.rank = rank;
+                    user.points = points;
+                }
+                expanded.users.add(String(userId));
+                notify('Данные пользователя обновлены', 'success');
+                closeInlineEdit('users', userId);
+                applyUsers();
+            } else {
+                notify('Не удалось сохранить пользователя', 'error');
+            }
+        }
+
+        async function saveTicketEdit(ticket, actionEl) {
+            const detail = actionEl.closest('tr.row-details');
+            if (!detail) return;
+            const issueInput = detail.querySelector('input[data-field="issue_number"]');
+            const dateInput = detail.querySelector('input[data-field="date"]');
+            const issue = issueInput ? issueInput.value.trim() : '';
+            const date = dateInput ? dateInput.value.trim() : '';
+
+            if (date && !/^\d{2}\.\d{2}\.\d{4}$/.test(date)) {
+                notify('Дата должна быть в формате ДД.ММ.ГГГГ', 'error');
+                return;
+            }
+
+            const payload = { ticket_number: ticket, issue_number: issue, date: date };
+            const res = await fFetch(`${API_BASE}/ticket/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res && res.status === 'ok') {
+                const item = state.tickets.find(t => String(t.ticket) === String(ticket));
+                if (item) {
+                    item.issue = issue || item.issue;
+                    item.date = date || item.date;
+                }
+                expanded.tickets.add(String(ticket));
+                notify('Билет обновлен', 'success');
+                closeInlineEdit('tickets', ticket);
+                applyTickets();
+            } else {
+                notify('Не удалось обновить билет', 'error');
+            }
+        }
 
         async function loadLogs() {
             const d = await fFetch(`${API_BASE}/logs`);
             if (d) {
                 const con = document.getElementById('log-console');
-                con.innerHTML = d.logs.split('\n').map(l => `<div class="log-line">${l}</div>`).join('');
+                con.innerHTML = d.logs.split('\n').map(l => `<div class="log-line">${escapeHtml(l)}</div>`).join('');
                 con.scrollTop = con.scrollHeight;
             }
         }
@@ -802,7 +2451,7 @@
                 type: 'bar',
                 data: {
                     labels: act.map(i => i.day),
-                    datasets: [{ data: act.map(i => i.count), backgroundColor: '#0071E3', borderRadius: 8 }]
+                    datasets: [{ data: act.map(i => i.count), backgroundColor: '#0f766e', borderRadius: 8 }]
                 },
                 options: commonOptions
             });
@@ -812,48 +2461,173 @@
                 type: 'line',
                 data: {
                     labels: grow.map(i => i.day),
-                    datasets: [{ data: grow.map(i => i.total), borderColor: '#34C759', tension: 0.4, fill: true, backgroundColor: 'rgba(52, 199, 89, 0.05)' }]
+                    datasets: [{ data: grow.map(i => i.total), borderColor: '#22c55e', tension: 0.4, fill: true, backgroundColor: 'rgba(34, 197, 94, 0.12)' }]
                 },
                 options: commonOptions
             });
         }
 
-        // Heartbeat
-        setInterval(async () => {
-            const h = await fFetch(`${API_BASE}/health`);
-            if (h) {
-                document.getElementById('val-db-size').innerText = h.db_size;
-                const hh = Math.floor(h.uptime / 3600);
-                const mm = Math.floor((h.uptime % 3600) / 60);
-                document.getElementById('kpi-uptime').innerText = `${hh}h ${mm}m`;
+        function applyHealth(h) {
+            if (!h) return;
+            document.getElementById('val-db-size').innerText = h.db_size ?? '--';
+            const hh = Math.floor(h.uptime / 3600);
+            const mm = Math.floor((h.uptime % 3600) / 60);
+            document.getElementById('kpi-uptime').innerText = `${hh}h ${mm}m`;
+        }
+
+        function startPollingHealth() {
+            stopPollingHealth();
+            refreshTimer = setInterval(async () => {
+                const h = await fFetch(`${API_BASE}/health`);
+                if (h) applyHealth(h);
+            }, 8000);
+            setLiveStatus('polling');
+        }
+
+        function stopPollingHealth() {
+            if (refreshTimer) clearInterval(refreshTimer);
+            refreshTimer = null;
+        }
+
+        function stopLiveStream() {
+            if (liveStream) liveStream.close();
+            liveStream = null;
+        }
+
+        function startLiveStream() {
+            if (!window.EventSource) {
+                startPollingHealth();
+                return;
             }
-        }, 8000);
+            stopLiveStream();
+            try {
+                liveStream = new EventSource(`${API_BASE}/stream`);
+            } catch (e) {
+                startPollingHealth();
+                return;
+            }
+            liveStream.onopen = () => {
+                setLiveStatus('live');
+                stopPollingHealth();
+            };
+            liveStream.onerror = () => {
+                setLiveStatus('offline');
+                stopLiveStream();
+                startPollingHealth();
+            };
+            liveStream.addEventListener('health', (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    applyHealth(data);
+                    updateConnectionStatus(true);
+                } catch (e) { }
+            });
+            liveStream.addEventListener('stats', (event) => {
+                try {
+                    const data = JSON.parse(event.data);
+                    renderKPI(data);
+                    markUpdated('dashboard');
+                } catch (e) { }
+            });
+        }
 
         function notify(msg, type) {
             const toast = document.createElement('div');
-            toast.style.cssText = `position:fixed;bottom:20px;right:20px;padding:12px 24px;background:${type === 'error' ? '#ff3b30' : '#34c759'};color:white;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.2);z-index:9999;font-weight:700;animation:slideIn 0.3s ease;`;
+            toast.style.cssText = `position:fixed;bottom:20px;right:20px;padding:12px 24px;background:${type === 'error' ? '#ef4444' : '#22c55e'};color:white;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.2);z-index:9999;font-weight:700;animation:slideIn 0.3s ease;`;
             toast.innerText = msg;
             document.body.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
         }
 
         function filterT(id, q) {
-            const rows = document.getElementById(id).getElementsByTagName('tr');
-            q = q.toLowerCase();
-            for (let r of rows) r.style.display = r.innerText.toLowerCase().includes(q) ? '' : 'none';
+            const query = q || '';
+            if (id === 'user-body') setSearch('users', query);
+            if (id === 'ticket-body') setSearch('tickets', query);
+            if (id === 'archive-body') setSearch('archives', query);
         }
 
         function exportData(id, file) {
-            const rows = Array.from(document.getElementById(id).querySelectorAll('tr'));
-            const csv = rows.map(r => Array.from(r.querySelectorAll('td')).map(td => td.innerText.replace(/,/g, '')).join(',')).join('\n');
+            let rows = [];
+            let headers = [];
+
+            if (id === 'user-body') {
+                const view = buildUsersView({ paginate: false });
+                headers = ['user_id', 'name', 'rank', 'points', 'total_tickets', 'total_value', 'highest_single_value', 'weekly_tickets', 'weekly_points'];
+                rows = view.list.map(u => [
+                    u.user_id,
+                    u.first_name || '',
+                    u.rank || '',
+                    u.points || 0,
+                    u.total_tickets || 0,
+                    u.total_value || 0,
+                    u.highest_single_value || 0,
+                    u.weekly_tickets || 0,
+                    u.weekly_points || 0
+                ]);
+            } else if (id === 'ticket-body') {
+                const view = buildTicketsView({ paginate: false });
+                headers = ['ticket', 'issue', 'date', 'user_id', 'created_at'];
+                rows = view.list.map(t => [
+                    t.ticket || '',
+                    t.issue || '',
+                    t.date || '',
+                    t.user_id || '',
+                    t.created_at || ''
+                ]);
+            } else if (id === 'archive-body') {
+                const view = buildArchivesView({ paginate: false });
+                headers = ['name', 'size_mb', 'mtime'];
+                rows = view.list.map(a => [
+                    a.name || '',
+                    (a.size / 1024 / 1024).toFixed(2),
+                    new Date(a.mtime * 1000).toLocaleDateString('ru-RU')
+                ]);
+            } else {
+                const domRows = Array.from(document.getElementById(id).querySelectorAll('tr'));
+                const csvRaw = domRows
+                    .map(r => Array.from(r.querySelectorAll('td')).map(td => td.innerText.replace(/,/g, '')).join(','))
+                    .join('\n');
+                const blob = new Blob([csvRaw], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file;
+                a.click();
+                return;
+            }
+
+            const csv = rows.length
+                ? [headers.map(csvEscape).join(','), ...rows.map(r => r.map(csvEscape).join(','))].join('\n')
+                : headers.map(csvEscape).join(',');
+
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url; a.download = file; a.click();
+            a.href = url;
+            a.download = file;
+            a.click();
         }
 
-        async function killUser(id) { if (confirm('Удалить?')) { await fFetch(`${API_BASE}/user/delete`, { method: 'POST', body: JSON.stringify({ user_id: id }), headers: { 'Content-Type': 'application/json' } }); refresh('management'); } }
-        async function killTicket(n) { if (confirm('Сбросить метку?')) { await fFetch(`${API_BASE}/ticket/delete`, { method: 'POST', body: JSON.stringify({ ticket_number: n }), headers: { 'Content-Type': 'application/json' } }); refresh('tickets'); } }
+        async function killUser(id) {
+            if (!confirm('Удалить?')) return;
+            await fFetch(`${API_BASE}/user/delete`, {
+                method: 'POST',
+                body: JSON.stringify({ user_id: id }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            refresh('management');
+        }
+
+        async function killTicket(n) {
+            if (!confirm('Сбросить метку?')) return;
+            await fFetch(`${API_BASE}/ticket/delete`, {
+                method: 'POST',
+                body: JSON.stringify({ ticket_number: n }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            refresh('tickets');
+        }
+
         async function doRestart() {
             if (!confirm('Перезапустить сервер?')) return;
             const res = await fFetch(`${API_BASE}/system/restart`, { method: 'POST' });
@@ -870,8 +2644,128 @@
             }
         }
 
+        async function saveConfig() {
+            const tokenInput = document.getElementById('cfg-token');
+            if (!tokenInput) return;
+            const token = tokenInput.value.trim();
+            if (!token) {
+                notify('Введите токен', 'error');
+                return;
+            }
+            const res = await fFetch(`${API_BASE}/config`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ BOT_TOKEN: token })
+            });
+            if (res && res.status === 'ok') {
+                notify('Токен обновлен', 'success');
+                tokenInput.value = '';
+            } else {
+                notify('Не удалось обновить токен', 'error');
+            }
+        }
+
+        function handleAction(el) {
+            const action = el.dataset.action;
+            if (action === 'toggle-row') {
+                toggleRow(el.dataset.type, el.dataset.id);
+                return;
+            }
+            if (action === 'delete-user') return killUser(el.dataset.userId);
+            if (action === 'delete-ticket') return killTicket(el.dataset.ticket);
+            if (action === 'add-admin') return addAdmin();
+            if (action === 'remove-admin') return removeAdmin(el.dataset.adminId);
+            if (action === 'add-user') return addUser();
+            if (action === 'remove-user') return removeUser(el.dataset.userId);
+            if (action === 'edit-user') return openInlineEdit('users', el.dataset.userId);
+            if (action === 'edit-ticket') return openInlineEdit('tickets', el.dataset.ticket);
+            if (action === 'save-user') return saveUserEdit(el.dataset.userId, el);
+            if (action === 'save-ticket') return saveTicketEdit(el.dataset.ticket, el);
+            if (action === 'cancel-edit') return closeInlineEdit(el.dataset.type, el.dataset.id);
+            if (action === 'copy-user') {
+                return copyText(el.dataset.userId).then(() => notify('ID скопирован', 'success'));
+            }
+            if (action === 'copy-ticket') {
+                return copyText(el.dataset.ticket).then(() => notify('Билет скопирован', 'success'));
+            }
+        }
+
+        function focusSearchForPane(pane) {
+            if (pane === 'management') return document.getElementById('search-users')?.focus();
+            if (pane === 'tickets') return document.getElementById('search-tickets')?.focus();
+            if (pane === 'storage') return document.getElementById('search-archives')?.focus();
+        }
+
+        function setupHotkeys() {
+            document.addEventListener('keydown', (e) => {
+                const target = e.target;
+                if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+                    return;
+                }
+                if (e.altKey && ['1', '2', '3', '4', '5'].includes(e.key)) {
+                    const map = ['dashboard', 'management', 'tickets', 'storage', 'system'];
+                    const pane = map[Number(e.key) - 1];
+                    const el = document.querySelector(`.nav-item[data-tab="${pane}"]`);
+                    if (pane) goTab(pane, el);
+                    return;
+                }
+                if (e.altKey && (e.key === 'r' || e.key === 'R')) {
+                    refresh(currentPane);
+                    return;
+                }
+                if (e.key === '/' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                    e.preventDefault();
+                    focusSearchForPane(currentPane);
+                }
+            });
+        }
+
+        function bindInteractions() {
+            document.addEventListener('click', (e) => {
+                const actionEl = e.target.closest('[data-action]');
+                if (actionEl) {
+                    e.preventDefault();
+                    handleAction(actionEl);
+                    return;
+                }
+
+                const chip = e.target.closest('.chip');
+                if (chip) {
+                    const target = chip.dataset.target;
+                    const filter = chip.dataset.filter;
+                    if (target && filter) setFilter(target, filter);
+                    return;
+                }
+
+                const th = e.target.closest('th.sortable');
+                if (th) {
+                    setSort(th.dataset.table, th.dataset.sort);
+                    return;
+                }
+
+                const pager = e.target.closest('button[data-page]');
+                if (pager) {
+                    setPage(pager.dataset.table, pager.dataset.page);
+                    return;
+                }
+
+                const row = e.target.closest('tr.row-main');
+                if (row) {
+                    toggleRow(row.dataset.type, row.dataset.id);
+                }
+            });
+        }
+
         // Init
-        goTab('dashboard', document.querySelector('.nav-item'));
+        restoreUiState();
+        bindInteractions();
+        bindAccessInputs();
+        setupHotkeys();
+        startLiveStream();
+        if (!liveStream) startPollingHealth();
+
+        const navEl = document.querySelector(`.nav-item[data-tab="${currentPane}"]`) || document.querySelector('.nav-item');
+        goTab(currentPane, navEl);
     </script>
 </body>
 
