@@ -523,23 +523,25 @@
         .quiz-trigger-row {
             display: flex;
             justify-content: center;
-            margin: 10px 0 4px;
+            margin: 12px 0 6px;
         }
 
         .quiz-trigger {
-            border: none;
-            background: transparent;
-            color: var(--secondary-text);
-            font-size: 12px;
-            font-weight: 600;
-            padding: 0;
+            border: 1px solid rgba(0, 122, 255, 0.35);
+            background: rgba(0, 122, 255, 0.08);
+            color: var(--text-color);
+            font-size: 14px;
+            font-weight: 700;
+            padding: 10px 18px;
+            border-radius: 999px;
             cursor: pointer;
-            text-decoration: underline;
-            transition: color 0.2s ease;
+            box-shadow: 0 8px 16px rgba(0, 122, 255, 0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .quiz-trigger:hover {
-            color: var(--text-color);
+            transform: translateY(-1px);
+            box-shadow: 0 12px 24px rgba(0, 122, 255, 0.18);
         }
 
         .quiz-content {
@@ -831,22 +833,23 @@
         /* Segmented Control Redesign */
         .segmented-control {
             display: flex;
-            background: #EFEFF4;
+            background: rgba(0, 0, 0, 0.06);
             /* iOS Segmented Control BG */
             border-radius: 9px;
             padding: 2px;
             margin-bottom: 24px;
             position: relative;
-            border: none;
+            border: 1px solid rgba(0, 0, 0, 0.08);
         }
 
         .segmented-control label {
             flex: 1;
             text-align: center;
-            padding: 8px 12px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #000;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1d1d1f;
+            line-height: 1.2;
             cursor: pointer;
             border-radius: 7px;
             transition: all 0.2s ease;
@@ -864,9 +867,9 @@
 
         .segmented-control input[type="radio"]:checked+label {
             background-color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16), 0 2px 4px rgba(0, 0, 0, 0.06);
             font-weight: 700;
-            color: #000;
+            color: #1d1d1f;
             transform: scale(1.02);
             border: 0.5px solid rgba(0, 0, 0, 0.04);
             z-index: 2;
@@ -1493,28 +1496,29 @@
 
         /* Total Cost Banner */
         .total-banner {
-            background: linear-gradient(135deg, #f0f9ff 0%, #e6f7ff 100%);
-            padding: 16px;
+            background: linear-gradient(135deg, rgba(0, 122, 255, 0.14) 0%, rgba(52, 199, 89, 0.14) 100%);
+            padding: 18px;
             /* Reduced padding */
             border-radius: 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 8px;
-            border: 1px solid rgba(0, 122, 255, 0.1);
+            border: 1px solid rgba(0, 122, 255, 0.25);
+            box-shadow: 0 10px 24px rgba(0, 122, 255, 0.12);
         }
 
         .total-label {
-            font-size: 15px;
+            font-size: 16px;
             color: var(--text-color);
-            font-weight: 600;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
         .total-amount {
-            font-size: 20px;
+            font-size: 24px;
             /* Smaller font */
             font-weight: 800;
             color: var(--primary-color);
@@ -1673,7 +1677,7 @@
                 📘 Инструкция пользователя
             </div>
             <div class="quiz-trigger-row">
-                <button type="button" class="quiz-trigger" onclick="openQuiz()">🧠 Проверь себя (необязательно)</button>
+                <button type="button" class="quiz-trigger" onclick="openQuiz()">🧠 Проверь себя — мини‑викторина (необязательно)</button>
             </div>
             <div class="footer-author">
                 Разработка: Жуков Олег
@@ -2402,7 +2406,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2329'; // UX tweaks
+            const swVersion = '2330'; // Quiz button + totals
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
