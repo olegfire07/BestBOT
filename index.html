@@ -362,6 +362,32 @@
             transition: background 0.2s;
         }
 
+        .item-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            color: var(--secondary-text);
+            background: rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        .item-card.collapsed .item-toggle {
+            transform: rotate(-90deg);
+        }
+
+        .item-card:hover .item-toggle {
+            color: var(--text-color);
+        }
+
         .item-card.collapsed .item-body {
             display: none;
         }
@@ -497,29 +523,23 @@
         .quiz-trigger-row {
             display: flex;
             justify-content: center;
-            margin: 6px 0 18px;
+            margin: 10px 0 4px;
         }
 
         .quiz-trigger {
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            background: rgba(255, 255, 255, 0.85);
-            color: var(--text-color);
-            font-size: 13px;
+            border: none;
+            background: transparent;
+            color: var(--secondary-text);
+            font-size: 12px;
             font-weight: 600;
-            padding: 8px 14px;
-            border-radius: 999px;
+            padding: 0;
             cursor: pointer;
-            box-shadow: var(--shadow-sm);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: underline;
+            transition: color 0.2s ease;
         }
 
         .quiz-trigger:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .quiz-trigger:active {
-            transform: scale(0.97);
+            color: var(--text-color);
         }
 
         .quiz-content {
@@ -1518,10 +1538,6 @@
         </div>
         <h1 id="mainTitle">Новое заключение</h1>
     </div>
-    <div class="quiz-trigger-row">
-        <button type="button" class="quiz-trigger" onclick="openQuiz()">🧠 Проверь себя</button>
-    </div>
-
     <!-- Draft Notice -->
     <div class="draft-notice" id="draftNotice">
         ✅ Восстановлен черновик из предыдущей сессии
@@ -1585,7 +1601,7 @@
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
                 </div>
-                <div class="hint-text">Формат: ДД.ММ.ГГГГ (не позже сегодня)</div>
+                <div class="hint-text">Выберите дату (не позже сегодня)</div>
             </div>
             <div class="form-group">
                 <label>Регион</label>
@@ -1644,6 +1660,7 @@
             <input type="radio" name="mode" id="mode-test" value="test">
             <label for="mode-test">Черновик (Тест)</label>
         </div>
+        <div class="hint-text">Оригинал — отправка в рабочую группу. Черновик — только вам.</div>
 
         <div class="sticky-footer">
             <button type="button" class="btn btn-primary" onclick="showPreview()">
@@ -1654,6 +1671,9 @@
         <div class="footer-note">
             <div class="footer-author" onclick="showUserGuide()" style="cursor:pointer; text-decoration: underline;">
                 📘 Инструкция пользователя
+            </div>
+            <div class="quiz-trigger-row">
+                <button type="button" class="quiz-trigger" onclick="openQuiz()">🧠 Проверь себя (необязательно)</button>
             </div>
             <div class="footer-author">
                 Разработка: Жуков Олег
@@ -2102,7 +2122,13 @@
                         <span class="item-title">Предмет</span>
                         <span class="item-summary"></span>
                     </div>
-                    <div style="display: flex; gap: 8px;">
+                    <div class="item-header-actions">
+                        <span class="item-toggle" aria-hidden="true">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
                         <!-- Remove button will be added by renumberItems if needed -->
                     </div>
                 </div>
@@ -2209,20 +2235,21 @@
                 if (title) title.textContent = `Предмет #${num}`;
 
                 // Update Remove Button visibility
-                const headerBtnContainer = card.querySelector('.item-header > div:last-child');
+                const headerBtnContainer = card.querySelector('.item-header-actions');
                 if (headerBtnContainer) {
+                    const removeBtn = headerBtnContainer.querySelector('.btn-remove');
                     if (num > 1) {
-                        // Add button if missing
-                        if (!headerBtnContainer.querySelector('.btn-remove')) {
-                            headerBtnContainer.innerHTML = `
-                                <button type="button" class="btn-remove" onclick="removeItem(this, event)">
+                        if (!removeBtn) {
+                            headerBtnContainer.insertAdjacentHTML(
+                                'beforeend',
+                                `<button type="button" class="btn-remove" onclick="removeItem(this, event)">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                                     Удалить
-                                </button>`;
+                                </button>`
+                            );
                         }
-                    } else {
-                        // Remove button for first item
-                        headerBtnContainer.innerHTML = '';
+                    } else if (removeBtn) {
+                        removeBtn.remove();
                     }
                 }
             });
@@ -2375,7 +2402,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2328'; // Quiz questions update
+            const swVersion = '2329'; // UX tweaks
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
