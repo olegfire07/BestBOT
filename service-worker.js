@@ -1,11 +1,12 @@
 // Service Worker for offline support
-const VERSION = '2326';
+const VERSION = '2327';
 const CACHE_NAME = `sklad-bot-${VERSION}`;
 const swPath = self.location.pathname.replace(/service-worker\.js.*$/, '');
 const BASE_PATH = swPath.endsWith('/') ? swPath : `${swPath}/`;
 const urlsToCache = [
     BASE_PATH,
-    `${BASE_PATH}index.html`
+    `${BASE_PATH}index.html`,
+    `${BASE_PATH}quiz_questions.json`
 ];
 
 // Install event - cache resources
