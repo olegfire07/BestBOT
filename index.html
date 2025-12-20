@@ -844,12 +844,8 @@
 
         .segmented-control label {
             flex: 1;
-            text-align: center;
             padding: 10px 12px;
-            font-size: 14px;
-            font-weight: 600;
             color: #1d1d1f;
-            line-height: 1.2;
             cursor: pointer;
             border-radius: 7px;
             transition: all 0.2s ease;
@@ -859,6 +855,27 @@
             -webkit-user-select: none;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            text-align: center;
+            line-height: 1.1;
+            min-height: 44px;
+        }
+
+        .segmented-title {
+            font-size: 14px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .segmented-subtitle {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            white-space: nowrap;
         }
 
         .segmented-control input[type="radio"] {
@@ -873,6 +890,10 @@
             transform: scale(1.02);
             border: 0.5px solid rgba(0, 0, 0, 0.04);
             z-index: 2;
+        }
+
+        .segmented-control input[type="radio"]:checked+label .segmented-subtitle {
+            color: rgba(0, 0, 0, 0.7);
         }
 
         /* Pulse Animation for Main Button */
@@ -1659,10 +1680,16 @@
         <label class="mode-label">Режим отправки</label>
         <div class="segmented-control">
             <input type="radio" name="mode" id="mode-final" value="final" checked>
-            <label for="mode-final">Оригинал (В группу)</label>
+            <label for="mode-final">
+                <span class="segmented-title">Оригинал</span>
+                <span class="segmented-subtitle">в группу</span>
+            </label>
 
             <input type="radio" name="mode" id="mode-test" value="test">
-            <label for="mode-test">Черновик (Тест)</label>
+            <label for="mode-test">
+                <span class="segmented-title">Черновик</span>
+                <span class="segmented-subtitle">только вам</span>
+            </label>
         </div>
         <div class="hint-text">Оригинал — отправка в рабочую группу. Черновик — только вам.</div>
 
@@ -2406,7 +2433,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2330'; // Quiz button + totals
+            const swVersion = '2331'; // Segmented labels
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
