@@ -1855,7 +1855,7 @@
         let quizQuestions = [];
         let quizState = null;
         const QUIZ_SIZE = 5;
-        const QUIZ_VERSION = '2327';
+        const QUIZ_VERSION = '2328';
 
         async function loadQuizQuestions() {
             if (quizQuestions.length > 0) return;
@@ -2375,7 +2375,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2327'; // Quiz + Photo UX
+            const swVersion = '2328'; // Quiz questions update
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
