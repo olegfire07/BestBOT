@@ -7,8 +7,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Создание заключения v5.2</title>
-    <!-- Version: 5.2 (Ledger UI) -->
+    <title>Создание заключения v5.3</title>
+    <!-- Version: 5.3 (Classic UI) -->
     <style>
         /* Motivation Modal Styles */
         .motivation-container {
@@ -55,36 +55,28 @@
     <script
         src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --font-body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
-            --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
             --primary-color: #007AFF;
             --primary-hover: #0062cc;
             --text-color: #1d1d1f;
             --secondary-text: #86868b;
-            --card-bg: rgba(255, 255, 255, 0.88);
-            --input-bg: rgba(255, 255, 255, 0.75);
-            --border-color: rgba(15, 23, 42, 0.08);
-            --paper-border: rgba(15, 23, 42, 0.08);
+            --card-bg: rgba(255, 255, 255, 0.65);
+            --input-bg: rgba(255, 255, 255, 0.5);
+            --border-color: rgba(0, 0, 0, 0.05);
             --danger-color: #ff3b30;
             --success-color: #34c759;
             --error-color: #ff3b30;
-            --shadow-sm: 0 8px 20px rgba(15, 23, 42, 0.08);
-            --shadow-md: 0 22px 55px rgba(15, 23, 42, 0.14);
-            --shadow-float: 0 12px 30px rgba(15, 23, 42, 0.12);
-            --shadow-float-hover: 0 18px 40px rgba(15, 23, 42, 0.18);
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 12px 24px rgba(0, 0, 0, 0.06);
             --glass-border: 1px solid rgba(255, 255, 255, 0.5);
             --radius-lg: 24px;
             --radius-md: 16px;
-            --grid-line: rgba(15, 23, 42, 0.06);
-            --chip-bg: rgba(15, 23, 42, 0.05);
-            --accent-line: linear-gradient(180deg, rgba(0, 122, 255, 0.7), rgba(52, 199, 89, 0.7));
         }
 
         body {
-            font-family: var(--font-body);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
             padding: 20px;
             padding-bottom: 100px;
@@ -94,12 +86,10 @@
             background-color: #f0f2f5;
             /* Premium Soft Mesh Gradient */
             background-image:
-                linear-gradient(var(--grid-line) 1px, transparent 1px),
-                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
                 radial-gradient(at 0% 0%, hsla(253, 16%, 90%, 1) 0, transparent 50%),
                 radial-gradient(at 50% 0%, hsla(225, 39%, 90%, 1) 0, transparent 50%),
                 radial-gradient(at 100% 0%, hsla(339, 49%, 90%, 1) 0, transparent 50%);
-            background-size: 28px 28px, 28px 28px, 100% 100%, 100% 100%, 100% 100%;
+            background-size: 100% 100%;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -122,8 +112,6 @@
             body {
                 background-color: #ffffff;
                 background-image:
-                    linear-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
                     radial-gradient(at 40% 20%, hsla(28, 100%, 74%, 1) 0px, transparent 50%),
                     radial-gradient(at 80% 0%, hsla(189, 100%, 56%, 1) 0px, transparent 50%),
                     radial-gradient(at 0% 50%, hsla(355, 100%, 93%, 1) 0px, transparent 50%),
@@ -131,7 +119,7 @@
                     radial-gradient(at 0% 100%, hsla(22, 100%, 77%, 1) 0px, transparent 50%),
                     radial-gradient(at 80% 100%, hsla(242, 100%, 70%, 1) 0px, transparent 50%),
                     radial-gradient(at 0% 0%, hsla(343, 100%, 76%, 1) 0px, transparent 50%);
-                background-size: 28px 28px, 28px 28px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+                background-size: 100% 100%;
             }
         }
 
@@ -148,14 +136,14 @@
         }
 
         .section {
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.88));
+            background: var(--card-bg);
             -webkit-backdrop-filter: blur(30px);
             backdrop-filter: blur(30px);
             border-radius: var(--radius-lg);
             padding: 24px;
             margin-bottom: 24px;
             box-shadow: var(--shadow-md);
-            border: 1px solid var(--paper-border);
+            border: var(--glass-border);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             animation: fadeInUp 0.6s ease-out 0.1s backwards;
         }
@@ -221,90 +209,8 @@
 
         /* Interactive Section Hover */
         .section:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-float-hover);
-        }
-
-        .summary-panel {
-            background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            padding: 18px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--paper-border);
-            animation: fadeInUp 0.6s ease-out 0.05s backwards;
-        }
-
-        .summary-panel-header {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .summary-title {
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 0.18em;
-            text-transform: uppercase;
-            color: var(--secondary-text);
-        }
-
-        .summary-subtitle {
-            font-size: 12px;
-            color: var(--secondary-text);
-        }
-
-        .summary-strip {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px;
-        }
-
-        .summary-card {
-            position: relative;
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 12px 14px;
-            border: 1px solid var(--paper-border);
-            box-shadow: var(--shadow-sm);
-            overflow: hidden;
-        }
-
-        .summary-card::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--accent-line);
-            opacity: 0.85;
-        }
-
-        .summary-card.total {
-            background: linear-gradient(135deg, rgba(0, 122, 255, 0.1), rgba(52, 199, 89, 0.12));
-        }
-
-        .summary-label {
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--secondary-text);
-        }
-
-        .summary-value {
-            font-size: 16px;
-            font-weight: 800;
-            margin-top: 6px;
-            font-family: var(--font-mono);
-            font-variant-numeric: tabular-nums;
-        }
-
-        .summary-value.muted {
-            color: var(--secondary-text);
-            font-weight: 600;
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.08);
         }
 
         .form-group {
@@ -1285,71 +1191,6 @@
             }
         }
 
-        .item-card {
-            background: rgba(255, 255, 255, 0.96);
-            border-radius: 22px;
-            padding: 0;
-            margin-bottom: 18px;
-            box-shadow: var(--shadow-float);
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid var(--paper-border);
-            animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .item-card::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: var(--accent-line);
-            opacity: 0.85;
-        }
-
-        .item-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-float-hover);
-        }
-
-        .item-header {
-            background: rgba(15, 23, 42, 0.03);
-            padding: 16px 20px;
-        }
-
-        .item-title {
-            font-weight: 800;
-            letter-spacing: 0.01em;
-        }
-
-        .item-body {
-            padding: 20px;
-        }
-
-        .item-grid {
-            display: grid;
-            gap: 16px;
-            grid-template-columns: 1fr;
-        }
-
-        .item-fields {
-            display: grid;
-            gap: 16px;
-        }
-
-        .item-photo {
-            display: grid;
-            gap: 8px;
-        }
-
-        @media (min-width: 860px) {
-            .item-grid {
-                grid-template-columns: 1.1fr 0.9fr;
-                align-items: start;
-            }
-        }
 
         /* Button Press Effect */
         .main-button:active,
@@ -1369,16 +1210,6 @@
             border-color: var(--primary-color);
         }
 
-        #department,
-        #issue,
-        #ticket,
-        #date,
-        .eval,
-        .preview-value,
-        .total-amount {
-            font-family: var(--font-mono);
-            font-variant-numeric: tabular-nums;
-        }
 
 
 
@@ -1480,43 +1311,6 @@
 
     <div class="progress-container">
         <div class="progress-bar" id="progressBar"></div>
-    </div>
-
-    <div class="summary-panel">
-        <div class="summary-panel-header">
-            <div class="summary-title">Сводка</div>
-            <div class="summary-subtitle">Заполняется автоматически</div>
-        </div>
-        <div class="summary-strip">
-            <div class="summary-card">
-                <div class="summary-label">Подразделение</div>
-                <div class="summary-value muted" id="summaryDepartment">—</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-label">№ Заключения</div>
-                <div class="summary-value muted" id="summaryIssue">—</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-label">№ Билета</div>
-                <div class="summary-value muted" id="summaryTicket">—</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-label">Дата</div>
-                <div class="summary-value muted" id="summaryDate">—</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-label">Регион</div>
-                <div class="summary-value muted" id="summaryRegion">—</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-label">Позиций</div>
-                <div class="summary-value" id="summaryItems">1</div>
-            </div>
-            <div class="summary-card total">
-                <div class="summary-label">Итого</div>
-                <div class="summary-value muted" id="summaryTotal">—</div>
-            </div>
-        </div>
     </div>
 
     <form id="mainForm">
@@ -1808,32 +1602,6 @@
             } catch (e) { }
         }
 
-        function formatDateForSummary(value) {
-            if (!value) return '';
-            const parts = value.split('-');
-            return parts.length === 3 ? `${parts[2]}.${parts[1]}.${parts[0]}` : value;
-        }
-
-        function setSummaryValue(id, value) {
-            const el = document.getElementById(id);
-            if (!el) return;
-            const normalized = (value || '').toString().trim();
-            if (!normalized || normalized === '—') {
-                el.textContent = '—';
-                el.classList.add('muted');
-                return;
-            }
-            el.textContent = normalized;
-            el.classList.remove('muted');
-        }
-
-        function updateSummaryStrip() {
-            setSummaryValue('summaryDepartment', document.getElementById('department')?.value);
-            setSummaryValue('summaryIssue', document.getElementById('issue')?.value);
-            setSummaryValue('summaryTicket', document.getElementById('ticket')?.value);
-            setSummaryValue('summaryDate', formatDateForSummary(document.getElementById('date')?.value));
-            setSummaryValue('summaryRegion', document.getElementById('region')?.value);
-        }
 
         function showUserGuide() {
             document.getElementById('guideModal').style.display = 'flex';
@@ -1944,21 +1712,12 @@
 
             const banner = document.getElementById('realTimeTotal');
             const display = document.getElementById('totalAmountDisplay');
-            const summaryTotal = document.getElementById('summaryTotal');
 
             if (total > 0) {
                 banner.style.display = 'flex';
                 display.textContent = total.toLocaleString('ru-RU') + ' ₽';
-                if (summaryTotal) {
-                    summaryTotal.textContent = total.toLocaleString('ru-RU') + ' ₽';
-                    summaryTotal.classList.remove('muted');
-                }
             } else {
                 banner.style.display = 'none';
-                if (summaryTotal) {
-                    summaryTotal.textContent = '—';
-                    summaryTotal.classList.add('muted');
-                }
             }
         }
 
@@ -1981,46 +1740,40 @@
                     </div>
                 </div>
                 <div class="item-body">
-                    <div class="item-grid">
-                        <div class="item-fields">
-                            <div class="form-group">
-                                <input type="text" class="desc item-field" placeholder="Кольцо, металл желтого цвета" required id="desc-${itemCount}">
-                                <label class="floating-label" for="desc-${itemCount}">Описание</label>
-                                <div class="error-message"></div>
-                                <div class="input-hint">
-                                    Добавьте краткое описание предмета
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <input type="tel" class="eval item-field" placeholder="Сумма" required inputmode="numeric" id="eval-${itemCount}">
-                                <label class="floating-label" for="eval-${itemCount}">Оценка (руб.)</label>
-                                <div class="error-message"></div>
-                                <div class="input-hint">Только цифры, без пробелов</div>
-                            </div>
-                        </div>
-                        <div class="item-photo">
-                            <div class="photo-preview-container" 
-                                 ondragover="handleDragOver(event)" 
-                                 ondragleave="handleDragLeave(event)" 
-                                 ondrop="handleDrop(event, this)"
-                                 ontouchstart="handleTouchStart(event)"
-                                 ontouchmove="handleTouchMove(event)"
-                                 ontouchend="handleTouchEnd(event)">
-                                <div class="photo-preview"></div>
-                                <label class="upload-label">
-                                    <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                        <polyline points="21 15 16 10 5 21"></polyline>
-                                    </svg>
-                                    <input type="file" class="file-input" accept="image/*" onchange="handleFileSelect(this)" style="display:none">
-                                    <span class="btn-text">Добавить фото</span>
-                                    <span class="hint">Нажмите для выбора или перетащите</span>
-                                </label>
-                            </div>
-                            <div class="upload-status">Добавьте одно фото предмета</div>
+                    <div class="form-group">
+                        <input type="text" class="desc item-field" placeholder="Кольцо, металл желтого цвета" required id="desc-${itemCount}">
+                        <label class="floating-label" for="desc-${itemCount}">Описание</label>
+                        <div class="error-message"></div>
+                        <div class="input-hint">
+                            Добавьте краткое описание предмета
                         </div>
                     </div>
+                    <div class="form-group">
+                        <input type="tel" class="eval item-field" placeholder="Сумма" required inputmode="numeric" id="eval-${itemCount}">
+                        <label class="floating-label" for="eval-${itemCount}">Оценка (руб.)</label>
+                        <div class="error-message"></div>
+                        <div class="input-hint">Только цифры, без пробелов</div>
+                    </div>
+                    <div class="photo-preview-container" 
+                         ondragover="handleDragOver(event)" 
+                         ondragleave="handleDragLeave(event)" 
+                         ondrop="handleDrop(event, this)"
+                         ontouchstart="handleTouchStart(event)"
+                         ontouchmove="handleTouchMove(event)"
+                         ontouchend="handleTouchEnd(event)">
+                        <div class="photo-preview"></div>
+                        <label class="upload-label">
+                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            <input type="file" class="file-input" accept="image/*" onchange="handleFileSelect(this)" style="display:none">
+                            <span class="btn-text">Добавить фото</span>
+                            <span class="hint">Нажмите для выбора или перетащите</span>
+                        </label>
+                    </div>
+                    <div class="upload-status">Добавьте одно фото предмета</div>
                 </div>
             `;
             document.getElementById('itemsList').appendChild(div);
@@ -2146,14 +1899,10 @@
         function updateBadge() {
             const count = document.getElementById('itemsList').children.length;
             const badge = document.getElementById('itemCountBadge');
-            const summaryItems = document.getElementById('summaryItems');
             if (badge) {
                 badge.textContent = count;
                 // Optional: Hide badge if 0 (though we always have 1 item)
                 // badge.style.display = count > 0 ? 'inline-block' : 'none';
-            }
-            if (summaryItems) {
-                summaryItems.textContent = count;
             }
         }
 
@@ -2230,20 +1979,12 @@
 
         // Restore draft on load
         restoreDraft();
-        updateSummaryStrip();
-
-        ['department', 'issue', 'ticket', 'date', 'region'].forEach(id => {
-            const el = document.getElementById(id);
-            if (!el) return;
-            el.addEventListener('input', updateSummaryStrip);
-            el.addEventListener('change', updateSummaryStrip);
-        });
 
         // ============================================
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2324'; // Ledger UI
+            const swVersion = '2324'; // Classic UI
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
