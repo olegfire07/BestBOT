@@ -7,8 +7,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Создание заключения v5.3</title>
-    <!-- Version: 5.3 (Classic UI) -->
+    <title>Создание заключения v5.4</title>
+    <!-- Version: 5.4 (Photo UX + Motion) -->
     <style>
         /* Motivation Modal Styles */
         .motivation-container {
@@ -346,6 +346,11 @@
             z-index: 2;
         }
 
+        .item-card:focus-within {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+        }
+
         .item-header {
             background: rgba(255, 255, 255, 0.5);
             padding: 16px 24px;
@@ -544,6 +549,81 @@
             border-radius: 14px;
         }
 
+        .photo-actions {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 20;
+            opacity: 0;
+            transform: translateY(-6px);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .photo-action-btn {
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.92);
+            color: var(--text-color);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .photo-action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .photo-action-btn.danger {
+            color: var(--danger-color);
+            border-color: rgba(255, 59, 48, 0.3);
+            background: rgba(255, 59, 48, 0.08);
+        }
+
+        .photo-preview-container.has-photo .photo-actions {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .photo-preview-container.loading .photo-actions {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .upload-progress {
+            position: absolute;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(6px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 20;
+        }
+
+        .upload-progress.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .upload-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+            transition: width 0.2s ease;
+        }
+
         .upload-icon {
             width: 48px;
             height: 48px;
@@ -709,6 +789,28 @@
             /* Disable container scroll */
             display: flex;
             flex-direction: column;
+        }
+
+        #previewModal {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+
+        #previewModal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #previewModal .modal-content {
+            opacity: 0;
+            transform: translateY(18px) scale(0.98);
+            transition: transform 0.25s ease, opacity 0.25s ease;
+        }
+
+        #previewModal.show .modal-content {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
         #previewContent {
@@ -1353,7 +1455,7 @@
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                     </svg>
                 </div>
-                <div class="hint-text">Ровно 11 цифр</div>
+                <div class="hint-text">11 цифр без пробелов (пример: 03850006392)</div>
             </div>
             <div class="form-group">
                 <label>Дата</label>
@@ -1367,7 +1469,7 @@
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
                 </div>
-                <div class="hint-text">Можно выбрать только сегодняшнюю или прошедшую дату</div>
+                <div class="hint-text">Формат: ДД.ММ.ГГГГ (не позже сегодня)</div>
             </div>
             <div class="form-group">
                 <label>Регион</label>
@@ -1772,6 +1874,13 @@
                             <span class="btn-text">Добавить фото</span>
                             <span class="hint">Нажмите для выбора или перетащите</span>
                         </label>
+                        <div class="photo-actions">
+                            <button type="button" class="photo-action-btn" onclick="handleReplacePhoto(this, event)">Заменить</button>
+                            <button type="button" class="photo-action-btn danger" onclick="handleRemovePhoto(this, event)">Удалить</button>
+                        </div>
+                        <div class="upload-progress">
+                            <div class="upload-progress-bar"></div>
+                        </div>
                     </div>
                     <div class="upload-status">Добавьте одно фото предмета</div>
                 </div>
@@ -1962,6 +2071,23 @@
             });
         });
 
+        // Smart focus: move to next field on Enter
+        const focusOrder = ['department', 'issue', 'ticket', 'date', 'region'];
+        focusOrder.forEach((id, index) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.setAttribute('enterkeyhint', index < focusOrder.length - 1 ? 'next' : 'done');
+            el.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const nextId = focusOrder[index + 1];
+                    if (nextId) {
+                        document.getElementById(nextId)?.focus();
+                    }
+                }
+            });
+        });
+
         // Input Mask for Evaluation (Thousands Separator)
         // Dynamically attached in addItem() but also need utility function
         function formatNumber(num) {
@@ -1984,7 +2110,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2325'; // Classic UI
+            const swVersion = '2326'; // Photo UX + Motion
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
@@ -2077,6 +2203,71 @@
             localStorage.setItem('default_region', e.target.value);
         });
 
+        function setUploadProgress(previewContainer, percent) {
+            const progress = previewContainer.querySelector('.upload-progress');
+            const bar = previewContainer.querySelector('.upload-progress-bar');
+            if (!progress || !bar) return;
+
+            if (percent === null) {
+                progress.classList.remove('visible');
+                bar.style.width = '0%';
+                return;
+            }
+
+            const safePercent = Math.max(0, Math.min(100, percent));
+            progress.classList.add('visible');
+            bar.style.width = `${safePercent}%`;
+
+            if (safePercent >= 100) {
+                setTimeout(() => {
+                    progress.classList.remove('visible');
+                    bar.style.width = '0%';
+                }, 400);
+            }
+        }
+
+        function handleReplacePhoto(button, event) {
+            if (event) event.stopPropagation();
+            const container = button.closest('.item-card');
+            const input = container?.querySelector('.file-input');
+            if (input) {
+                input.click();
+            }
+        }
+
+        function handleRemovePhoto(button, event) {
+            if (event) event.stopPropagation();
+            const container = button.closest('.item-card');
+            if (!container) return;
+
+            const input = container.querySelector('.file-input');
+            const previewContainer = container.querySelector('.photo-preview-container');
+            const status = container.querySelector('.upload-status');
+            const btnText = container.querySelector('.btn-text');
+
+            if (input) {
+                input.value = '';
+            }
+
+            const img = previewContainer.querySelector('.photo-preview-img');
+            if (img) img.remove();
+
+            const label = previewContainer.querySelector('.upload-label');
+            if (label) label.style.opacity = '1';
+
+            previewContainer.classList.remove('loading');
+            previewContainer.classList.remove('has-photo');
+            delete container.dataset.photoUrl;
+
+            setUploadProgress(previewContainer, null);
+
+            if (btnText) btnText.textContent = "Добавить фото";
+            if (status) {
+                status.textContent = "Добавьте одно фото предмета";
+                status.className = "upload-status";
+            }
+        }
+
         async function handleFileSelect(input) {
             const file = input.files[0];
             if (!file) return;
@@ -2091,6 +2282,8 @@
             btnText.textContent = "Сжатие...";
             status.textContent = "⏳ Обработка фото...";
             status.className = "upload-status";
+            delete container.dataset.photoUrl;
+            setUploadProgress(previewContainer, null);
 
             try {
                 // Compression options
@@ -2140,14 +2333,22 @@
 
                 // 🚀 BACKGROUND UPLOAD with Compressed File
                 btnText.textContent = "Загрузка...";
-                status.textContent = "⏳ Загрузка на сервер...";
+                status.textContent = "⏳ Загрузка: 0%";
+                setUploadProgress(previewContainer, 0);
 
-                const uploadedUrl = await uploadImageToBot(compressedFile);
+                const uploadedUrl = await uploadImageToBot(compressedFile, (percent) => {
+                    const safePercent = Math.max(0, Math.min(100, percent));
+                    setUploadProgress(previewContainer, safePercent);
+                    if (safePercent > 0 && safePercent < 100) {
+                        status.textContent = `⏳ Загрузка: ${safePercent}%`;
+                    }
+                });
 
                 // Store URL
                 container.dataset.photoUrl = uploadedUrl;
 
                 // Success UI
+                setUploadProgress(previewContainer, 100);
                 btnText.textContent = "✓ Загружено";
                 status.textContent = "✅ Готово к отправке";
                 status.className = "upload-status success";
@@ -2177,6 +2378,7 @@
                 previewContainer.classList.remove('loading');
                 previewContainer.classList.remove('has-photo');
                 delete container.dataset.photoUrl;
+                setUploadProgress(previewContainer, null);
 
                 // Re-attach click handler for upload
                 previewContainer.onclick = (e) => {
@@ -2188,9 +2390,9 @@
         }
 
         // New function to handle Bot API upload
-        async function uploadImageToBot(file) {
+        async function uploadImageToBot(file, onProgress) {
             if (imagebanClientId) {
-                return await uploadImageToImageBan(file);
+                return await uploadImageToImageBan(file, onProgress);
             }
 
             const compressedBlob = file;
@@ -2201,39 +2403,22 @@
             const cleanBase = baseUrl.replace(/\/$/, "");
             const uploadUrl = `${cleanBase}/api/upload-photo`;
 
-            const response = await fetch(uploadUrl, {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error(`Ошибка сервера: ${response.status}`);
-            }
-
-            const result = await response.json();
+            const result = await uploadWithProgress(uploadUrl, formData, {}, onProgress);
             if (result && result.data && result.data.url) {
                 return result.data.url;
             }
             throw new Error(result?.error || "Неизвестная ошибка загрузки");
         }
 
-        async function uploadImageToImageBan(file) {
+        async function uploadImageToImageBan(file, onProgress) {
             const formData = new FormData();
             formData.append('image', file, file.name || 'image.jpg');
-
-            const response = await fetch('https://api.imageban.ru/v1', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `TOKEN ${imagebanClientId}`
-                },
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error(`ImageBan: HTTP ${response.status}`);
-            }
-
-            const result = await response.json();
+            const result = await uploadWithProgress(
+                'https://api.imageban.ru/v1',
+                formData,
+                { 'Authorization': `TOKEN ${imagebanClientId}` },
+                onProgress
+            );
             const link = result?.data?.[0]?.link || result?.data?.link;
             if (result?.success && link) {
                 return link;
@@ -2241,6 +2426,41 @@
 
             const message = result?.message || result?.error || "Ошибка загрузки в ImageBan";
             throw new Error(message);
+        }
+
+        function uploadWithProgress(url, formData, headers, onProgress) {
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', url, true);
+                if (headers) {
+                    Object.entries(headers).forEach(([key, value]) => {
+                        xhr.setRequestHeader(key, value);
+                    });
+                }
+
+                if (xhr.upload && onProgress) {
+                    xhr.upload.onprogress = (event) => {
+                        if (!event.lengthComputable) return;
+                        const percent = Math.round((event.loaded / event.total) * 100);
+                        onProgress(percent);
+                    };
+                }
+
+                xhr.onload = () => {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            resolve(JSON.parse(xhr.responseText));
+                        } catch (err) {
+                            reject(new Error('Ошибка ответа сервера'));
+                        }
+                    } else {
+                        reject(new Error(`HTTP ${xhr.status}`));
+                    }
+                };
+
+                xhr.onerror = () => reject(new Error('Ошибка сети'));
+                xhr.send(formData);
+            });
         }
 
         // Lightbox Functions
@@ -2536,7 +2756,9 @@
                 </div>
             `;
 
-            document.getElementById('previewModal').style.display = 'block';
+            const previewModal = document.getElementById('previewModal');
+            previewModal.style.display = 'block';
+            requestAnimationFrame(() => previewModal.classList.add('show'));
 
             // Update state to preview mode
             appState = 'preview';
@@ -2547,7 +2769,13 @@
 
         function closePreview() {
             haptic('light');
-            document.getElementById('previewModal').style.display = 'none';
+            const previewModal = document.getElementById('previewModal');
+            previewModal.classList.remove('show');
+            setTimeout(() => {
+                if (!previewModal.classList.contains('show')) {
+                    previewModal.style.display = 'none';
+                }
+            }, 250);
 
             // Revert state to editing
             appState = 'editing';
