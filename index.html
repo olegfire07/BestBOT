@@ -1793,7 +1793,7 @@
                 <span class="segmented-subtitle">только вам</span>
             </label>
         </div>
-        <div class="hint-text">Оригинал — отправка в рабочую группу. Черновик — только вам.</div>
+        <div class="hint-text">Оригинал — автомитически отправляется региональному менеджеру. Черновик — только вам.</div>
 
         <div class="sticky-footer">
             <button type="button" class="btn btn-primary" onclick="showPreview()">
@@ -2095,6 +2095,59 @@
             'Одинаковый формат описания упрощает работу всей команды.'
         ];
 
+        function getQuizRegion() {
+            const regionEl = document.getElementById('region');
+            const current = regionEl ? regionEl.value.trim() : '';
+            if (current) {
+                try {
+                    localStorage.setItem('last_region', current);
+                } catch (e) { }
+                return current;
+            }
+            try {
+                return localStorage.getItem('last_region') || '';
+            } catch (e) {
+                return '';
+            }
+        }
+
+        function getQuizUserMeta() {
+            const user = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
+            if (!user) return {};
+            return {
+                user_id: user.id,
+                username: user.username,
+                first_name: user.first_name,
+                last_name: user.last_name
+            };
+        }
+
+        function sendQuizStats(payload) {
+            const base = (botUrl || '').trim();
+            if (!base) return;
+            const cleanBase = base.replace(/\/$/, "");
+            fetch(`${cleanBase}/api/quiz/submit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                keepalive: true
+            }).catch(() => { });
+        }
+
+        function reportQuizAttempt() {
+            if (!quizState) return;
+            const total = quizState.questions ? quizState.questions.length : 0;
+            const payload = {
+                correct: quizState.correct || 0,
+                wrong: quizState.wrong || 0,
+                total: total,
+                region: getQuizRegion(),
+                quiz_version: QUIZ_VERSION
+            };
+            Object.assign(payload, getQuizUserMeta());
+            sendQuizStats(payload);
+        }
+
         async function loadQuizQuestions() {
             if (quizQuestions.length > 0) return;
             const response = await fetch(`quiz_questions.json?v=${QUIZ_VERSION}`, { cache: 'no-store' });
@@ -2222,6 +2275,7 @@
         }
 
         function showQuizResult() {
+            reportQuizAttempt();
             const body = document.getElementById('quizBody');
             const fact = QUIZ_FACTS.length
                 ? QUIZ_FACTS[Math.floor(Math.random() * QUIZ_FACTS.length)]
@@ -2267,6 +2321,17 @@
                 this.value = today; // Reset to today
             }
         });
+
+        const regionInput = document.getElementById('region');
+        if (regionInput) {
+            regionInput.addEventListener('change', () => {
+                const value = regionInput.value.trim();
+                if (!value) return;
+                try {
+                    localStorage.setItem('last_region', value);
+                } catch (e) { }
+            });
+        }
 
         let itemCount = 0;
         let appState = 'editing'; // State: 'editing' or 'preview'
@@ -2635,7 +2700,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2344'; // Add image logo
+            const swVersion = '2345'; // Quiz engagement reporting
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)

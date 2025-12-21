@@ -1303,6 +1303,11 @@
             color: var(--text-main);
         }
 
+        .region-sub {
+            font-size: 11px;
+            color: var(--text-mute);
+        }
+
         .region-bar {
             height: 6px;
             border-radius: 999px;
@@ -1556,6 +1561,39 @@
                         <h4>Регионы за период</h4>
                         <div class="region-list" id="monitor-region-list"></div>
                     </div>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <div class="quick-header">
+                    <h3>Викторина: вовлеченность</h3>
+                    <span class="update-stamp" id="quiz-last-updated">Обновлено: --</span>
+                </div>
+                <div class="chip-group monitoring-chips">
+                    <button class="chip" data-quiz-days="7">7 дней</button>
+                    <button class="chip active" data-quiz-days="30">30 дней</button>
+                    <button class="chip" data-quiz-days="90">90 дней</button>
+                </div>
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-label">Участников</div>
+                        <div class="summary-value" id="quiz-users">0</div>
+                        <div class="summary-meta" id="quiz-period">—</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Попыток</div>
+                        <div class="summary-value" id="quiz-attempts">0</div>
+                        <div class="summary-meta" id="quiz-attempts-meta">—</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Средний результат</div>
+                        <div class="summary-value" id="quiz-score">0%</div>
+                        <div class="summary-meta" id="quiz-score-meta">—</div>
+                    </div>
+                </div>
+                <div class="monitor-panel">
+                    <h4>Регионы (участники)</h4>
+                    <div class="region-list" id="quiz-region-list"></div>
                 </div>
             </div>
 
@@ -1882,6 +1920,7 @@
             search: { users: '', tickets: '', archives: '' },
             filters: { users: 'all', tickets: 'all', archives: 'all' },
             monitorDays: 30,
+            quizDays: 30,
             sort: {
                 users: { key: null, dir: null },
                 tickets: { key: null, dir: null },
@@ -1989,7 +2028,8 @@
                     search: state.search,
                     filters: state.filters,
                     sort: state.sort,
-                    monitorDays: state.monitorDays
+                    monitorDays: state.monitorDays,
+                    quizDays: state.quizDays
                 };
                 localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
             } catch (e) { }
@@ -2004,6 +2044,7 @@
                 if (saved?.filters) state.filters = { ...state.filters, ...saved.filters };
                 if (saved?.sort) state.sort = { ...state.sort, ...saved.sort };
                 if (saved?.monitorDays) state.monitorDays = saved.monitorDays;
+                if (saved?.quizDays) state.quizDays = saved.quizDays;
                 if (saved?.pane) currentPane = saved.pane;
             } catch (e) { }
 
@@ -2018,6 +2059,7 @@
             setActiveChip('tickets', state.filters.tickets);
             setActiveChip('archives', state.filters.archives);
             setMonitorActiveChip();
+            setQuizActiveChip();
 
             updateSortIndicators('users');
             updateSortIndicators('tickets');
@@ -2043,6 +2085,21 @@
             setMonitorActiveChip();
             saveUiState();
             loadMonitoring(normalized);
+        }
+
+        function setQuizActiveChip() {
+            document.querySelectorAll('[data-quiz-days]').forEach(chip => {
+                const days = Number(chip.dataset.quizDays);
+                chip.classList.toggle('active', days === Number(state.quizDays));
+            });
+        }
+
+        function setQuizDays(days) {
+            const normalized = Number(days) || 30;
+            state.quizDays = normalized;
+            setQuizActiveChip();
+            saveUiState();
+            loadQuizStats(normalized);
         }
 
         async function goTab(pane, el) {
@@ -2071,11 +2128,12 @@
             if (!silent) showLoading();
             try {
                 if (pane === 'dashboard') {
-                    const [stats, act, grow, monitoring] = await Promise.all([
+                    const [stats, act, grow, monitoring, quizStats] = await Promise.all([
                         fFetch(`${API_BASE}/stats`),
                         fFetch(`${API_BASE}/charts/activity`),
                         fFetch(`${API_BASE}/charts/growth`),
-                        fFetch(`${API_BASE}/monitoring?days=${state.monitorDays}`)
+                        fFetch(`${API_BASE}/monitoring?days=${state.monitorDays}`),
+                        fFetch(`${API_BASE}/quiz-stats?days=${state.quizDays}`)
                     ]);
                     if (stats) {
                         renderKPI(stats);
@@ -2087,6 +2145,9 @@
                     }
                     if (monitoring) {
                         renderMonitoring(monitoring);
+                    }
+                    if (quizStats) {
+                        renderQuizStats(quizStats);
                     }
                     await loadLogs({ updateConsole: false });
                 } else if (pane === 'management') {
@@ -3449,6 +3510,73 @@
             if (data) renderMonitoring(data);
         }
 
+        function renderQuizStats(payload) {
+            if (!payload) return;
+            const attempts = Number(payload.total_attempts || 0);
+            const users = Number(payload.unique_users || 0);
+            const avgScore = payload.avg_score_pct ?? 0;
+            const avgCorrect = payload.avg_correct ?? 0;
+            const avgTotal = payload.avg_total ?? 0;
+            const period = payload.period || {};
+
+            const usersEl = document.getElementById('quiz-users');
+            const attemptsEl = document.getElementById('quiz-attempts');
+            const attemptsMetaEl = document.getElementById('quiz-attempts-meta');
+            const scoreEl = document.getElementById('quiz-score');
+            const scoreMetaEl = document.getElementById('quiz-score-meta');
+            const periodEl = document.getElementById('quiz-period');
+
+            if (usersEl) usersEl.innerText = users.toLocaleString('ru-RU');
+            if (attemptsEl) attemptsEl.innerText = attempts.toLocaleString('ru-RU');
+            if (attemptsMetaEl) attemptsMetaEl.innerText = `за ${payload.days || state.quizDays} дн.`;
+            if (scoreEl) scoreEl.innerText = `${avgScore}%`;
+            if (scoreMetaEl) scoreMetaEl.innerText = `среднее верных: ${avgCorrect} из ${avgTotal}`;
+            if (periodEl) {
+                periodEl.innerText = period.start && period.end
+                    ? `${formatIsoShort(period.start)} — ${formatIsoShort(period.end)}`
+                    : '—';
+            }
+
+            const regionList = document.getElementById('quiz-region-list');
+            if (regionList) {
+                const regions = Array.isArray(payload.regions) ? payload.regions : [];
+                if (!regions.length) {
+                    regionList.innerHTML = '<div class="region-empty">Нет данных за период</div>';
+                } else {
+                    const metric = regions.map(r => Number(r.users || r.attempts || 0));
+                    const max = Math.max(...metric, 1);
+                    const limit = 10;
+                    const items = regions.slice(0, limit).map(r => {
+                        const usersCount = Number(r.users || 0);
+                        const attemptsCount = Number(r.attempts || 0);
+                        const display = usersCount > 0 ? `${usersCount} чел.` : `${attemptsCount} попыток`;
+                        const pct = Math.round((Number(r.users || r.attempts || 0) / max) * 100);
+                        return `
+                            <div class="region-item">
+                                <div class="region-meta">
+                                    <span class="region-name">${escapeHtml(r.region || '—')}</span>
+                                    <span>${display}</span>
+                                </div>
+                                <div class="region-sub">Попыток: ${attemptsCount}</div>
+                                <div class="region-bar"><span style="width: ${pct}%"></span></div>
+                            </div>
+                        `;
+                    }).join('');
+                    const tail = regions.length > limit
+                        ? `<div class="region-empty">+${regions.length - limit} регионов</div>`
+                        : '';
+                    regionList.innerHTML = items + tail;
+                }
+            }
+
+            markUpdated('quiz');
+        }
+
+        async function loadQuizStats(days = state.quizDays) {
+            const data = await fFetch(`${API_BASE}/quiz-stats?days=${days}`);
+            if (data) renderQuizStats(data);
+        }
+
         function applyHealth(h) {
             if (!h) return;
             document.getElementById('val-db-size').innerText = h.db_size ?? '--';
@@ -3798,6 +3926,11 @@
                     const monitorDays = chip.dataset.monitorDays;
                     if (monitorDays) {
                         setMonitorDays(monitorDays);
+                        return;
+                    }
+                    const quizDays = chip.dataset.quizDays;
+                    if (quizDays) {
+                        setQuizDays(quizDays);
                         return;
                     }
                     const target = chip.dataset.target;
