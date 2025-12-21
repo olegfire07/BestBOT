@@ -95,7 +95,9 @@
             min-height: 100%;
             color: var(--text-color);
             background-color: #f4f5f7;
-            background-image: none;
+            background-image: linear-gradient(135deg, #ffe7e0 0%, #e6f2ff 38%, #e6fff3 68%, #fff0e6 100%);
+            background-size: 300% 300%;
+            animation: gradient-animation 18s ease infinite;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -117,7 +119,7 @@
         @media (prefers-color-scheme: light) {
             body {
                 background-color: #f4f5f7;
-                background-image: none;
+                background-image: linear-gradient(135deg, #ffe7e0 0%, #e6f2ff 38%, #e6fff3 68%, #fff0e6 100%);
             }
         }
 
@@ -1938,7 +1940,35 @@
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
+        const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : {
+            initDataUnsafe: {},
+            platform: '',
+            version: '',
+            initData: '',
+            ready: () => { },
+            expand: () => { },
+            requestFullscreen: () => { },
+            showAlert: (message) => alert(message),
+            showPopup: ({ message }) => alert(message),
+            sendData: () => { },
+            close: () => { },
+            MainButton: {
+                setText: () => { },
+                show: () => { },
+                hide: () => { },
+                enable: () => { },
+                disable: () => { },
+                onClick: () => { },
+                offClick: () => { },
+                showProgress: () => { },
+                hideProgress: () => { }
+            },
+            HapticFeedback: {
+                impactOccurred: () => { },
+                notificationOccurred: () => { },
+                selectionChanged: () => { }
+            }
+        };
 
         let audioCtx = null;
         let audioUnlocked = false;
@@ -2346,13 +2376,22 @@
 
         function handleTouchStart(e) {
             const card = e.currentTarget.closest('.item-card');
+            if (!card) return;
+            currentCard = card;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            currentCard.style.transition = 'none';
+        }
+
+        function handleTouchMove(e) {
+            if (!currentCard) return;
             const touchX = e.touches[0].clientX;
             const touchY = e.touches[0].clientY;
             const diffX = touchX - touchStartX;
             const diffY = touchY - touchStartY;
 
-            // Only horizontal swipe
-            if (Math.abs(diffX) > Math.abs(diffY) && diffX < -50) {
+            // Only horizontal swipe to the left
+            if (Math.abs(diffX) > Math.abs(diffY) && diffX < 0) {
                 currentCard.style.transform = `translateX(${diffX}px)`;
                 currentCard.style.opacity = 1 + diffX / 200;
             }
@@ -2472,16 +2511,20 @@
                     <div class="upload-status">Добавьте одно фото предмета</div>
                 </div>
             `;
-            document.getElementById('itemsList').appendChild(div);
-
             // --- ADDED EVENT LISTENERS ---
             // 1. Input Mask for Evaluation (Cleave.js)
             const evalInput = div.querySelector('.eval');
-            new Cleave(evalInput, {
-                numeral: true,
-                numeralThousandsGroupStyle: 'thousand',
-                delimiter: ' '
-            });
+            if (window.Cleave) {
+                new Cleave(evalInput, {
+                    numeral: true,
+                    numeralThousandsGroupStyle: 'thousand',
+                    delimiter: ' '
+                });
+            } else {
+                evalInput.addEventListener('input', () => {
+                    evalInput.value = evalInput.value.replace(/\D/g, '');
+                });
+            }
 
             // Real-time total update
             evalInput.addEventListener('input', updateTotalCost);
@@ -2698,7 +2741,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2346'; // Solid background + item visibility
+            const swVersion = '2348'; // Restore gradient + Telegram stub
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
@@ -2772,10 +2815,9 @@
 
         // 4. Smart Memory (Department & Region)
         const deptInput = document.getElementById('department');
-        const regionInput = document.getElementById('region');
 
         // Load defaults if not draft
-        if (!localStorage.getItem('formDraft')) {
+        if (deptInput && regionInput && !localStorage.getItem('formDraft')) {
             const savedDept = localStorage.getItem('default_department');
             const savedRegion = localStorage.getItem('default_region');
             if (savedDept) deptInput.value = savedDept;
@@ -2783,13 +2825,17 @@
         }
 
         // Save on change
-        deptInput.addEventListener('change', (e) => {
-            localStorage.setItem('default_department', e.target.value);
-        });
+        if (deptInput) {
+            deptInput.addEventListener('change', (e) => {
+                localStorage.setItem('default_department', e.target.value);
+            });
+        }
 
-        regionInput.addEventListener('change', (e) => {
-            localStorage.setItem('default_region', e.target.value);
-        });
+        if (regionInput) {
+            regionInput.addEventListener('change', (e) => {
+                localStorage.setItem('default_region', e.target.value);
+            });
+        }
 
         function setUploadProgress(previewContainer, percent) {
             const progress = previewContainer.querySelector('.upload-progress');
@@ -2871,7 +2917,8 @@
 
             // Show loading state
             previewContainer.classList.add('loading');
-            btnText.textContent = "Сжатие...";
+            const compressionAvailable = typeof imageCompression === 'function';
+            btnText.textContent = compressionAvailable ? "Сжатие..." : "Подготовка...";
             status.textContent = "⏳ Обработка фото...";
             status.className = "upload-status";
             delete container.dataset.photoUrl;
@@ -2886,12 +2933,16 @@
                     fileType: 'image/jpeg'
                 };
 
-                console.log(`Original: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+                if (compressionAvailable) {
+                    console.log(`Original: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
+                }
 
-                // Compress
-                const compressedFile = await imageCompression(file, options);
+                // Compress (fallback to original if library is unavailable)
+                const compressedFile = compressionAvailable ? await imageCompression(file, options) : file;
 
-                console.log(`Compressed: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+                if (compressionAvailable) {
+                    console.log(`Compressed: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
+                }
 
                 // Show preview
                 const reader = new FileReader();
