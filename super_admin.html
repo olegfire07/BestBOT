@@ -1960,20 +1960,42 @@
             }
         }
 
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
         async function fFetch(url, opts = {}) {
-            try {
-                const res = await fetch(url, opts);
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                updateConnectionStatus(true);
-                const contentType = res.headers.get('content-type') || '';
-                if (contentType.includes('application/json')) {
-                    return await res.json();
+            const timeoutMs = opts.timeoutMs ?? 15000;
+            const retries = opts.retries ?? 1;
+            const backoffMs = opts.backoffMs ?? 600;
+            const fetchOpts = { ...opts };
+            delete fetchOpts.timeoutMs;
+            delete fetchOpts.retries;
+            delete fetchOpts.backoffMs;
+
+            for (let attempt = 0; attempt <= retries; attempt += 1) {
+                const controller = new AbortController();
+                const timer = setTimeout(() => controller.abort(), timeoutMs);
+                try {
+                    const res = await fetch(url, { ...fetchOpts, signal: controller.signal });
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    updateConnectionStatus(true);
+                    const contentType = res.headers.get('content-type') || '';
+                    if (contentType.includes('application/json')) {
+                        return await res.json();
+                    }
+                    return null;
+                } catch (e) {
+                    if (attempt < retries) {
+                        await sleep(backoffMs * (attempt + 1));
+                        continue;
+                    }
+                    console.error('Fetch error:', e);
+                    updateConnectionStatus(false);
+                    return null;
+                } finally {
+                    clearTimeout(timer);
                 }
-                return null;
-            } catch (e) {
-                console.error('Fetch error:', e);
-                updateConnectionStatus(false);
-                return null;
             }
         }
 
