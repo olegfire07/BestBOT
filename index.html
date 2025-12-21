@@ -172,6 +172,24 @@
             z-index: 2;
         }
 
+        .brand-logo {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 20px;
+            opacity: 0.35;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-logo svg {
+            height: 20px;
+            width: auto;
+            display: block;
+        }
+
         .section {
             background: var(--card-bg);
             -webkit-backdrop-filter: blur(30px);
@@ -199,6 +217,18 @@
 
         .guide-btn {
             margin-top: 24px;
+        }
+
+        .guide-update {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 11px;
+            color: var(--secondary-text);
+        }
+
+        .guide-update a {
+            color: inherit;
+            text-decoration: underline;
         }
 
         .real-time-banner {
@@ -1629,6 +1659,15 @@
             </svg>
         </div>
         <h1 id="mainTitle">Новое заключение</h1>
+        <div class="brand-logo" aria-hidden="true">
+            <svg viewBox="0 0 64 32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Фианит Ломбард">
+                <polygon points="12,2 22,12 12,22 2,12" fill="#E31B23" />
+                <circle cx="12" cy="22" r="8" fill="#E31B23" />
+                <rect x="22" y="11" width="18" height="4" rx="2" fill="#E31B23" />
+                <rect x="22" y="18" width="22" height="4" rx="2" fill="#E31B23" />
+                <rect x="22" y="25" width="22" height="4" rx="2" fill="#E31B23" />
+            </svg>
+        </div>
     </div>
     <!-- Draft Notice -->
     <div class="draft-notice" id="draftNotice">
@@ -1693,7 +1732,7 @@
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
                 </div>
-                <div class="hint-text">Выберите дату (не позже сегодня)</div>
+                <div class="hint-text">Дата не может быть в будущем. Сегодня или раньше.</div>
             </div>
             <div class="form-group">
                 <label>Регион</label>
@@ -1774,10 +1813,10 @@
                 <button type="button" class="quiz-trigger" onclick="openQuiz()">🧠 Проверь себя — мини‑викторина (необязательно)</button>
             </div>
             <div class="footer-author">
-                Разработка: Жуков Олег
+                 Жуков Олег
             </div>
             <div class="footer-version">
-                Enterprise v2.1
+                Версия v2.1 21.12.2025
             </div>
         </div>
     </form>
@@ -1829,9 +1868,6 @@
             <div style="margin-top: 20px; text-align: center;">
                 <button class="btn btn-primary" style="margin-bottom: 10px; width: 100%;"
                     onclick="closeMotivation()">Понятно</button>
-                <a href="javascript:void(0)" onclick="forceUpdate()"
-                    style="color: var(--text-secondary); font-size: 11px; text-decoration: underline;">Обновить версию
-                    (сбросить кэш)</a>
             </div>
         </div>
     </div>
@@ -1901,6 +1937,9 @@
             </div>
 
             <button class="btn btn-primary guide-btn" onclick="closeGuide()">Всё понятно</button>
+            <div class="guide-update">
+                Если интерфейс не обновился — <a href="javascript:void(0)" onclick="forceUpdate()">обновить страницу</a>
+            </div>
         </div>
     </div>
 
@@ -2600,7 +2639,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2340'; // Upload retry + admin fetch timeout
+            const swVersion = '2343'; // Add subtle brand mark
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
