@@ -450,6 +450,10 @@
             .broadcast-grid {
                 grid-template-columns: 1fr;
             }
+
+            .monitoring-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 500px) {
@@ -1245,6 +1249,87 @@
             margin-top: 6px;
         }
 
+        .monitoring-chips {
+            margin-top: 12px;
+        }
+
+        .monitoring-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 18px;
+            margin-top: 18px;
+        }
+
+        .monitor-panel {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .monitor-panel h4 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text-mute);
+            margin-bottom: 12px;
+        }
+
+        .monitor-chart {
+            height: 220px;
+        }
+
+        .region-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .region-item {
+            display: grid;
+            gap: 6px;
+        }
+
+        .region-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-mute);
+            font-weight: 600;
+        }
+
+        .region-name {
+            color: var(--text-main);
+        }
+
+        .region-bar {
+            height: 6px;
+            border-radius: 999px;
+            background: rgba(15, 118, 110, 0.12);
+            overflow: hidden;
+        }
+
+        .region-bar span {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #22c55e);
+            border-radius: 999px;
+        }
+
+        .region-empty {
+            font-size: 12px;
+            color: var(--text-mute);
+        }
+
+        .trend-positive {
+            color: var(--success);
+        }
+
+        .trend-negative {
+            color: var(--error);
+        }
+
         .bulk-actions {
             display: flex;
             gap: 10px;
@@ -1424,6 +1509,52 @@
                     <h3 style="margin-bottom: 24px;">Приток аудитории</h3>
                     <div style="height: 300px;">
                         <canvas id="chart-growth"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-box">
+                <div class="quick-header">
+                    <h3>Мониторинг заключений</h3>
+                    <span class="update-stamp" id="monitor-last-updated">Обновлено: --</span>
+                </div>
+                <div class="chip-group monitoring-chips">
+                    <button class="chip" data-monitor-days="7">7 дней</button>
+                    <button class="chip active" data-monitor-days="30">30 дней</button>
+                    <button class="chip" data-monitor-days="90">90 дней</button>
+                </div>
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-label">Заключений за период</div>
+                        <div class="summary-value" id="monitor-total">0</div>
+                        <div class="summary-meta" id="monitor-period">—</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Среднее / день</div>
+                        <div class="summary-value" id="monitor-avg">0</div>
+                        <div class="summary-meta" id="monitor-avg-meta">—</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Рост к прошлому периоду</div>
+                        <div class="summary-value" id="monitor-growth">—</div>
+                        <div class="summary-meta" id="monitor-growth-meta">—</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Пиковый день</div>
+                        <div class="summary-value" id="monitor-peak">—</div>
+                        <div class="summary-meta" id="monitor-peak-meta">—</div>
+                    </div>
+                </div>
+                <div class="monitoring-grid">
+                    <div class="monitor-panel">
+                        <h4>Динамика по дням</h4>
+                        <div class="monitor-chart">
+                            <canvas id="chart-monitor-daily"></canvas>
+                        </div>
+                    </div>
+                    <div class="monitor-panel">
+                        <h4>Регионы за период</h4>
+                        <div class="region-list" id="monitor-region-list"></div>
                     </div>
                 </div>
             </div>
@@ -1750,6 +1881,7 @@
             archives: [],
             search: { users: '', tickets: '', archives: '' },
             filters: { users: 'all', tickets: 'all', archives: 'all' },
+            monitorDays: 30,
             sort: {
                 users: { key: null, dir: null },
                 tickets: { key: null, dir: null },
@@ -1856,7 +1988,8 @@
                     pane: currentPane,
                     search: state.search,
                     filters: state.filters,
-                    sort: state.sort
+                    sort: state.sort,
+                    monitorDays: state.monitorDays
                 };
                 localStorage.setItem(UI_STATE_KEY, JSON.stringify(payload));
             } catch (e) { }
@@ -1870,6 +2003,7 @@
                 if (saved?.search) state.search = { ...state.search, ...saved.search };
                 if (saved?.filters) state.filters = { ...state.filters, ...saved.filters };
                 if (saved?.sort) state.sort = { ...state.sort, ...saved.sort };
+                if (saved?.monitorDays) state.monitorDays = saved.monitorDays;
                 if (saved?.pane) currentPane = saved.pane;
             } catch (e) { }
 
@@ -1883,6 +2017,7 @@
             setActiveChip('users', state.filters.users);
             setActiveChip('tickets', state.filters.tickets);
             setActiveChip('archives', state.filters.archives);
+            setMonitorActiveChip();
 
             updateSortIndicators('users');
             updateSortIndicators('tickets');
@@ -1893,6 +2028,21 @@
             document.querySelectorAll(`.chip[data-target="${target}"]`).forEach(chip => {
                 chip.classList.toggle('active', chip.dataset.filter === filter);
             });
+        }
+
+        function setMonitorActiveChip() {
+            document.querySelectorAll('[data-monitor-days]').forEach(chip => {
+                const days = Number(chip.dataset.monitorDays);
+                chip.classList.toggle('active', days === Number(state.monitorDays));
+            });
+        }
+
+        function setMonitorDays(days) {
+            const normalized = Number(days) || 30;
+            state.monitorDays = normalized;
+            setMonitorActiveChip();
+            saveUiState();
+            loadMonitoring(normalized);
         }
 
         async function goTab(pane, el) {
@@ -1921,10 +2071,11 @@
             if (!silent) showLoading();
             try {
                 if (pane === 'dashboard') {
-                    const [stats, act, grow] = await Promise.all([
+                    const [stats, act, grow, monitoring] = await Promise.all([
                         fFetch(`${API_BASE}/stats`),
                         fFetch(`${API_BASE}/charts/activity`),
-                        fFetch(`${API_BASE}/charts/growth`)
+                        fFetch(`${API_BASE}/charts/growth`),
+                        fFetch(`${API_BASE}/monitoring?days=${state.monitorDays}`)
                     ]);
                     if (stats) {
                         renderKPI(stats);
@@ -1933,6 +2084,9 @@
                     if (act && grow) {
                         renderCharts(act, grow);
                         markUpdated('dashboard');
+                    }
+                    if (monitoring) {
+                        renderMonitoring(monitoring);
                     }
                     await loadLogs({ updateConsole: false });
                 } else if (pane === 'management') {
@@ -3191,6 +3345,110 @@
             });
         }
 
+        function formatIsoShort(iso) {
+            if (!iso) return '—';
+            const parts = String(iso).split('-');
+            if (parts.length !== 3) return iso;
+            return `${parts[2]}.${parts[1]}`;
+        }
+
+        function renderMonitoring(payload) {
+            if (!payload) return;
+            const total = Number(payload.total) || 0;
+            const avg = payload.avg_per_day ?? 0;
+            const prevTotal = Number(payload.prev_total) || 0;
+            const growth = payload.growth_pct;
+            const period = payload.period || {};
+            const peak = payload.peak_day || null;
+
+            const totalEl = document.getElementById('monitor-total');
+            const periodEl = document.getElementById('monitor-period');
+            const avgEl = document.getElementById('monitor-avg');
+            const avgMetaEl = document.getElementById('monitor-avg-meta');
+            const growthEl = document.getElementById('monitor-growth');
+            const growthMetaEl = document.getElementById('monitor-growth-meta');
+            const peakEl = document.getElementById('monitor-peak');
+            const peakMetaEl = document.getElementById('monitor-peak-meta');
+
+            if (totalEl) totalEl.innerText = total.toLocaleString('ru-RU');
+            if (periodEl) {
+                periodEl.innerText = period.start && period.end
+                    ? `${formatIsoShort(period.start)} — ${formatIsoShort(period.end)}`
+                    : '—';
+            }
+            if (avgEl) avgEl.innerText = Number(avg).toLocaleString('ru-RU');
+            if (avgMetaEl) avgMetaEl.innerText = `за ${payload.days || state.monitorDays} дн.`;
+
+            if (growthEl) {
+                growthEl.classList.remove('trend-positive', 'trend-negative');
+                if (typeof growth === 'number') {
+                    const sign = growth > 0 ? '+' : '';
+                    growthEl.innerText = `${sign}${growth}%`;
+                    growthEl.classList.add(growth >= 0 ? 'trend-positive' : 'trend-negative');
+                } else {
+                    growthEl.innerText = '—';
+                }
+            }
+            if (growthMetaEl) {
+                growthMetaEl.innerText = prevTotal ? `пред. период: ${prevTotal}` : 'нет базы сравнения';
+            }
+
+            if (peakEl) peakEl.innerText = peak?.count ? String(peak.count) : '—';
+            if (peakMetaEl) peakMetaEl.innerText = peak?.day ? formatIsoShort(peak.day) : '—';
+
+            const daily = Array.isArray(payload.daily) ? payload.daily : [];
+            if (charts.monitor) charts.monitor.destroy();
+            charts.monitor = new Chart(document.getElementById('chart-monitor-daily'), {
+                type: 'line',
+                data: {
+                    labels: daily.map(d => formatIsoShort(d.day)),
+                    datasets: [{
+                        data: daily.map(d => d.count),
+                        borderColor: '#0f766e',
+                        backgroundColor: 'rgba(15, 118, 110, 0.12)',
+                        fill: true,
+                        tension: 0.35,
+                        pointRadius: 3
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+
+            const regionList = document.getElementById('monitor-region-list');
+            if (regionList) {
+                const regions = Array.isArray(payload.regions) ? payload.regions : [];
+                if (!regions.length) {
+                    regionList.innerHTML = '<div class="region-empty">Нет данных за период</div>';
+                } else {
+                    const max = Math.max(...regions.map(r => r.count || 0), 1);
+                    const limit = 8;
+                    const items = regions.slice(0, limit).map(r => {
+                        const pct = Math.round((Number(r.count || 0) / max) * 100);
+                        return `
+                            <div class="region-item">
+                                <div class="region-meta">
+                                    <span class="region-name">${escapeHtml(r.region || '—')}</span>
+                                    <span>${Number(r.count || 0)}</span>
+                                </div>
+                                <div class="region-bar"><span style="width: ${pct}%"></span></div>
+                            </div>
+                        `;
+                    }).join('');
+                    const tail = regions.length > limit
+                        ? `<div class="region-empty">+${regions.length - limit} регионов</div>`
+                        : '';
+                    regionList.innerHTML = items + tail;
+                }
+            }
+
+            markUpdated('monitor');
+        }
+
+        async function loadMonitoring(days = state.monitorDays) {
+            const data = await fFetch(`${API_BASE}/monitoring?days=${days}`);
+            if (data) renderMonitoring(data);
+        }
+
         function applyHealth(h) {
             if (!h) return;
             document.getElementById('val-db-size').innerText = h.db_size ?? '--';
@@ -3537,6 +3795,11 @@
 
                 const chip = e.target.closest('.chip');
                 if (chip) {
+                    const monitorDays = chip.dataset.monitorDays;
+                    if (monitorDays) {
+                        setMonitorDays(monitorDays);
+                        return;
+                    }
                     const target = chip.dataset.target;
                     const filter = chip.dataset.filter;
                     if (target && filter) setFilter(target, filter);
