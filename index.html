@@ -94,10 +94,13 @@
             /* Fix sticky footer overlap */
             min-height: 100%;
             color: var(--text-color);
-            background-color: #f4f5f7;
-            background-image: linear-gradient(135deg, #ffe7e0 0%, #e6f2ff 38%, #e6fff3 68%, #fff0e6 100%);
-            background-size: 300% 300%;
-            animation: gradient-animation 18s ease infinite;
+            background-color: #fdfdfd;
+            background-image:
+                radial-gradient(1200px circle at 0% 100%, rgba(255, 86, 86, 0.35), transparent 60%),
+                radial-gradient(900px circle at 100% 0%, rgba(88, 220, 230, 0.45), transparent 55%),
+                radial-gradient(800px circle at 70% 10%, rgba(180, 240, 255, 0.35), transparent 60%);
+            background-size: 120% 120%;
+            animation: gradient-animation 20s ease-in-out infinite;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -118,8 +121,11 @@
         /* Light Theme Override for Mesh */
         @media (prefers-color-scheme: light) {
             body {
-                background-color: #f4f5f7;
-                background-image: linear-gradient(135deg, #ffe7e0 0%, #e6f2ff 38%, #e6fff3 68%, #fff0e6 100%);
+                background-color: #fdfdfd;
+                background-image:
+                    radial-gradient(1200px circle at 0% 100%, rgba(255, 86, 86, 0.35), transparent 60%),
+                    radial-gradient(900px circle at 100% 0%, rgba(88, 220, 230, 0.45), transparent 55%),
+                    radial-gradient(800px circle at 70% 10%, rgba(180, 240, 255, 0.35), transparent 60%);
             }
         }
 
@@ -2741,7 +2747,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2348'; // Restore gradient + Telegram stub
+            const swVersion = '2349'; // Logo palette gradient
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
