@@ -1399,6 +1399,11 @@
             text-align: center;
         }
 
+        .photo-preview-container.photo-invalid {
+            border-color: var(--danger-color);
+            box-shadow: 0 0 0 2px rgba(255, 59, 48, 0.12);
+        }
+
         #mainForm::after {
             content: "";
             display: block;
@@ -2570,7 +2575,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2336'; // Fullscreen layout fixes
+            const swVersion = '2338'; // Auto-scroll validation
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
@@ -2736,6 +2741,10 @@
             const previewContainer = container.querySelector('.photo-preview-container');
             const btnText = container.querySelector('.btn-text');
             const status = container.querySelector('.upload-status');
+
+            previewContainer.classList.remove('photo-invalid');
+            previewContainer.style.borderColor = '';
+            previewContainer.style.animation = 'none';
 
             // Show loading state
             previewContainer.classList.add('loading');
@@ -3053,6 +3062,7 @@
                 if (desc && !desc.value.trim()) {
                     isValid = false;
                     desc.classList.add('invalid');
+                    card.classList.remove('collapsed');
                     if (!firstInvalidField) firstInvalidField = desc;
                     desc.addEventListener('input', () => desc.classList.remove('invalid'), { once: true });
                 }
@@ -3060,6 +3070,7 @@
                 if (evalInput && !evalInput.value.trim()) {
                     isValid = false;
                     evalInput.classList.add('invalid');
+                    card.classList.remove('collapsed');
                     if (!firstInvalidField) firstInvalidField = evalInput;
                     evalInput.addEventListener('input', () => evalInput.classList.remove('invalid'), { once: true });
                 }
@@ -3098,24 +3109,34 @@
 
             // Check photos
             let allPhotosSelected = true;
+            let firstMissingPhoto = null;
             document.querySelectorAll('.item-card').forEach(div => {
                 const input = div.querySelector('.file-input');
                 if (!input.files || !input.files[0]) {
                     allPhotosSelected = false;
                     const container = div.querySelector('.photo-preview-container');
+                    div.classList.remove('collapsed');
+                    container.classList.add('photo-invalid');
                     container.style.borderColor = 'var(--danger-color)';
                     container.style.animation = 'shake 0.4s cubic-bezier(.36, .07, .19, .97) both';
+                    if (!firstMissingPhoto) {
+                        firstMissingPhoto = container;
+                    }
                     haptic('error');
 
                     // Remove error on click/drop
                     input.addEventListener('change', () => {
                         container.style.borderColor = 'rgba(0, 0, 0, 0.1)';
                         container.style.animation = 'none';
+                        container.classList.remove('photo-invalid');
                     }, { once: true });
                 }
             });
 
             if (!allPhotosSelected) {
+                if (firstMissingPhoto) {
+                    firstMissingPhoto.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
                 tg.showAlert("Пожалуйста, выберите фото для всех предметов!");
                 previewOpen = false;
                 return;
