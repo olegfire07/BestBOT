@@ -677,6 +677,15 @@
             font-size: 14px;
         }
 
+        .quiz-fact {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 14px;
+            background: rgba(255, 149, 0, 0.12);
+            font-size: 13px;
+            color: #6b4a00;
+        }
+
         .btn-remove {
             color: var(--danger-color);
             background: rgba(255, 59, 48, 0.1);
@@ -2038,6 +2047,18 @@
         let quizState = null;
         const QUIZ_SIZE = 5;
         const QUIZ_VERSION = '2328';
+        const QUIZ_FACTS = [
+            'Самые ценные предметы обычно сопровождаются четкой историей происхождения.',
+            'Бережная чистка ценится выше агрессивной полировки.',
+            'Наличие клейм и маркировок повышает доверие к предмету.',
+            'Даже небольшие повреждения стоит фиксировать в описании.',
+            'Фотография в хорошем свете экономит время на проверке.',
+            'Редкость модели зачастую важнее возраста.',
+            'Комплектность (коробка, документы) добавляет ценность.',
+            'Следы реставрации нужно указывать отдельно.',
+            'Качественное описание помогает быстрее согласовать оценку.',
+            'Одинаковый формат описания упрощает работу всей команды.'
+        ];
 
         async function loadQuizQuestions() {
             if (quizQuestions.length > 0) return;
@@ -2068,7 +2089,7 @@
             const modal = document.getElementById('quizModal');
             const body = document.getElementById('quizBody');
             modal.style.display = 'flex';
-            body.innerHTML = `<div class="quiz-progress">Загрузка вопросов...</div>`;
+            body.innerHTML = `<div class="quiz-progress">⏱ 1 минута • Загрузка вопросов...</div>`;
 
             try {
                 await loadQuizQuestions();
@@ -2113,7 +2134,7 @@
             )).join('');
 
             body.innerHTML = `
-                <div class="quiz-progress">Вопрос ${quizState.current + 1} из ${quizState.questions.length}</div>
+                <div class="quiz-progress">⏱ 1 минута • Вопрос ${quizState.current + 1} из ${quizState.questions.length}</div>
                 <div class="quiz-question">${escapeHtml(q.question)}</div>
                 <div class="quiz-options">${optionsHtml}</div>
                 <div class="quiz-footer" id="quizNext" style="display:none;">
@@ -2167,11 +2188,15 @@
 
         function showQuizResult() {
             const body = document.getElementById('quizBody');
+            const fact = QUIZ_FACTS.length
+                ? QUIZ_FACTS[Math.floor(Math.random() * QUIZ_FACTS.length)]
+                : '';
             body.innerHTML = `
                 <div class="quiz-result">
                     ✅ Верно: <b>${quizState.correct}</b><br>
                     ❌ Неверно: <b>${quizState.wrong}</b>
                 </div>
+                ${fact ? `<div class="quiz-fact">💡 ${escapeHtml(fact)}</div>` : ''}
                 <div class="quiz-footer">
                     <button type="button" class="btn btn-secondary" onclick="startQuiz()">Ещё раз</button>
                     <button type="button" class="btn btn-primary" onclick="closeQuiz()">Закрыть</button>
@@ -2575,7 +2600,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2338'; // Auto-scroll validation
+            const swVersion = '2339'; // Quiz motivation
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
