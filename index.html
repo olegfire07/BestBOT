@@ -1043,6 +1043,57 @@
             box-sizing: border-box;
         }
 
+        .lightbox-modal {
+            background-color: rgba(0, 0, 0, 0.85);
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+        }
+
+        .lightbox-content {
+            background: transparent;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            max-width: none;
+            height: 100%;
+            max-height: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        #lightboxImage {
+            max-width: 94vw;
+            max-height: 86vh;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+            background: #fff;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: calc(14px + env(safe-area-inset-top));
+            right: calc(14px + env(safe-area-inset-right));
+            width: 36px;
+            height: 36px;
+            border-radius: 999px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 22px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .lightbox-close:active {
+            transform: scale(0.96);
+        }
+
         #previewModal {
             opacity: 0;
             visibility: hidden;
@@ -1833,6 +1884,14 @@
                 <button class="btn btn-primary btn-no-margin" onclick="submitForm()"
                     id="finalSubmitBtn">Отправить</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightboxModal" class="modal lightbox-modal" onclick="closeLightbox()">
+        <div class="modal-content lightbox-content" onclick="event.stopPropagation()">
+            <button type="button" class="lightbox-close" onclick="closeLightbox()">×</button>
+            <img id="lightboxImage" alt="Фото">
         </div>
     </div>
 
@@ -2747,7 +2806,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2349'; // Logo palette gradient
+            const swVersion = '2350'; // Add lightbox modal
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
