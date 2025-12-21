@@ -258,6 +258,42 @@
             backdrop-filter: blur(10px);
         }
 
+        .status-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            background: rgba(15, 23, 42, 0.08);
+            color: var(--text-mute);
+        }
+
+        .status-tag.success {
+            background: rgba(34, 197, 94, 0.12);
+            color: #15803d;
+        }
+
+        .status-tag.danger {
+            background: rgba(239, 68, 68, 0.12);
+            color: #b91c1c;
+        }
+
+        .user-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .user-meta {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
         .pulse {
             width: 10px;
             height: 10px;
@@ -409,6 +445,10 @@
 
             .theme-grid {
                 grid-template-columns: 1fr 1fr;
+            }
+
+            .broadcast-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -866,6 +906,40 @@
             display: flex;
             gap: 10px;
             margin-top: 12px;
+        }
+
+        .broadcast-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .broadcast-field label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-mute);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .broadcast-field textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .broadcast-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 14px;
+        }
+
+        .broadcast-hint {
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--text-mute);
         }
 
         .quick-actions {
@@ -1388,6 +1462,8 @@
                 </div>
                 <div class="chip-group" id="user-filters">
                     <button class="chip active" data-target="users" data-filter="all">Все</button>
+                    <button class="chip" data-target="users" data-filter="active">Активные</button>
+                    <button class="chip" data-target="users" data-filter="blocked">Заблокированные</button>
                     <button class="chip" data-target="users" data-filter="top">Топ 10</button>
                     <button class="chip" data-target="users" data-filter="zero">0 баллов</button>
                 </div>
@@ -1418,6 +1494,31 @@
                     </div>
                     <div class="table-meta" id="users-count">0 записей</div>
                 </div>
+            </div>
+            <div class="content-box">
+                <div class="quick-header">
+                    <h3>Рассылка пользователям</h3>
+                    <span class="update-stamp" id="broadcast-last-sent">Готово к отправке</span>
+                </div>
+                <div class="broadcast-grid">
+                    <div class="broadcast-field">
+                        <label for="broadcast-message">Сообщение</label>
+                        <textarea class="input-pro" id="broadcast-message"
+                            placeholder="Введите текст рассылки..."></textarea>
+                    </div>
+                    <div class="broadcast-field">
+                        <label for="broadcast-region">Регион</label>
+                        <select class="input-pro" id="broadcast-region">
+                            <option value="">Все регионы</option>
+                        </select>
+                        <div class="broadcast-hint">Отправка идет по последнему региону из заключения.</div>
+                    </div>
+                </div>
+                <div class="broadcast-actions">
+                    <button class="btn btn-outline" data-action="clear-broadcast">Очистить</button>
+                    <button class="btn btn-primary" data-action="send-broadcast">Отправить</button>
+                </div>
+                <div class="broadcast-hint">Заблокированные пользователи автоматически исключаются.</div>
             </div>
         </div>
 
@@ -1841,6 +1942,7 @@
                     ]);
                     if (Array.isArray(tickets)) state.tickets = tickets;
                     if (users) renderUsers(users);
+                    await loadBroadcastRegions();
                 } else if (pane === 'tickets') {
                     const t = await fFetch(`${API_BASE}/tickets`);
                     if (t) renderTickets(t);
@@ -1985,7 +2087,7 @@
             const query = (state.search.users || '').toLowerCase().trim();
             if (query) {
                 list = list.filter(u => {
-                    const hay = `${u.user_id} ${u.first_name || ''} ${u.rank || ''} ${u.points || 0}`.toLowerCase();
+                    const hay = `${u.user_id} ${u.first_name || ''} ${u.last_name || ''} ${u.username || ''} ${u.rank || ''} ${u.points || 0} ${u.last_region || ''}`.toLowerCase();
                     return hay.includes(query);
                 });
             }
@@ -1993,6 +2095,14 @@
             const filter = state.filters.users;
             if (filter === 'zero') {
                 list = list.filter(u => Number(u.points) === 0);
+            }
+
+            if (filter === 'blocked') {
+                list = list.filter(u => Number(u.is_blocked) === 1);
+            }
+
+            if (filter === 'active') {
+                list = list.filter(u => !Number(u.is_blocked));
             }
 
             if (filter === 'top') {
@@ -2255,7 +2365,8 @@
             }
             body.innerHTML = list.map(u => {
                 const userId = u.user_id;
-                const name = escapeHtml(u.first_name || 'Сотрудник');
+                const fullName = [u.first_name, u.last_name].filter(Boolean).join(' ');
+                const name = escapeHtml(fullName || (u.username ? `@${u.username}` : 'Сотрудник'));
                 const rank = escapeHtml(u.rank || 'Новичок');
                 const points = Number(u.points) || 0;
                 const totalTickets = Number(u.total_tickets) || 0;
@@ -2264,6 +2375,16 @@
                 const weeklyTickets = Number(u.weekly_tickets) || 0;
                 const weeklyPoints = Number(u.weekly_points) || 0;
                 const lastUpdated = u.last_updated ? formatDateTime(u.last_updated) : '—';
+                const lastRegion = escapeHtml(u.last_region || '—');
+                const lastActive = u.last_active ? formatDateTime(u.last_active) : '—';
+                const isBlocked = Number(u.is_blocked) === 1;
+                const blockedAt = u.blocked_at ? formatDateTime(u.blocked_at) : '—';
+                const blockedReason = escapeHtml(u.blocked_reason || '—');
+                const statusLabel = isBlocked ? '⛔ Заблокирован' : '✅ Активен';
+                const statusTag = isBlocked ? '<span class="status-tag danger">Блок</span>' : '';
+                const nameCell = statusTag
+                    ? `<div class="user-cell"><div><b>${name}</b></div><div class="user-meta">${statusTag}</div></div>`
+                    : `<div class="user-cell"><div><b>${name}</b></div></div>`;
                 const isSelected = selected.users.has(String(userId));
                 return `
                     <tr class="row-main" data-type="users" data-id="${userId}" data-row-id="users-${userId}">
@@ -2272,7 +2393,7 @@
                                 ${isSelected ? 'checked' : ''}>
                         </td>
                         <td><code>${userId}</code></td>
-                        <td><b>${name}</b></td>
+                        <td>${nameCell}</td>
                         <td><span class="status-pill">${rank}</span></td>
                         <td>${points} баллов</td>
                         <td align="right">
@@ -2287,6 +2408,14 @@
                                     <div>
                                         <div class="detail-label">ID</div>
                                         <div class="detail-value">${userId}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Регион</div>
+                                        <div class="detail-value">${lastRegion}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Статус</div>
+                                        <div class="detail-value">${statusLabel}</div>
                                     </div>
                                     <div>
                                         <div class="detail-label">Ранг</div>
@@ -2313,13 +2442,28 @@
                                         <div class="detail-value">${formatNumber(weeklyTickets)} / ${formatNumber(weeklyPoints)}</div>
                                     </div>
                                     <div>
+                                        <div class="detail-label">Активен</div>
+                                        <div class="detail-value">${lastActive}</div>
+                                    </div>
+                                    <div>
                                         <div class="detail-label">Обновлено</div>
                                         <div class="detail-value">${lastUpdated}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Блокировка</div>
+                                        <div class="detail-value">${blockedAt}</div>
+                                    </div>
+                                    <div>
+                                        <div class="detail-label">Причина</div>
+                                        <div class="detail-value">${blockedReason}</div>
                                     </div>
                                 </div>
                                 <div class="detail-actions">
                                     <button class="btn btn-outline btn-icon" data-action="edit-user" data-user-id="${userId}">✏️</button>
                                     <button class="btn btn-outline" data-action="copy-user" data-user-id="${userId}">📋 Скопировать ID</button>
+                                    <button class="${isBlocked ? 'btn btn-outline' : 'btn btn-danger'}" data-action="toggle-block" data-user-id="${userId}" data-blocked="${isBlocked ? '1' : '0'}">
+                                        ${isBlocked ? '🔓 Разблокировать' : '⛔ Заблокировать'}
+                                    </button>
                                 </div>
                                 <div class="detail-section">
                                     <div class="detail-section-title">Последние заключения</div>
@@ -2466,6 +2610,18 @@
             markUpdated('access');
         }
 
+        async function loadBroadcastRegions() {
+            const select = document.getElementById('broadcast-region');
+            if (!select) return;
+            const payload = await fFetch(`${API_BASE}/regions`);
+            const regions = payload?.regions || [];
+            if (!regions.length) return;
+            const current = select.value || '';
+            select.innerHTML = '<option value="">Все регионы</option>' +
+                regions.map(r => `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join('');
+            select.value = current;
+        }
+
         function renderAdminsList(payload) {
             const list = payload?.admins || [];
             accessState.admins = list;
@@ -2517,6 +2673,8 @@
                 if (user.username) metaParts.push(`@${user.username}`);
                 metaParts.push(`ID ${user.user_id}`);
                 if (user.last_active) metaParts.push(`Активен: ${formatDateTime(user.last_active)}`);
+                if (user.last_region) metaParts.push(`Регион: ${user.last_region}`);
+                if (Number(user.is_blocked) === 1) metaParts.push('⛔ Заблокирован');
                 const meta = metaParts.join(' • ');
                 return `
                     <div class="access-item">
@@ -2750,6 +2908,69 @@
                 refresh('management', { silent: true });
             } else {
                 notify('Не удалось удалить пользователя', 'error');
+            }
+        }
+
+        async function toggleBlock(userId, isBlocked) {
+            const actionText = isBlocked ? 'Разблокировать' : 'Заблокировать';
+            if (!confirm(`${actionText} пользователя ${userId}?`)) return;
+            const reason = !isBlocked ? (prompt('Причина блокировки (необязательно):', '') || '').trim() : '';
+            showLoading();
+            try {
+                const res = await fFetch(`${API_BASE}/user/block`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, blocked: !isBlocked, reason })
+                });
+                if (res?.status === 'ok') {
+                    notify(isBlocked ? 'Пользователь разблокирован' : 'Пользователь заблокирован', 'success');
+                    await loadAccessLists();
+                    refresh('management', { silent: true });
+                } else {
+                    notify('Не удалось обновить блокировку', 'error');
+                }
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function clearBroadcast() {
+            const message = document.getElementById('broadcast-message');
+            if (message) message.value = '';
+        }
+
+        async function sendBroadcast() {
+            const messageEl = document.getElementById('broadcast-message');
+            if (!messageEl) return;
+            const message = messageEl.value.trim();
+            if (!message) {
+                notify('Введите текст рассылки', 'error');
+                return;
+            }
+            const regionEl = document.getElementById('broadcast-region');
+            const region = regionEl ? regionEl.value : '';
+            const target = region ? `регион: ${region}` : 'все регионы';
+            if (!confirm(`Отправить рассылку (${target})?`)) return;
+            showLoading();
+            try {
+                const res = await fFetch(`${API_BASE}/broadcast`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, region })
+                });
+                if (res?.status === 'ok') {
+                    const time = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+                    const stamp = document.getElementById('broadcast-last-sent');
+                    if (stamp) {
+                        stamp.textContent = `Отправлено: ${time} • ${res.sent || 0} ok / ${res.failed || 0} err`;
+                    }
+                    notify(`Рассылка отправлена: ${res.sent || 0}`, 'success');
+                    messageEl.value = '';
+                } else {
+                    notify('Ошибка рассылки', 'error');
+                }
+            } finally {
+                hideLoading();
             }
         }
 
@@ -3039,7 +3260,7 @@
 
             if (id === 'user-body') {
                 const view = buildUsersView({ paginate: false });
-                headers = ['user_id', 'name', 'rank', 'points', 'total_tickets', 'total_value', 'highest_single_value', 'weekly_tickets', 'weekly_points'];
+                headers = ['user_id', 'name', 'rank', 'points', 'total_tickets', 'total_value', 'highest_single_value', 'weekly_tickets', 'weekly_points', 'last_region', 'is_blocked', 'last_active', 'blocked_at', 'blocked_reason'];
                 rows = view.list.map(u => [
                     u.user_id,
                     u.first_name || '',
@@ -3049,7 +3270,12 @@
                     u.total_value || 0,
                     u.highest_single_value || 0,
                     u.weekly_tickets || 0,
-                    u.weekly_points || 0
+                    u.weekly_points || 0,
+                    u.last_region || '',
+                    u.is_blocked ? 1 : 0,
+                    u.last_active || '',
+                    u.blocked_at || '',
+                    u.blocked_reason || ''
                 ]);
             } else if (id === 'ticket-body') {
                 const view = buildTicketsView({ paginate: false });
@@ -3232,11 +3458,14 @@
             if (action === 'remove-admin') return removeAdmin(el.dataset.adminId);
             if (action === 'add-user') return addUser();
             if (action === 'remove-user') return removeUser(el.dataset.userId);
+            if (action === 'toggle-block') return toggleBlock(el.dataset.userId, el.dataset.blocked === '1');
             if (action === 'edit-user') return openInlineEdit('users', el.dataset.userId);
             if (action === 'edit-ticket') return openInlineEdit('tickets', el.dataset.ticket);
             if (action === 'save-user') return saveUserEdit(el.dataset.userId, el);
             if (action === 'save-ticket') return saveTicketEdit(el.dataset.ticket, el);
             if (action === 'cancel-edit') return closeInlineEdit(el.dataset.type, el.dataset.id);
+            if (action === 'clear-broadcast') return clearBroadcast();
+            if (action === 'send-broadcast') return sendBroadcast();
             if (action === 'copy-user') {
                 return copyText(el.dataset.userId).then(() => notify('ID скопирован', 'success'));
             }

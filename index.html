@@ -75,13 +75,18 @@
             --radius-md: 16px;
         }
 
+        html,
+        body {
+            height: 100%;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
             padding: 20px;
             padding-bottom: 100px;
             /* Fix sticky footer overlap */
-            min-height: 100vh;
+            min-height: 100%;
             color: var(--text-color);
             background-color: #f0f2f5;
             /* Premium Soft Mesh Gradient */
@@ -1828,6 +1833,71 @@
     <script>
         const tg = window.Telegram.WebApp;
 
+        let audioCtx = null;
+        let audioUnlocked = false;
+        let fullScreenRequested = false;
+
+        function getAudioContext() {
+            const Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return null;
+            if (!audioCtx) audioCtx = new Ctx();
+            return audioCtx;
+        }
+
+        function unlockAudio() {
+            const ctx = getAudioContext();
+            if (!ctx || audioUnlocked) return;
+            const resume = ctx.state === 'suspended' ? ctx.resume() : Promise.resolve();
+            resume.then(() => {
+                const buffer = ctx.createBuffer(1, 1, 22050);
+                const source = ctx.createBufferSource();
+                source.buffer = buffer;
+                source.connect(ctx.destination);
+                source.start(0);
+                audioUnlocked = true;
+            }).catch(() => { });
+        }
+
+        function playTone(kind = 'success') {
+            const ctx = getAudioContext();
+            if (!ctx) return;
+            if (ctx.state === 'suspended') {
+                ctx.resume().catch(() => { });
+            }
+
+            let freq = 660;
+            let duration = 0.08;
+            if (kind === 'error') {
+                freq = 220;
+                duration = 0.12;
+            } else if (kind === 'tap') {
+                freq = 520;
+                duration = 0.05;
+            }
+
+            const now = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now);
+            gain.gain.setValueAtTime(0.0001, now);
+            gain.gain.exponentialRampToValueAtTime(0.12, now + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now);
+            osc.stop(now + duration + 0.02);
+        }
+
+        function requestFullScreen(force = false) {
+            if (fullScreenRequested && !force) return;
+            fullScreenRequested = true;
+            try {
+                tg.expand();
+                if (tg.requestFullscreen) tg.requestFullscreen();
+            } catch (e) { }
+        }
+
         // --- CONFIGURATION ---
         // WARNING: These are default values for local/demo use.
         // For production, consider injecting these via environment variables or a build step.
@@ -1849,6 +1919,14 @@
 
         // Initialize
         tg.expand();
+        if (tg.ready) tg.ready();
+        requestFullScreen();
+        const firstGesture = () => {
+            requestFullScreen(true);
+            unlockAudio();
+        };
+        document.addEventListener('click', firstGesture, { once: true });
+        document.addEventListener('touchstart', firstGesture, { once: true });
         // Assuming restoreDraft() exists elsewhere or will be added.
         // restoreDraft();
 
@@ -2421,7 +2499,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2332'; // Compact preview summary
+            const swVersion = '2333'; // Feedback + fullscreen
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
@@ -2663,7 +2741,7 @@
                 btnText.textContent = "✓ Загружено";
                 status.textContent = "✅ Готово к отправке";
                 status.className = "upload-status success";
-                haptic('success');
+                haptic('success', { sound: true, vibrate: true });
 
             } catch (error) {
                 console.error('Processing failed:', error);
@@ -2828,28 +2906,38 @@
         updateMainButton();
 
         // Haptic Feedback Helper
-        function haptic(type = 'light') {
-            if (!tg.HapticFeedback) return;
+        function haptic(type = 'light', opts = {}) {
+            const sound = opts && opts.sound === true;
+            const vibrate = opts && opts.vibrate === true;
 
-            switch (type) {
-                case 'light':
-                case 'medium':
-                case 'heavy':
-                case 'rigid':
-                case 'soft':
-                    tg.HapticFeedback.impactOccurred(type);
-                    break;
-                case 'error':
-                case 'success':
-                case 'warning':
-                    tg.HapticFeedback.notificationOccurred(type);
-                    break;
-                case 'selection':
-                    tg.HapticFeedback.selectionChanged();
-                    break;
-                default:
-                    // Fallback for unknown types
-                    tg.HapticFeedback.impactOccurred('light');
+            if (tg.HapticFeedback) {
+                switch (type) {
+                    case 'light':
+                    case 'medium':
+                    case 'heavy':
+                    case 'rigid':
+                    case 'soft':
+                        tg.HapticFeedback.impactOccurred(type);
+                        break;
+                    case 'error':
+                    case 'success':
+                    case 'warning':
+                        tg.HapticFeedback.notificationOccurred(type);
+                        break;
+                    case 'selection':
+                        tg.HapticFeedback.selectionChanged();
+                        break;
+                    default:
+                        tg.HapticFeedback.impactOccurred('light');
+                }
+            } else if (vibrate && navigator.vibrate) {
+                const pattern = type === 'error' ? [30, 40, 30] : 20;
+                navigator.vibrate(pattern);
+            }
+
+            if (sound) {
+                const soundKind = type === 'error' ? 'error' : (type === 'success' ? 'success' : 'tap');
+                playTone(soundKind);
             }
         }
 
@@ -3066,6 +3154,7 @@
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 mainButton.setText("ОТПРАВИТЬ");
             }
+            haptic('success', { sound: true, vibrate: true });
         }
 
         function closePreview() {
@@ -3232,7 +3321,7 @@
                     console.log('Detected Telegram WebApp - sending via tg.sendData()');
                     btn.textContent = "Отправка в Telegram...";
                     tg.sendData(JSON.stringify(data));
-                    haptic('success');
+                    haptic('success', { sound: true, vibrate: true });
 
                     // ✅ UX: Clear ticket for next form (always unique)
                     document.getElementById('ticket').value = '';
@@ -3286,6 +3375,7 @@
                     document.getElementById('ticket').value = '';
 
                     fireConfetti(); // 🎉 Celebration!
+                    haptic('success', { sound: true, vibrate: true });
 
                     if (tg.showPopup) {
                         tg.showPopup({ message: "✅ Документ готов и скачан!" });
