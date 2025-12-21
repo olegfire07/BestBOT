@@ -177,17 +177,19 @@
             right: 0;
             top: 50%;
             transform: translateY(-50%);
-            height: 20px;
-            opacity: 0.35;
+            opacity: 0.45;
             pointer-events: none;
             display: flex;
             align-items: center;
         }
 
-        .brand-logo svg {
+        .brand-logo img {
             height: 20px;
             width: auto;
+            max-width: 120px;
+            border-radius: 6px;
             display: block;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
 
         .section {
@@ -1660,13 +1662,7 @@
         </div>
         <h1 id="mainTitle">Новое заключение</h1>
         <div class="brand-logo" aria-hidden="true">
-            <svg viewBox="0 0 64 32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Фианит Ломбард">
-                <polygon points="12,2 22,12 12,22 2,12" fill="#E31B23" />
-                <circle cx="12" cy="22" r="8" fill="#E31B23" />
-                <rect x="22" y="11" width="18" height="4" rx="2" fill="#E31B23" />
-                <rect x="22" y="18" width="22" height="4" rx="2" fill="#E31B23" />
-                <rect x="22" y="25" width="22" height="4" rx="2" fill="#E31B23" />
-            </svg>
+            <img src="fianit-logo.jpg" alt="">
         </div>
     </div>
     <!-- Draft Notice -->
@@ -2639,7 +2635,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2343'; // Add subtle brand mark
+            const swVersion = '2344'; // Add image logo
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)

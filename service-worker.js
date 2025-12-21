@@ -1,12 +1,13 @@
 // Service Worker for offline support
-const VERSION = '2343';
+const VERSION = '2344';
 const CACHE_NAME = `sklad-bot-${VERSION}`;
 const swPath = self.location.pathname.replace(/service-worker\.js.*$/, '');
 const BASE_PATH = swPath.endsWith('/') ? swPath : `${swPath}/`;
 const urlsToCache = [
     BASE_PATH,
     `${BASE_PATH}index.html`,
-    `${BASE_PATH}quiz_questions.json`
+    `${BASE_PATH}quiz_questions.json`,
+    `${BASE_PATH}fianit-logo.jpg`
 ];
 
 // Install event - cache resources
