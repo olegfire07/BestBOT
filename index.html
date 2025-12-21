@@ -152,6 +152,7 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 16px;
+            padding-top: 6px;
         }
 
         .motivation-trigger {
@@ -168,6 +169,7 @@
             justify-content: center;
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
             cursor: pointer;
+            z-index: 2;
         }
 
         .section {
@@ -1397,6 +1399,12 @@
             text-align: center;
         }
 
+        #mainForm::after {
+            content: "";
+            display: block;
+            height: calc(80px + env(safe-area-inset-bottom));
+        }
+
         /* Premium Preview Modal Styles - Compact Version */
         .preview-card {
             background: #ffffff;
@@ -2049,6 +2057,9 @@
         }
 
         async function openQuiz() {
+            if (quizOpen || quizLoading) return;
+            quizOpen = true;
+            quizLoading = true;
             const modal = document.getElementById('quizModal');
             const body = document.getElementById('quizBody');
             modal.style.display = 'flex';
@@ -2064,12 +2075,16 @@
                         <button type="button" class="btn btn-secondary" onclick="closeQuiz()">Закрыть</button>
                     </div>
                 `;
+            } finally {
+                quizLoading = false;
             }
         }
 
         function closeQuiz() {
             const modal = document.getElementById('quizModal');
             modal.style.display = 'none';
+            quizOpen = false;
+            quizLoading = false;
         }
 
         function startQuiz() {
@@ -2191,6 +2206,10 @@
         let itemCount = 0;
         let appState = 'editing'; // State: 'editing' or 'preview'
         let autosaveTimeout; // For debounced autosave
+        let previewOpen = false;
+        let submitInProgress = false;
+        let quizOpen = false;
+        let quizLoading = false;
 
         // Swipe gesture support
         let touchStartX = 0;
@@ -2551,7 +2570,7 @@
         // SERVICE WORKER & OFFLINE MODE
         // ============================================
         if ('serviceWorker' in navigator) {
-            const swVersion = '2335'; // Fullscreen layout fixes
+            const swVersion = '2336'; // Fullscreen layout fixes
             const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
             const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
             navigator.serviceWorker.register(swUrl)
@@ -3068,9 +3087,12 @@
         }
 
         function showPreview() {
+            if (previewOpen || appState === 'preview') return;
+            previewOpen = true;
             haptic('medium');
             // Centralized validation
             if (!validateForm()) {
+                previewOpen = false;
                 return;
             }
 
@@ -3095,6 +3117,7 @@
 
             if (!allPhotosSelected) {
                 tg.showAlert("Пожалуйста, выберите фото для всех предметов!");
+                previewOpen = false;
                 return;
             }
 
@@ -3221,6 +3244,7 @@
 
             // Revert state to editing
             appState = 'editing';
+            previewOpen = false;
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 mainButton.setText("ПРОВЕРИТЬ И ОТПРАВИТЬ");
             }
@@ -3269,6 +3293,8 @@
         }
 
         async function submitForm() {
+            if (submitInProgress) return;
+            submitInProgress = true;
             // Disable button
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 mainButton.showProgress();
@@ -3302,6 +3328,7 @@
                             mainButton.hideProgress();
                             mainButton.enable();
                         }
+                        submitInProgress = false;
                         return;
                     }
                     continue; // Skip items without photos
@@ -3319,6 +3346,11 @@
                 tg.showAlert('❌ Нет загруженных фотографий');
                 btn.disabled = false;
                 btn.textContent = "Отправить";
+                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                    mainButton.hideProgress();
+                    mainButton.enable();
+                }
+                submitInProgress = false;
                 return;
             }
 
@@ -3353,6 +3385,7 @@
                         mainButton.enable();
                     }
                     haptic('error');
+                    submitInProgress = false;
                     return;
                 }
 
@@ -3437,6 +3470,7 @@
                     closePreview();
                     btn.disabled = false;
                     btn.textContent = "Отправить";
+                    submitInProgress = false;
                 }
             } catch (e) {
                 console.error("Submission Error", e);
@@ -3462,6 +3496,7 @@
                 }
                 btn.disabled = false;
                 btn.textContent = "Отправить";
+                submitInProgress = false;
             }
         }
 
