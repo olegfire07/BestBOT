@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enterprise Gold Admin v5.2 | BestBOT</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap"
         rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -101,7 +102,7 @@
             pointer-events: none;
         }
 
-        .sidebar > * {
+        .sidebar>* {
             position: relative;
             z-index: 1;
         }
@@ -1474,6 +1475,40 @@
                 </div>
             </div>
 
+            <div class="content-box" id="dashboard-quiz-stats-block"
+                style="border: 2px solid rgba(175, 82, 222, 0.4); background: linear-gradient(145deg, var(--card) 0%, rgba(175, 82, 222, 0.03) 100%);">
+                <div class="quick-header">
+                    <h3>🏆 Викторина: вовлеченность</h3>
+                    <span class="update-stamp" id="quiz-last-updated">Обновлено: --</span>
+                </div>
+                <div class="chip-group monitoring-chips">
+                    <button class="chip" data-quiz-days="7">7 дней</button>
+                    <button class="chip active" data-quiz-days="30">30 дней</button>
+                    <button class="chip" data-quiz-days="90">90 дней</button>
+                </div>
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-label">Участников</div>
+                        <div class="summary-value" id="quiz-users" style="color: var(--primary-color);">0</div>
+                        <div class="summary-meta" id="quiz-period">—</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Попыток</div>
+                        <div class="summary-value" id="quiz-attempts" style="color: #af52de;">0</div>
+                        <div class="summary-meta" id="quiz-attempts-meta">—</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Средний результат</div>
+                        <div class="summary-value" id="quiz-score" style="color: var(--success-color);">0%</div>
+                        <div class="summary-meta" id="quiz-score-meta">—</div>
+                    </div>
+                </div>
+                <div class="monitor-panel" style="margin-top: 20px;">
+                    <h4>Топ регионов (участники)</h4>
+                    <div class="region-list" id="quiz-region-list"></div>
+                </div>
+            </div>
+
             <div class="content-box">
                 <div class="quick-header">
                     <h3>Сигналы системы</h3>
@@ -1564,39 +1599,6 @@
                 </div>
             </div>
 
-            <div class="content-box">
-                <div class="quick-header">
-                    <h3>Викторина: вовлеченность</h3>
-                    <span class="update-stamp" id="quiz-last-updated">Обновлено: --</span>
-                </div>
-                <div class="chip-group monitoring-chips">
-                    <button class="chip" data-quiz-days="7">7 дней</button>
-                    <button class="chip active" data-quiz-days="30">30 дней</button>
-                    <button class="chip" data-quiz-days="90">90 дней</button>
-                </div>
-                <div class="summary-grid">
-                    <div class="summary-card">
-                        <div class="summary-label">Участников</div>
-                        <div class="summary-value" id="quiz-users">0</div>
-                        <div class="summary-meta" id="quiz-period">—</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-label">Попыток</div>
-                        <div class="summary-value" id="quiz-attempts">0</div>
-                        <div class="summary-meta" id="quiz-attempts-meta">—</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-label">Средний результат</div>
-                        <div class="summary-value" id="quiz-score">0%</div>
-                        <div class="summary-meta" id="quiz-score-meta">—</div>
-                    </div>
-                </div>
-                <div class="monitor-panel">
-                    <h4>Регионы (участники)</h4>
-                    <div class="region-list" id="quiz-region-list"></div>
-                </div>
-            </div>
-
             <div class="content-box quick-actions">
                 <div class="quick-header">
                     <h3>Быстрые действия</h3>
@@ -1604,9 +1606,13 @@
                 </div>
                 <div class="quick-actions-grid">
                     <button class="btn btn-primary" onclick="refresh(currentPane)">🔄 Обновить текущую вкладку</button>
-                    <button class="btn btn-outline" onclick="exportData('user-body', 'users_export.csv')">📥 Экспорт пользователей</button>
-                    <button class="btn btn-outline" onclick="exportData('ticket-body', 'tickets_export.csv')">📊 Экспорт заключений</button>
-                    <button class="btn btn-outline" onclick="goTab('system', document.querySelector('.nav-item[data-tab=&quot;system&quot;]'))">🧾 Логи системы</button>
+                    <button class="btn btn-outline" onclick="exportData('user-body', 'users_export.csv')">📥 Экспорт
+                        пользователей</button>
+                    <button class="btn btn-outline" onclick="exportData('ticket-body', 'tickets_export.csv')">📊 Экспорт
+                        заключений</button>
+                    <button class="btn btn-outline"
+                        onclick="goTab('system', document.querySelector('.nav-item[data-tab=&quot;system&quot;]'))">🧾
+                        Логи системы</button>
                     <button class="btn btn-outline" onclick="doClearCache()">🧹 Очистить кэш</button>
                     <button class="btn btn-danger" onclick="doRestart()">⚡ Перезапуск</button>
                 </div>
@@ -1643,8 +1649,8 @@
                     <table>
                         <thead>
                             <tr>
-                                <th class="select-col"><input type="checkbox" class="table-select" data-select-all="users"
-                                        id="select-all-users"></th>
+                                <th class="select-col"><input type="checkbox" class="table-select"
+                                        data-select-all="users" id="select-all-users"></th>
                                 <th class="sortable" data-table="users" data-sort="user_id">TG ID</th>
                                 <th class="sortable" data-table="users" data-sort="name">Имя</th>
                                 <th class="sortable" data-table="users" data-sort="rank">Ранг</th>
@@ -1718,8 +1724,8 @@
                     <table>
                         <thead>
                             <tr>
-                                <th class="select-col"><input type="checkbox" class="table-select" data-select-all="tickets"
-                                        id="select-all-tickets"></th>
+                                <th class="select-col"><input type="checkbox" class="table-select"
+                                        data-select-all="tickets" id="select-all-tickets"></th>
                                 <th class="sortable" data-table="tickets" data-sort="ticket">Билет</th>
                                 <th class="sortable" data-table="tickets" data-sort="issue">№ Закл.</th>
                                 <th class="sortable" data-table="tickets" data-sort="date">Дата</th>
@@ -1734,7 +1740,8 @@
                     <div class="pagination" data-table="tickets">
                         <button class="btn btn-outline btn-ghost" data-page="prev" data-table="tickets">← Назад</button>
                         <span class="page-indicator" id="tickets-page-info">1 / 1</span>
-                        <button class="btn btn-outline btn-ghost" data-page="next" data-table="tickets">Вперёд →</button>
+                        <button class="btn btn-outline btn-ghost" data-page="next" data-table="tickets">Вперёд
+                            →</button>
                     </div>
                     <div class="table-meta" id="tickets-count">0 записей</div>
                 </div>
@@ -1769,6 +1776,14 @@
                         <div class="summary-meta" id="storage-newest-meta">Нет данных</div>
                     </div>
                 </div>
+                <div class="search-wrap" id="archive-download-controls">
+                    <select class="input-pro" id="archive-region">
+                        <option value="">Все регионы</option>
+                    </select>
+                    <input type="text" class="input-pro" id="archive-start" placeholder="Дата с (ДД.ММ.ГГГГ)">
+                    <input type="text" class="input-pro" id="archive-end" placeholder="Дата по (ДД.ММ.ГГГГ)">
+                    <button class="btn btn-primary" data-action="download-archive-region">Скачать архив</button>
+                </div>
                 <div class="search-wrap">
                     <input type="text" class="input-pro" id="search-archives" placeholder="Поиск по имени файла..."
                         onkeyup="filterT('archive-body', this.value)">
@@ -1799,9 +1814,11 @@
                 </div>
                 <div class="table-footer">
                     <div class="pagination" data-table="archives">
-                        <button class="btn btn-outline btn-ghost" data-page="prev" data-table="archives">← Назад</button>
+                        <button class="btn btn-outline btn-ghost" data-page="prev" data-table="archives">←
+                            Назад</button>
                         <span class="page-indicator" id="archives-page-info">1 / 1</span>
-                        <button class="btn btn-outline btn-ghost" data-page="next" data-table="archives">Вперёд →</button>
+                        <button class="btn btn-outline btn-ghost" data-page="next" data-table="archives">Вперёд
+                            →</button>
                     </div>
                     <div class="table-meta" id="archives-count">0 записей</div>
                 </div>
@@ -2164,6 +2181,7 @@
                 } else if (pane === 'storage') {
                     const a = await fFetch(`${API_BASE}/archives`);
                     if (a) renderArchives(a);
+                    await loadArchiveRegions();
                 } else if (pane === 'system') {
                     await Promise.all([
                         loadLogs(),
@@ -2857,6 +2875,46 @@
             select.innerHTML = '<option value="">Все регионы</option>' +
                 regions.map(r => `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join('');
             select.value = current;
+        }
+
+        async function loadArchiveRegions() {
+            const select = document.getElementById('archive-region');
+            if (!select) return;
+            const payload = await fFetch(`${API_BASE}/regions`);
+            const regions = payload?.regions || [];
+            if (!regions.length) return;
+            const current = select.value || '';
+            select.innerHTML = '<option value="">Все регионы</option>' +
+                regions.map(r => `<option value="${escapeHtml(r)}">${escapeHtml(r)}</option>`).join('');
+            select.value = current;
+        }
+
+        function downloadRegionArchive() {
+            const regionEl = document.getElementById('archive-region');
+            const startEl = document.getElementById('archive-start');
+            const endEl = document.getElementById('archive-end');
+            if (!regionEl || !startEl || !endEl) return;
+
+            const start = startEl.value.trim();
+            const end = endEl.value.trim();
+            const startDt = parseDateDDMMYYYY(start);
+            const endDt = parseDateDDMMYYYY(end);
+
+            if (!start || !end || !startDt || !endDt) {
+                notify('Укажите даты в формате ДД.ММ.ГГГГ', 'error');
+                return;
+            }
+            if (endDt < startDt) {
+                notify('Дата "по" должна быть позже даты "с"', 'error');
+                return;
+            }
+
+            const params = new URLSearchParams({ start, end });
+            const region = regionEl.value.trim();
+            if (region) params.set('region', region);
+
+            const url = `${API_BASE}/archives/export?${params.toString()}`;
+            window.open(url, '_blank');
         }
 
         function renderAdminsList(payload) {
@@ -3874,6 +3932,7 @@
             if (action === 'cancel-edit') return closeInlineEdit(el.dataset.type, el.dataset.id);
             if (action === 'clear-broadcast') return clearBroadcast();
             if (action === 'send-broadcast') return sendBroadcast();
+            if (action === 'download-archive-region') return downloadRegionArchive();
             if (action === 'copy-user') {
                 return copyText(el.dataset.userId).then(() => notify('ID скопирован', 'success'));
             }
