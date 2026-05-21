@@ -153,11 +153,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 2. Add validation on blur
+    // 2. Add validation on blur and live duplicate check
     const ticketInput = document.getElementById('ticket');
     if (ticketInput) {
         ticketInput.addEventListener('blur', function () {
             validateTicket(this);
+        });
+        ticketInput.addEventListener('input', function () {
+            const val = this.value.replace(/\D/g, '');
+            if (val.length > 11) {
+                this.value = val.slice(0, 11);
+            }
+            if (val.length === 11) {
+                checkTicketDuplicateLive(this, val);
+            } else {
+                clearTicketDuplicateWarning(this);
+            }
         });
         // Force numeric keyboard
         ticketInput.setAttribute('inputmode', 'numeric');
@@ -192,3 +203,86 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+// --- LIVE TICKET DUPLICATE VERIFICATION ---
+async function checkTicketDuplicateLive(input, ticketNumber) {
+    const baseUrl = typeof botUrl !== 'undefined' ? botUrl : '';
+    const cleanBase = baseUrl.replace(/\/$/, '');
+    
+    let warningDiv = input.parentNode.querySelector('.warning-message');
+    if (!warningDiv) {
+        warningDiv = document.createElement('div');
+        warningDiv.className = 'warning-message';
+        input.parentNode.insertBefore(warningDiv, input.nextSibling);
+    }
+
+    try {
+        const response = await fetch(`${cleanBase}/api/check-ticket?ticket=${ticketNumber}`);
+        if (!response.ok) return;
+        const res = await response.json();
+        
+        if (res.duplicate) {
+            input.classList.add('input-warning');
+            warningDiv.textContent = `⚠️ Этот билет уже обрабатывался ${res.date} пользователем ${res.user}. Вы можете продолжить, но баллы не будут начислены.`;
+            warningDiv.classList.add('show');
+            
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+                window.Telegram.WebApp.HapticFeedback.notificationOccurred('warning');
+            }
+        } else {
+            clearTicketDuplicateWarning(input);
+        }
+    } catch (e) {
+        console.error("Failed to check ticket duplicate:", e);
+    }
+}
+
+function clearTicketDuplicateWarning(input) {
+    input.classList.remove('input-warning');
+    const warningDiv = input.parentNode.querySelector('.warning-message');
+    if (warningDiv) {
+        warningDiv.classList.remove('show');
+    }
+}
+
+// --- AUTO-CAPITALIZATION OF DESCRIPTION ---
+document.addEventListener('blur', function (e) {
+    const target = e.target;
+    if (target && target.classList && target.classList.contains('desc')) {
+        let val = target.value.trim();
+        if (val) {
+            target.value = val.charAt(0).toUpperCase() + val.slice(1);
+            target.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
+}, true);
+
+// --- DYNAMIC PRECIOUS METALS WARNING ---
+function checkDescriptionPreciousMetals(input) {
+    const text = input.value.toLowerCase();
+    const keywords = ['золото', 'серебро', 'платина', 'палладий', '585', '750', '925', 'драгметал', 'драг.метал'];
+    const hasPreciousMetal = keywords.some(keyword => text.includes(keyword));
+
+    let warningDiv = input.parentNode.querySelector('.precious-warning');
+    if (hasPreciousMetal) {
+        if (!warningDiv) {
+            warningDiv = document.createElement('div');
+            warningDiv.className = 'warning-message precious-warning show';
+            input.parentNode.insertBefore(warningDiv, input.nextSibling);
+        }
+        warningDiv.textContent = '⚠️ Внимание: изделия из драгоценных металлов не принимаются в качестве антиквариата!';
+        warningDiv.classList.add('show');
+    } else {
+        if (warningDiv) {
+            warningDiv.classList.remove('show');
+        }
+    }
+}
+
+document.addEventListener('input', function (e) {
+    const target = e.target;
+    if (target && target.classList && target.classList.contains('desc')) {
+        checkDescriptionPreciousMetals(target);
+    }
+}, true);
+

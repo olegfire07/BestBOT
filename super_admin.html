@@ -1399,6 +1399,139 @@
             font-size: 12px;
             color: var(--text-mute);
         }
+
+        /* Telegram Broadcast Preview CSS */
+        .telegram-preview-container {
+            margin-top: 10px;
+            background: #0f172a; /* Slate 900 */
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        .telegram-preview-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .telegram-preview-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fbbf24, #d97706); /* Fianit Amber Gold */
+            color: #ffffff;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .telegram-preview-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .telegram-preview-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .telegram-preview-subtitle {
+            font-size: 11px;
+            color: #fbbf24; /* Fianit Gold */
+            font-weight: 500;
+        }
+
+        .telegram-preview-bubble-wrapper {
+            position: relative;
+            background: #1e293b; /* Slate 800 */
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px 14px 14px 4px;
+            padding: 10px 14px;
+            max-width: 90%;
+            align-self: flex-start;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            word-break: break-word;
+        }
+
+        .telegram-preview-bubble {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #e2e8f0; /* Slate 200 */
+        }
+
+        .telegram-preview-placeholder {
+            color: #64748b; /* Slate 500 */
+            font-style: italic;
+        }
+
+        .telegram-preview-time {
+            font-size: 10px;
+            color: #64748b; /* Slate 500 */
+            text-align: right;
+            margin-top: 4px;
+            user-select: none;
+        }
+
+        /* Markup styles inside bubble */
+        .telegram-preview-bubble strong {
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .telegram-preview-bubble em {
+            font-style: italic;
+        }
+
+        .telegram-preview-bubble u {
+            text-decoration: underline;
+        }
+
+        .telegram-preview-bubble strike {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .telegram-preview-bubble .tg-code {
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            background: rgba(0, 0, 0, 0.3);
+            color: #f43f5e; /* Premium rose color */
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-size: 12.5px;
+        }
+
+        .telegram-preview-bubble .tg-pre {
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            background: rgba(0, 0, 0, 0.3);
+            color: #e2e8f0;
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            white-space: pre-wrap;
+            margin: 6px 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .telegram-preview-bubble .tg-link {
+            color: #38bdf8; /* Sky blue */
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .telegram-preview-bubble .tg-link:hover {
+            color: #7dd3fc;
+        }
     </style>
 </head>
 
@@ -1687,6 +1820,24 @@
                             <option value="">Все регионы</option>
                         </select>
                         <div class="broadcast-hint">Отправка идет по последнему региону из заключения.</div>
+                    </div>
+                    <div class="broadcast-field" style="grid-column: 1 / -1; margin-top: 10px;">
+                        <label>Предпросмотр сообщения (Telegram)</label>
+                        <div class="telegram-preview-container">
+                            <div class="telegram-preview-header">
+                                <div class="telegram-preview-avatar">B</div>
+                                <div class="telegram-preview-meta">
+                                    <span class="telegram-preview-title">BestBOT SmartQA</span>
+                                    <span class="telegram-preview-subtitle">бот</span>
+                                </div>
+                            </div>
+                            <div class="telegram-preview-bubble-wrapper">
+                                <div class="telegram-preview-bubble" id="broadcast-preview">
+                                    <span class="telegram-preview-placeholder">Введите текст сообщения выше для предпросмотра...</span>
+                                </div>
+                                <div class="telegram-preview-time" id="broadcast-preview-time">12:34</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="broadcast-actions">
@@ -3231,7 +3382,10 @@
 
         function clearBroadcast() {
             const message = document.getElementById('broadcast-message');
-            if (message) message.value = '';
+            if (message) {
+                message.value = '';
+                message.dispatchEvent(new Event('input'));
+            }
         }
 
         async function sendBroadcast() {
@@ -3261,6 +3415,7 @@
                     }
                     notify(`Рассылка отправлена: ${res.sent || 0}`, 'success');
                     messageEl.value = '';
+                    messageEl.dispatchEvent(new Event('input'));
                 } else {
                     notify('Ошибка рассылки', 'error');
                 }
@@ -3441,26 +3596,93 @@
         }
 
         function renderCharts(act, grow) {
-            const commonOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } };
+            // Premium Chart.js Tooltip & Styling Options
+            const premiumOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)', // slate-900 with high opacity
+                        titleFont: { family: "'Inter', 'Helvetica Neue', 'Arial', sans-serif", size: 12, weight: '600' },
+                        bodyFont: { family: "'Inter', 'Helvetica Neue', 'Arial', sans-serif", size: 12 },
+                        padding: { top: 8, bottom: 8, left: 12, right: 12 },
+                        borderColor: 'rgba(251, 191, 36, 0.25)', // Elegant gold border accent
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        displayColors: false,
+                        caretSize: 6,
+                        callbacks: {
+                            label: function(context) {
+                                return `📈 Значение: ${context.parsed.y.toLocaleString('ru-RU')}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)', drawOnChartArea: true, drawTicks: false },
+                        border: { display: false },
+                        ticks: { color: 'rgba(255, 255, 255, 0.4)', font: { family: "'Inter', sans-serif", size: 10 } }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)', drawOnChartArea: true, drawTicks: false },
+                        border: { display: false },
+                        ticks: { color: 'rgba(255, 255, 255, 0.4)', font: { family: "'Inter', sans-serif", size: 10 } }
+                    }
+                }
+            };
+
+            // 1. Activity Bar Chart (Gold to Amber linear gradient matching the Fianit brand)
+            const actCanvas = document.getElementById('chart-activity');
+            let actBg = '#fbbf24';
+            if (actCanvas) {
+                const ctx = actCanvas.getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+                gradient.addColorStop(0, '#fbbf24'); // gold
+                gradient.addColorStop(1, '#d97706'); // amber
+                actBg = gradient;
+            }
 
             if (charts.act) charts.act.destroy();
-            charts.act = new Chart(document.getElementById('chart-activity'), {
+            charts.act = new Chart(actCanvas, {
                 type: 'bar',
                 data: {
                     labels: act.map(i => i.day),
-                    datasets: [{ data: act.map(i => i.count), backgroundColor: '#0f766e', borderRadius: 8 }]
+                    datasets: [{ data: act.map(i => i.count), backgroundColor: actBg, borderRadius: 6 }]
                 },
-                options: commonOptions
+                options: premiumOptions
             });
 
+            // 2. Growth Line Chart (emerald fading line)
+            const growCanvas = document.getElementById('chart-growth');
+            let growBg = 'rgba(16, 185, 129, 0.08)';
+            if (growCanvas) {
+                const ctx = growCanvas.getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+                gradient.addColorStop(0, 'rgba(16, 185, 129, 0.25)'); // emerald
+                gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+                growBg = gradient;
+            }
+
             if (charts.grow) charts.grow.destroy();
-            charts.grow = new Chart(document.getElementById('chart-growth'), {
+            charts.grow = new Chart(growCanvas, {
                 type: 'line',
                 data: {
                     labels: grow.map(i => i.day),
-                    datasets: [{ data: grow.map(i => i.total), borderColor: '#22c55e', tension: 0.4, fill: true, backgroundColor: 'rgba(34, 197, 94, 0.12)' }]
+                    datasets: [{
+                        data: grow.map(i => i.total),
+                        borderColor: '#10b981', // emerald border
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: growBg,
+                        pointRadius: 2,
+                        pointHoverRadius: 5
+                    }]
                 },
-                options: commonOptions
+                options: premiumOptions
             });
         }
 
@@ -3516,21 +3738,70 @@
             if (peakMetaEl) peakMetaEl.innerText = peak?.day ? formatIsoShort(peak.day) : '—';
 
             const daily = Array.isArray(payload.daily) ? payload.daily : [];
+            const monitorCanvas = document.getElementById('chart-monitor-daily');
+            let monitorBg = 'rgba(20, 184, 166, 0.08)';
+            if (monitorCanvas) {
+                const ctx = monitorCanvas.getContext('2d');
+                const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+                gradient.addColorStop(0, 'rgba(20, 184, 166, 0.25)'); // teal
+                gradient.addColorStop(1, 'rgba(20, 184, 166, 0.0)');
+                monitorBg = gradient;
+            }
+
+            const premiumMonitorOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleFont: { family: "'Inter', 'Helvetica Neue', 'Arial', sans-serif", size: 12, weight: '600' },
+                        bodyFont: { family: "'Inter', 'Helvetica Neue', 'Arial', sans-serif", size: 12 },
+                        padding: { top: 8, bottom: 8, left: 12, right: 12 },
+                        borderColor: 'rgba(20, 184, 166, 0.25)', // teal accent border
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        displayColors: false,
+                        caretSize: 6,
+                        callbacks: {
+                            label: function(context) {
+                                return `📈 Заключений: ${context.parsed.y.toLocaleString('ru-RU')}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)', drawOnChartArea: true, drawTicks: false },
+                        border: { display: false },
+                        ticks: { color: 'rgba(255, 255, 255, 0.4)', font: { family: "'Inter', sans-serif", size: 10 } }
+                    },
+                    y: {
+                        grid: { color: 'rgba(255, 255, 255, 0.05)', drawOnChartArea: true, drawTicks: false },
+                        border: { display: false },
+                        ticks: { color: 'rgba(255, 255, 255, 0.4)', font: { family: "'Inter', sans-serif", size: 10 } }
+                    }
+                }
+            };
+
             if (charts.monitor) charts.monitor.destroy();
-            charts.monitor = new Chart(document.getElementById('chart-monitor-daily'), {
+            charts.monitor = new Chart(monitorCanvas, {
                 type: 'line',
                 data: {
                     labels: daily.map(d => formatIsoShort(d.day)),
                     datasets: [{
                         data: daily.map(d => d.count),
-                        borderColor: '#0f766e',
-                        backgroundColor: 'rgba(15, 118, 110, 0.12)',
+                        borderColor: '#14b8a6', // beautiful teal
+                        borderWidth: 2,
+                        backgroundColor: monitorBg,
                         fill: true,
                         tension: 0.35,
-                        pointRadius: 3
+                        pointRadius: 2,
+                        pointHoverRadius: 5
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                options: premiumMonitorOptions
             });
 
             const regionList = document.getElementById('monitor-region-list');
@@ -4030,6 +4301,54 @@
             });
         }
 
+        function parseTelegramMarkup(text) {
+            if (!text) return '<span class="telegram-preview-placeholder">Введите текст сообщения выше для предпросмотра...</span>';
+            let html = escapeHtml(text);
+            html = html.replace(/\r?\n/g, '<br>');
+            html = html.replace(/&lt;b&gt;([\s\S]*?)&lt;\/b&gt;/gi, '<strong>$1</strong>');
+            html = html.replace(/&lt;strong&gt;([\s\S]*?)&lt;\/strong&gt;/gi, '<strong>$1</strong>');
+            html = html.replace(/&lt;i&gt;([\s\S]*?)&lt;\/i&gt;/gi, '<em>$1</em>');
+            html = html.replace(/&lt;em&gt;([\s\S]*?)&lt;\/em&gt;/gi, '<em>$1</em>');
+            html = html.replace(/&lt;u&gt;([\s\S]*?)&lt;\/u&gt;/gi, '<u>$1</u>');
+            html = html.replace(/&lt;s&gt;([\s\S]*?)&lt;\/s&gt;/gi, '<strike>$1</strike>');
+            html = html.replace(/&lt;strike&gt;([\s\S]*?)&lt;\/strike&gt;/gi, '<strike>$1</strike>');
+            html = html.replace(/&lt;del&gt;([\s\S]*?)&lt;\/del&gt;/gi, '<strike>$1</strike>');
+            html = html.replace(/&lt;code&gt;([\s\S]*?)&lt;\/code&gt;/gi, '<code class="tg-code">$1</code>');
+            html = html.replace(/&lt;pre&gt;([\s\S]*?)&lt;\/pre&gt;/gi, '<pre class="tg-pre">$1</pre>');
+            html = html.replace(/&lt;a\s+href=(?:&quot;|&#039;)?(https?:\/\/[^\s&"<>]+?)(?:&quot;|&#039;)?&gt;([\s\S]*?)&lt;\/a&gt;/gi, function(match, url, linkText) {
+                return `<a class="tg-link" href="${url}" target="_blank" rel="noopener noreferrer">${linkText}</a>`;
+            });
+            html = html.replace(/```([\s\S]+?)```/g, '<pre class="tg-pre">$1</pre>');
+            html = html.replace(/`([^`\n]+?)`/g, '<code class="tg-code">$1</code>');
+            html = html.replace(/__([^_]+?)__/g, '<u>$1</u>');
+            html = html.replace(/\b_([^_]+?)_\b/g, '<em>$1</em>');
+            html = html.replace(/\*([^\*]+?)\*/g, '<strong>$1</strong>');
+            html = html.replace(/~([^~]+?)~/g, '<strike>$1</strike>');
+            return html;
+        }
+
+        function bindBroadcastPreview() {
+            const messageEl = document.getElementById('broadcast-message');
+            const previewEl = document.getElementById('broadcast-preview');
+            const timeEl = document.getElementById('broadcast-preview-time');
+            if (!messageEl || !previewEl || !timeEl) return;
+
+            const updateTime = () => {
+                const now = new Date();
+                timeEl.textContent = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            };
+
+            const updatePreview = () => {
+                const text = messageEl.value;
+                previewEl.innerHTML = parseTelegramMarkup(text);
+                updateTime();
+            };
+
+            messageEl.addEventListener('input', updatePreview);
+            messageEl.addEventListener('change', updatePreview);
+            updatePreview();
+        }
+
         // Init
         restoreUiState();
         bindInteractions();
@@ -4038,6 +4357,7 @@
         setupHotkeys();
         startLiveStream();
         if (!liveStream) startPollingHealth();
+        bindBroadcastPreview();
 
         const navEl = document.querySelector(`.nav-item[data-tab="${currentPane}"]`) || document.querySelector('.nav-item');
         goTab(currentPane, navEl);

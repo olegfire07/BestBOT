@@ -520,6 +520,16 @@ function updateTotalCost() {
     }
 }
 
+// Helper to pluralize points in Russian
+function getPointsPlural(n) {
+    const lastDigit = n % 10;
+    const lastTwo = n % 100;
+    if (lastTwo >= 11 && lastTwo <= 19) return 'баллов';
+    if (lastDigit === 1) return 'балл';
+    if (lastDigit >= 2 && lastDigit <= 4) return 'балла';
+    return 'баллов';
+}
+
 // Easing function and animation for count-up effect
 function animateValue(obj, start, end, duration) {
     let startTimestamp = null;
@@ -533,7 +543,8 @@ function animateValue(obj, start, end, duration) {
         if (!startTimestamp) startTimestamp = timestamp;
         // Don't animate if duration is 0
         if (duration === 0) {
-            obj.textContent = end.toLocaleString('ru-RU') + ' ₽';
+            const points = 10 + Math.floor(end / 1000);
+            obj.textContent = end.toLocaleString('ru-RU') + ' ₽ | 🏆 +' + points + ' ' + getPointsPlural(points);
             return;
         }
 
@@ -542,18 +553,21 @@ function animateValue(obj, start, end, duration) {
         const ease = 1 - Math.pow(1 - progress, 4);
         const current = Math.floor(ease * (end - start) + start);
 
-        obj.textContent = current.toLocaleString('ru-RU') + ' ₽';
+        const currentPoints = 10 + Math.floor(current / 1000);
+        obj.textContent = current.toLocaleString('ru-RU') + ' ₽ | 🏆 +' + currentPoints + ' ' + getPointsPlural(currentPoints);
 
         if (progress < 1) {
             obj.animationId = window.requestAnimationFrame(step);
         } else {
-            obj.textContent = end.toLocaleString('ru-RU') + ' ₽';
+            const points = 10 + Math.floor(end / 1000);
+            obj.textContent = end.toLocaleString('ru-RU') + ' ₽ | 🏆 +' + points + ' ' + getPointsPlural(points);
             obj.animationId = null;
         }
     };
 
     obj.animationId = window.requestAnimationFrame(step);
 }
+
 
 function addItem() {
     // Collapse existing items
@@ -589,12 +603,19 @@ function addItem() {
                     </div>
                 </div>
                 <div class="item-body">
-                    <div class="form-group">
+                    <div class="form-group desc-group">
                         <input type="text" class="desc item-field" placeholder="Кольцо, металл желтого цвета" required id="desc-${itemCount}">
                         <label class="floating-label" for="desc-${itemCount}">Описание</label>
+                        <button type="button" class="mic-btn" onclick="startSpeechRecognition(this, 'desc-${itemCount}')" title="Голосовой ввод">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                <line x1="12" y1="19" x2="12" y2="22"></line>
+                            </svg>
+                        </button>
                         <div class="error-message"></div>
                         <div class="input-hint">
-                            Добавьте краткое описание предмета
+                            Добавьте краткое описание предмета или надиктуйте голосом
                         </div>
                     </div>
                     <div class="form-group">
@@ -1429,7 +1450,8 @@ function updateMainButton() {
 
         mainButton.setText("ПРОВЕРИТЬ И ОТПРАВИТЬ");
         mainButton.show();
-        // Use single state-based handler
+        // Use single state-based handler and clear existing to prevent duplicates
+        mainButton.offClick(handleMainButton);
         mainButton.onClick(handleMainButton);
     }
 }
@@ -2102,3 +2124,78 @@ document.getElementById('region').addEventListener('change', (e) => {
 
 // Restore draft on page load
 restoreDraft();
+
+// --- SPEECH-TO-TEXT FOR DESCRIPTIONS ---
+function startSpeechRecognition(btn, inputId) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.showAlert) {
+            window.Telegram.WebApp.showAlert("Голосовой ввод не поддерживается в вашем браузере/приложении. Пожалуйста, введите текст вручную.");
+        } else {
+            alert("Голосовой ввод не поддерживается в вашем браузере. Пожалуйста, введите текст вручную.");
+        }
+        return;
+    }
+
+    if (btn.classList.contains('listening')) {
+        if (window.activeRecognition) {
+            window.activeRecognition.stop();
+        }
+        return;
+    }
+
+    if (window.activeRecognition) {
+        window.activeRecognition.stop();
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ru-RU';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = function() {
+        btn.classList.add('listening');
+        btn.title = "Прослушивание... Нажмите, чтобы остановить";
+        window.activeRecognition = recognition;
+        
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+            window.Telegram.WebApp.HapticFeedback.triggerNotification('success');
+        }
+    };
+
+    recognition.onresult = function(event) {
+        const result = event.results[0][0].transcript;
+        if (result) {
+            if (input.value) {
+                input.value += ' ' + result;
+            } else {
+                input.value = result;
+            }
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    };
+
+    recognition.onerror = function(event) {
+        console.error('Speech recognition error:', event.error);
+        if (event.error === 'not-allowed') {
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.showAlert) {
+                window.Telegram.WebApp.showAlert("Для голосового ввода необходимо разрешить доступ к микрофону.");
+            } else {
+                alert("Для голосового ввода необходимо разрешить доступ к микрофону.");
+            }
+        }
+    };
+
+    recognition.onend = function() {
+        btn.classList.remove('listening');
+        btn.title = "Голосовой ввод";
+        if (window.activeRecognition === recognition) {
+            window.activeRecognition = null;
+        }
+    };
+
+    recognition.start();
+}

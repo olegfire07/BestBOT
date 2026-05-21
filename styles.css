@@ -1910,3 +1910,100 @@ textarea {
     border-radius: 999px;
     margin-left: 8px;
 }
+
+/* --- PREMIUM STYLING ADDITIONS --- */
+
+.item-card {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.item-card:hover {
+    transform: translateY(-2px) scale(1.005);
+    box-shadow: 0 12px 30px rgba(15, 118, 110, 0.08);
+}
+
+.desc-group {
+    position: relative;
+}
+
+.desc-group .item-field {
+    padding-right: 48px !important;
+}
+
+.mic-btn {
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--secondary-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+}
+
+.mic-btn:hover {
+    background: rgba(15, 118, 110, 0.1);
+    color: var(--primary-color);
+    transform: scale(1.15);
+}
+
+.mic-btn.listening {
+    color: #ff3b30;
+    background: rgba(255, 59, 48, 0.12);
+    animation: pulseMic 1.5s infinite;
+}
+
+@keyframes pulseMic {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.5);
+    }
+    70% {
+        transform: scale(1.15);
+        box-shadow: 0 0 0 8px rgba(255, 59, 48, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 59, 48, 0);
+    }
+}
+
+/* Duplicates live warnings style */
+.input-warning {
+    border-color: #ff9500 !important;
+    background-color: rgba(255, 149, 0, 0.04) !important;
+    box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.15) !important;
+}
+
+.warning-message {
+    color: #e67700;
+    font-size: 13px;
+    margin-top: 6px;
+    font-weight: 500;
+    line-height: 1.45;
+    display: none;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.warning-message.show {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
