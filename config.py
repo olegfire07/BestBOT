@@ -34,12 +34,15 @@ API_MAX_REQUEST_SIZE_MB: int = int(os.getenv("API_MAX_REQUEST_SIZE_MB", "2"))
 
 def load_bot_token():
     """
-    Loads the bot token from environment variables or uses the test token.
+    Loads the bot token from environment variables.
+    Token MUST be set in .env file; never hardcode bot tokens in code.
     """
     token = os.getenv(BOT_TOKEN_ENV_VAR, "").strip()
     if not token:
-        # User provided test token
-        return "7514668293:AAHInixLv71o-WBrWVSndKrhc_mnHdM4ul4"
+        raise RuntimeError(
+            "❌ BOT_TOKEN не найден! Укажите токен бота в файле .env:\n"
+            "   BOT_TOKEN=ваш_токен_от_BotFather"
+        )
     return token
 
 MAIN_GROUP_CHAT_ID: int = -1002381542769

@@ -1,6 +1,7 @@
 import logging
 import asyncio
 import os
+import time
 from aiohttp import web
 from modern_bot.config import (
     API_ENABLED,
@@ -12,6 +13,9 @@ from modern_bot.config import (
 )
 
 logger = logging.getLogger(__name__)
+
+BOT_APP_KEY = web.AppKey("bot", object)
+START_TIME_APP_KEY = web.AppKey("start_time", float)
 
 # CORS allowed origins (load from environment for security)
 ALLOWED_ORIGINS = os.getenv(
@@ -78,7 +82,7 @@ async def handle_generate(request):
         # Delegate to ReportService
         from modern_bot.services.report import ReportService
         
-        bot = request.app['bot']
+        bot = request.app[BOT_APP_KEY]
         path = await ReportService.create_report(data, bot)
 
         # 5. Return File
@@ -138,7 +142,7 @@ async def handle_upload_photo(request):
         from modern_bot.config import PHOTO_STORAGE_CHAT_ID
         import io
         
-        bot = request.app['bot']
+        bot = request.app[BOT_APP_KEY]
         
         logger.info(f"Uploading photo {filename} ({len(file_data)} bytes) to Telegram chat {PHOTO_STORAGE_CHAT_ID}")
         
@@ -188,7 +192,7 @@ async def handle_health(request):
     from modern_bot.version import __version__
     
     # Calculate uptime
-    start_time = request.app.get('start_time', time.time())
+    start_time = request.app.get(START_TIME_APP_KEY, time.time())
     uptime_seconds = int(time.time() - start_time)
     uptime_str = f"{uptime_seconds // 3600}h {(uptime_seconds % 3600) // 60}m"
     
@@ -281,8 +285,8 @@ async def start_api_server(bot, host: str = None, port: int = None):
     max_size_bytes = max(API_MAX_REQUEST_SIZE_MB, 1) * 1024 * 1024
 
     app = web.Application(client_max_size=max_size_bytes)
-    app['bot'] = bot
-    app['start_time'] = __import__('time').time()  # Track start time for uptime
+    app[BOT_APP_KEY] = bot
+    app[START_TIME_APP_KEY] = time.time()  # Track start time for uptime
     app.router.add_get('/', handle_root)
     app.router.add_get('/health', handle_health)
     app.router.add_get('/api/stats', handle_stats)

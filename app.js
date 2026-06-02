@@ -118,7 +118,7 @@ function escapeHtml(unsafe) {
 
 const APP_CONFIG = {
     DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || "",
-    IMAGEBAN_CLIENT_ID: window.APP_IMAGEBAN_CLIENT_ID || "wlbeebCGLMGRtwNpk5YS"
+    IMAGEBAN_CLIENT_ID: window.APP_IMAGEBAN_CLIENT_ID || ""
 };
 
 // Initialize
@@ -921,7 +921,7 @@ restoreDraft();
 // SERVICE WORKER & OFFLINE MODE
 // ============================================
 if ('serviceWorker' in navigator) {
-    const swVersion = '2403';
+    const swVersion = '2404';
     const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
     const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
     navigator.serviceWorker.register(swUrl)
