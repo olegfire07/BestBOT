@@ -916,7 +916,7 @@ restoreDraft();
 // SERVICE WORKER & OFFLINE MODE
 // ============================================
 if ('serviceWorker' in navigator) {
-    const swVersion = '2400';
+    const swVersion = '2401';
     const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
     const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
     navigator.serviceWorker.register(swUrl)
