@@ -93,7 +93,12 @@ function requestFullScreen(force = false) {
     fullScreenRequested = true;
     try {
         tg.expand();
-        if (tg.requestFullscreen) tg.requestFullscreen();
+        const fullscreenSupported = typeof tg.isVersionAtLeast === 'function'
+            ? tg.isVersionAtLeast('8.0')
+            : parseFloat(tg.version || '0') >= 8;
+        if (fullscreenSupported && typeof tg.requestFullscreen === 'function') {
+            tg.requestFullscreen();
+        }
     } catch (e) { }
 }
 
@@ -916,7 +921,7 @@ restoreDraft();
 // SERVICE WORKER & OFFLINE MODE
 // ============================================
 if ('serviceWorker' in navigator) {
-    const swVersion = '2401';
+    const swVersion = '2402';
     const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
     const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
     navigator.serviceWorker.register(swUrl)
