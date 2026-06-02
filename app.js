@@ -631,7 +631,7 @@ function addItem() {
                 </div>
                 <div class="item-body">
                     <div class="form-group desc-group">
-                        <input type="text" class="desc item-field" placeholder="Кольцо, металл желтого цвета" required id="desc-${itemCount}">
+                        <input type="text" class="desc item-field" placeholder="Икона деревянная, живопись на доске" required id="desc-${itemCount}">
                         <label class="floating-label" for="desc-${itemCount}">Описание</label>
                         <button type="button" class="mic-btn" onclick="startSpeechRecognition(this, 'desc-${itemCount}')" title="Голосовой ввод">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -920,7 +920,6 @@ if ('serviceWorker' in navigator) {
     const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
     const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
     navigator.serviceWorker.register(swUrl)
-        .then(reg => console.log('Service Worker registered:', reg.scope))
         .catch(err => console.error('Service Worker registration failed:', err));
 
     // Listen for sync messages from SW
@@ -991,7 +990,6 @@ async function savePendingReport(data) {
             tx.oncomplete = resolve;
             tx.onerror = () => reject(tx.error);
         });
-        console.log('Report saved to offline queue');
         showOfflineBanner('📦 Заключение сохранено в очередь — отправится при появлении сети', false);
         return true;
     } catch (error) {
@@ -1015,7 +1013,6 @@ async function getPendingCount() {
 
 // Online event - sync pending reports
 window.addEventListener('online', async () => {
-    console.log('Connection restored, syncing...');
     showOfflineBanner('✅ Соединение восстановлено! Синхронизация...', true);
 
     try {
@@ -1232,16 +1229,8 @@ async function handleFileSelect(input) {
             fileType: 'image/jpeg'
         };
 
-        if (compressionAvailable) {
-            console.log(`Original: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
-        }
-
         // Compress (fallback to original if library is unavailable)
         const compressedFile = compressionAvailable ? await imageCompression(file, options) : file;
-
-        if (compressionAvailable) {
-            console.log(`Compressed: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
-        }
 
         // Show preview
         const reader = new FileReader();
@@ -1924,18 +1913,12 @@ async function submitForm() {
         // Check if running in Telegram
         // iOS Telegram 9.x bug: initData may be empty even in WebApp
         // Instead, check for platform/version which are always present in Telegram
-        console.log('tg.platform:', tg.platform);
-        console.log('tg.version:', tg.version);
-        console.log('tg.initData:', tg.initData);
-        console.log('tg.initDataUnsafe:', tg.initDataUnsafe);
-
         // Check if we're in Telegram by platform/version presence
         const isInTelegram = (tg.platform && tg.platform.length > 0) ||
             (tg.version && tg.version.length > 0) ||
             (tg.initData && tg.initData.length > 0);
 
         if (isInTelegram) {
-            console.log('Detected Telegram WebApp - sending via tg.sendData()');
             btn.textContent = "Отправка в Telegram...";
             tg.sendData(JSON.stringify(data));
             haptic('success', { sound: true, vibrate: true });
