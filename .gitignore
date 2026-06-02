@@ -61,6 +61,16 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
+# Local BestBOT runtime state
+*.db
+*.db-shm
+*.db-wal
+*.pickle
+bot.pid
+console.log
+out.log
+logs/
+
 # Flask stuff:
 instance/
 .webassets-cache

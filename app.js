@@ -720,9 +720,9 @@ function addItem() {
     const inputs = div.querySelectorAll('input');
     inputs.forEach(input => {
         input.addEventListener('input', () => {
-            input.classList.remove('invalid');
-            const errorMsg = input.closest('.form-group')?.querySelector('.error-message');
-            if (errorMsg) errorMsg.classList.remove('show');
+            if (shouldClearFieldError(input)) {
+                clearFieldError(input, true);
+            }
         });
     });
 
@@ -921,7 +921,7 @@ restoreDraft();
 // SERVICE WORKER & OFFLINE MODE
 // ============================================
 if ('serviceWorker' in navigator) {
-    const swVersion = '2402';
+    const swVersion = '2403';
     const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
     const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
     navigator.serviceWorker.register(swUrl)
@@ -1532,26 +1532,94 @@ document.querySelectorAll('.btn').forEach(btn => {
     btn.addEventListener('click', () => haptic('medium'));
 });
 
+const VALIDATION_MESSAGES = {
+    department: 'Укажите номер подразделения.',
+    issue: 'Укажите номер заключения.',
+    ticket: 'Номер билета должен состоять из 11 цифр.',
+    date: 'Укажите дату заключения.',
+    region: 'Выберите регион.',
+    desc: 'Добавьте описание предмета.',
+    eval: 'Укажите оценку предмета.'
+};
+
+function getFieldErrorElement(field) {
+    const group = field.closest('.form-group');
+    if (!group) return null;
+
+    let error = group.querySelector('.error-message');
+    if (!error) {
+        error = document.createElement('div');
+        error.className = 'error-message';
+        group.appendChild(error);
+    }
+    return error;
+}
+
+function clearFieldError(field, force = false) {
+    if (!force && field.classList.contains('invalid') && !shouldClearFieldError(field)) {
+        return;
+    }
+
+    field.classList.remove('invalid');
+    const error = getFieldErrorElement(field);
+    if (error) {
+        error.textContent = '';
+        error.classList.remove('show');
+    }
+}
+
+function shouldClearFieldError(field) {
+    if (field.id === 'ticket') return field.value.trim().length === 11;
+    return Boolean(field.value.trim());
+}
+
+function setFieldError(field, message) {
+    field.classList.add('invalid');
+    const error = getFieldErrorElement(field);
+    if (error) {
+        error.textContent = message;
+        error.classList.add('show');
+    }
+
+    const clear = () => {
+        if (shouldClearFieldError(field)) {
+            clearFieldError(field, true);
+        }
+    };
+    field.addEventListener('input', clear, { once: true });
+    field.addEventListener('change', clear, { once: true });
+}
+
 function validateForm() {
     let isValid = true;
     let firstInvalidField = null; // Track first invalid for auto-scroll
+    let firstInvalidMessage = '';
     const requiredIds = ['department', 'issue', 'ticket', 'date', 'region'];
+
+    document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+    document.querySelectorAll('.error-message.show').forEach(el => {
+        el.textContent = '';
+        el.classList.remove('show');
+    });
 
     requiredIds.forEach(id => {
         const el = document.getElementById(id);
         if (!el.value.trim()) {
             isValid = false;
-            el.classList.add('invalid');
-            if (!firstInvalidField) firstInvalidField = el;
-            // Add listener to remove invalid class on input
-            el.addEventListener('input', () => el.classList.remove('invalid'), { once: true });
+            setFieldError(el, VALIDATION_MESSAGES[id]);
+            if (!firstInvalidField) {
+                firstInvalidField = el;
+                firstInvalidMessage = VALIDATION_MESSAGES[id];
+            }
         } else {
             // Specific checks
             if (id === 'ticket' && el.value.length !== 11) {
                 isValid = false;
-                el.classList.add('invalid');
-                if (!firstInvalidField) firstInvalidField = el;
-                el.addEventListener('input', () => el.classList.remove('invalid'), { once: true });
+                setFieldError(el, VALIDATION_MESSAGES.ticket);
+                if (!firstInvalidField) {
+                    firstInvalidField = el;
+                    firstInvalidMessage = VALIDATION_MESSAGES.ticket;
+                }
             }
         }
     });
@@ -1563,18 +1631,22 @@ function validateForm() {
 
         if (desc && !desc.value.trim()) {
             isValid = false;
-            desc.classList.add('invalid');
+            setFieldError(desc, VALIDATION_MESSAGES.desc);
             card.classList.remove('collapsed');
-            if (!firstInvalidField) firstInvalidField = desc;
-            desc.addEventListener('input', () => desc.classList.remove('invalid'), { once: true });
+            if (!firstInvalidField) {
+                firstInvalidField = desc;
+                firstInvalidMessage = VALIDATION_MESSAGES.desc;
+            }
         }
 
         if (evalInput && !evalInput.value.trim()) {
             isValid = false;
-            evalInput.classList.add('invalid');
+            setFieldError(evalInput, VALIDATION_MESSAGES.eval);
             card.classList.remove('collapsed');
-            if (!firstInvalidField) firstInvalidField = evalInput;
-            evalInput.addEventListener('input', () => evalInput.classList.remove('invalid'), { once: true });
+            if (!firstInvalidField) {
+                firstInvalidField = evalInput;
+                firstInvalidMessage = VALIDATION_MESSAGES.eval;
+            }
         }
     });
 
@@ -1589,6 +1661,9 @@ function validateForm() {
             // Focus after scroll animation
             setTimeout(() => {
                 firstInvalidField.focus();
+                if (!shouldClearFieldError(firstInvalidField)) {
+                    setFieldError(firstInvalidField, firstInvalidMessage);
+                }
             }, 500);
         }
 
