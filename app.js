@@ -14,6 +14,7 @@ const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp 
     showPopup: ({ message }) => alert(message),
     sendData: () => { },
     close: () => { },
+    onEvent: () => { },
     MainButton: {
         setText: () => { },
         show: () => { },
@@ -120,7 +121,42 @@ const APP_CONFIG = {
     DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || "",
     IMAGEBAN_CLIENT_ID: window.APP_IMAGEBAN_CLIENT_ID || ""
 };
-const APP_BUILD_ID = '2405';
+const APP_BUILD_ID = '2406';
+
+function isTelegramWebAppRuntime() {
+    const platform = String(tg.platform || '').toLowerCase();
+    const knownTelegramPlatforms = new Set(['android', 'ios', 'macos', 'tdesktop', 'weba', 'webk', 'unigram']);
+    return Boolean(
+        (tg.initData && tg.initData.length > 0) ||
+        (tg.initDataUnsafe && tg.initDataUnsafe.user) ||
+        knownTelegramPlatforms.has(platform)
+    );
+}
+
+function showAppAlert(message) {
+    if (isTelegramWebAppRuntime() && typeof tg.showAlert === 'function') {
+        try {
+            tg.showAlert(message);
+            return;
+        } catch (e) { }
+    }
+    alert(message);
+}
+
+function showAppPopup(message) {
+    if (isTelegramWebAppRuntime() && typeof tg.showPopup === 'function') {
+        try {
+            tg.showPopup({ message });
+            return;
+        } catch (e) { }
+    }
+    alert(message);
+}
+
+function getCleanBotUrl() {
+    const baseUrl = typeof botUrl !== 'undefined' ? botUrl : '';
+    return String(baseUrl || '').trim().replace(/\/$/, "");
+}
 
 // Initialize
 tg.expand();
@@ -138,7 +174,7 @@ document.addEventListener('touchstart', firstGesture, { once: true });
 // URL params allow setting shared config for all users (e.g. from bot WebApp URL).
 const urlParams = new URLSearchParams(window.location.search);
 const urlBotUrl = (urlParams.get('bot_url') || '').trim();
-const isInTelegram = Boolean(tg.initDataUnsafe && tg.initDataUnsafe.user);
+const isInTelegram = isTelegramWebAppRuntime();
 const imagebanClientId = (urlParams.get('imageban_client') || APP_CONFIG.IMAGEBAN_CLIENT_ID || '').trim();
 
 // Load Bot URL (for standalone mode)
@@ -441,7 +477,9 @@ function applyTelegramTheme() {
 
 // Apply theme initially and listen for dynamic changes
 applyTelegramTheme();
-tg.onEvent('themeChanged', applyTelegramTheme);
+if (typeof tg.onEvent === 'function') {
+    tg.onEvent('themeChanged', applyTelegramTheme);
+}
 
 
 // Set today's date and max date (prevent future dates)
@@ -456,7 +494,7 @@ dateInput.addEventListener('change', function () {
     const todayDate = new Date(today);
 
     if (selectedDate > todayDate) {
-        tg.showAlert('⚠️ Нельзя выбрать будущую дату! Выберите сегодня или прошедшую дату.');
+        showAppAlert('⚠️ Нельзя выбрать будущую дату! Выберите сегодня или прошедшую дату.');
         this.value = today; // Reset to today
     }
 });
@@ -1355,8 +1393,10 @@ async function uploadImageToBot(file, onProgress) {
     const formData = new FormData();
     formData.append('image', compressedBlob, 'image.jpg');
 
-    const baseUrl = typeof botUrl !== 'undefined' ? botUrl : '';
-    const cleanBase = baseUrl.replace(/\/$/, "");
+    const cleanBase = getCleanBotUrl();
+    if (!cleanBase) {
+        throw new Error("Сайт открыт без подключения к серверу создания заключений. Откройте ссылку из Telegram или используйте ссылку с параметром bot_url.");
+    }
     const uploadUrl = `${cleanBase}/api/upload-photo`;
 
     const result = await uploadWithRetry(
@@ -1487,7 +1527,7 @@ function handleMainButton() {
 }
 
 function updateMainButton() {
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+    if (isTelegramWebAppRuntime()) {
         // We are in Telegram
         document.getElementById('finalSubmitBtn').style.display = 'none'; // Hide HTML button in modal
         document.querySelector('.btn-primary[onclick="showPreview()"]').style.display = 'none'; // Hide main form button
@@ -1508,7 +1548,7 @@ function haptic(type = 'light', opts = {}) {
     const sound = opts && opts.sound === true;
     const vibrate = opts && opts.vibrate === true;
 
-    if (tg.HapticFeedback) {
+    if (isTelegramWebAppRuntime() && tg.HapticFeedback) {
         switch (type) {
             case 'light':
             case 'medium':
@@ -1683,7 +1723,7 @@ function validateForm() {
             }, 500);
         }
 
-        tg.showAlert("Пожалуйста, заполните все обязательные поля корректно.");
+        showAppAlert("Пожалуйста, заполните все обязательные поля корректно.");
         haptic('error');
     }
 
@@ -1730,7 +1770,7 @@ function showPreview() {
         if (firstMissingPhoto) {
             firstMissingPhoto.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        tg.showAlert("Пожалуйста, выберите фото для всех предметов!");
+        showAppAlert("Пожалуйста, выберите фото для всех предметов!");
         previewOpen = false;
         return;
     }
@@ -1934,7 +1974,7 @@ async function submitForm() {
             if (fileInput.files && fileInput.files[0]) {
                 // Photo selected but not uploaded yet (shouldn't happen with background upload)
                 allUploaded = false;
-                tg.showAlert('⏳ Дождитесь загрузки всех фотографий');
+                showAppAlert('⏳ Дождитесь загрузки всех фотографий');
                 btn.disabled = false;
                 btn.textContent = "Отправить";
 
@@ -1960,7 +2000,7 @@ async function submitForm() {
     }
 
     if (items.length === 0) {
-        tg.showAlert('❌ Нет загруженных фотографий');
+        showAppAlert('❌ Нет загруженных фотографий');
         btn.disabled = false;
         btn.textContent = "Отправить";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -1994,7 +2034,7 @@ async function submitForm() {
         selectedDate.setHours(0, 0, 0, 0);
 
         if (selectedDate > today) {
-            tg.showAlert('⚠️ Ошибка: Нельзя выбрать будущую дату!\n\nВыберите сегодняшнюю или прошедшую дату.');
+            showAppAlert('⚠️ Ошибка: Нельзя выбрать будущую дату!\n\nВыберите сегодняшнюю или прошедшую дату.');
             btn.disabled = false;
             btn.textContent = "Отправить";
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -2010,9 +2050,7 @@ async function submitForm() {
         // iOS Telegram 9.x bug: initData may be empty even in WebApp
         // Instead, check for platform/version which are always present in Telegram
         // Check if we're in Telegram by platform/version presence
-        const isInTelegram = (tg.platform && tg.platform.length > 0) ||
-            (tg.version && tg.version.length > 0) ||
-            (tg.initData && tg.initData.length > 0);
+        const isInTelegram = isTelegramWebAppRuntime();
 
         if (isInTelegram) {
             btn.textContent = "Отправка в Telegram...";
@@ -2035,7 +2073,12 @@ async function submitForm() {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
 
-            const response = await fetch(botUrl + '/api/generate', {
+            const cleanBase = getCleanBotUrl();
+            if (!cleanBase) {
+                throw new Error("Для скачивания DOCX на сайте нужен адрес сервера создания заключений. Откройте ссылку с параметром bot_url.");
+            }
+
+            const response = await fetch(`${cleanBase}/api/generate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -2073,11 +2116,7 @@ async function submitForm() {
             fireConfetti(); // 🎉 Celebration!
             haptic('success', { sound: true, vibrate: true });
 
-            if (tg.showPopup) {
-                tg.showPopup({ message: "✅ Документ готов и скачан!" });
-            } else {
-                alert("✅ Документ готов и скачан!");
-            }
+            showAppPopup("✅ Документ готов и скачан!");
             closePreview();
             btn.disabled = false;
             btn.textContent = "Отправить";
@@ -2093,17 +2132,9 @@ async function submitForm() {
         }
 
         if (e.name === 'AbortError') {
-            if (tg.showPopup) {
-                tg.showPopup({ message: "Ошибка: Превышено время ожидания (30с). Проверьте интернет или URL бота." });
-            } else {
-                alert("Ошибка: Превышено время ожидания (30с). Проверьте интернет или URL бота.");
-            }
+            showAppPopup("Ошибка: Превышено время ожидания (30с). Проверьте интернет или адрес сервера.");
         } else {
-            if (tg.showPopup) {
-                tg.showPopup({ message: `Ошибка при отправке: ${e.message}` });
-            } else {
-                alert(`Ошибка при отправке: ${e.message}`);
-            }
+            showAppPopup(`Ошибка при отправке: ${e.message}`);
         }
         btn.disabled = false;
         btn.textContent = "Отправить";

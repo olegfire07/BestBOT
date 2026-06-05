@@ -1,5 +1,5 @@
 // Service Worker for offline support
-const VERSION = '2405';
+const VERSION = '2406';
 const CACHE_NAME = `bestbot-pages-${VERSION}`;
 const swPath = self.location.pathname.replace(/service-worker\.js.*$/, '');
 const BASE_PATH = swPath.endsWith('/') ? swPath : `${swPath}/`;
