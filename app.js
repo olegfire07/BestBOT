@@ -120,6 +120,7 @@ const APP_CONFIG = {
     DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || "",
     IMAGEBAN_CLIENT_ID: window.APP_IMAGEBAN_CLIENT_ID || ""
 };
+const APP_BUILD_ID = '2405';
 
 // Initialize
 tg.expand();
@@ -388,11 +389,27 @@ function showQuizResult() {
             `;
 }
 
-function forceUpdate() {
+async function forceUpdate() {
     haptic('medium');
+    try {
+        if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(registrations.map(registration => registration.unregister()));
+        }
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(
+                cacheNames
+                    .filter(name => name.startsWith('sklad-bot-') || name.startsWith('bestbot-pages-'))
+                    .map(name => caches.delete(name))
+            );
+        }
+    } catch (e) {
+        console.warn('Cache cleanup failed:', e);
+    }
     const url = new URL(window.location.href);
-    url.searchParams.set('v', Date.now());
-    window.location.href = url.toString();
+    url.searchParams.set('cache_bust', Date.now());
+    window.location.replace(url.toString());
 }
 
 // Theme handling
@@ -921,9 +938,8 @@ restoreDraft();
 // SERVICE WORKER & OFFLINE MODE
 // ============================================
 if ('serviceWorker' in navigator) {
-    const swVersion = '2404';
-    const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
-    const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
+    const basePath = location.pathname.endsWith('/') ? location.pathname : location.pathname.replace(/[^/]*$/, '');
+    const swUrl = `${basePath}service-worker.js?v=${APP_BUILD_ID}`;
     navigator.serviceWorker.register(swUrl)
         .catch(err => console.error('Service Worker registration failed:', err));
 
