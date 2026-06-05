@@ -1,13 +1,14 @@
 // Service Worker for offline support
-const VERSION = '2406';
-const CACHE_NAME = `bestbot-pages-${VERSION}`;
+const VERSION = '2400';
+const CACHE_NAME = `sklad-bot-${VERSION}`;
 const swPath = self.location.pathname.replace(/service-worker\.js.*$/, '');
 const BASE_PATH = swPath.endsWith('/') ? swPath : `${swPath}/`;
 
 const urlsToCache = [
-    `${BASE_PATH}styles.css?v=${VERSION}`,
-    `${BASE_PATH}ux-improvements.js?v=${VERSION}`,
-    `${BASE_PATH}app.js?v=${VERSION}`,
+    BASE_PATH,
+    `${BASE_PATH}index.html`,
+    `${BASE_PATH}styles.css`,
+    `${BASE_PATH}app.js`,
     `${BASE_PATH}quiz_questions.json`,
     `${BASE_PATH}fianit-logo.jpg`
 ];
@@ -16,9 +17,7 @@ const urlsToCache = [
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then((cache) => Promise.all(
-                urlsToCache.map((url) => cache.add(url).catch(() => null))
-            ))
+            .then((cache) => cache.addAll(urlsToCache))
     );
     self.skipWaiting();
 });
@@ -29,10 +28,7 @@ self.addEventListener('activate', (event) => {
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
-                    if (
-                        cacheName !== CACHE_NAME
-                        && (cacheName.startsWith('sklad-bot-') || cacheName.startsWith('bestbot-pages-'))
-                    ) {
+                    if (cacheName !== CACHE_NAME) {
                         return caches.delete(cacheName);
                     }
                 })
@@ -42,60 +38,46 @@ self.addEventListener('activate', (event) => {
     return self.clients.claim();
 });
 
-async function networkFirst(request) {
-    try {
-        const networkResponse = await fetch(request);
-        if (networkResponse && networkResponse.ok && request.method === 'GET') {
-            const cache = await caches.open(CACHE_NAME);
-            await cache.put(request, networkResponse.clone());
-        }
-        return networkResponse;
-    } catch (error) {
-        const cachedResponse = await caches.match(request);
-        if (cachedResponse) {
-            return cachedResponse;
-        }
-        throw error;
-    }
-}
-
-async function cacheFirst(request) {
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-        return cachedResponse;
-    }
-    const networkResponse = await fetch(request);
-    if (networkResponse && networkResponse.ok && request.method === 'GET') {
-        const cache = await caches.open(CACHE_NAME);
-        await cache.put(request, networkResponse.clone());
-    }
-    return networkResponse;
-}
-
-// Fetch event - Network First for HTML/CSS/JS to avoid stale browser versions.
+// Fetch event - Network First for API, Cache First for static assets
 self.addEventListener('fetch', (event) => {
-    if (event.request.method !== 'GET') {
-        return;
-    }
-
     const url = new URL(event.request.url);
-    const isSameOrigin = url.origin === self.location.origin;
 
-    if (!isSameOrigin) {
+    // API requests: Network First
+    if (url.pathname.startsWith('/api/')) {
+        event.respondWith(
+            fetch(event.request)
+                .catch(() => caches.match(event.request))
+        );
         return;
     }
 
-    if (event.request.mode === 'navigate' || event.request.destination === 'document') {
-        event.respondWith(networkFirst(event.request));
-        return;
-    }
-
-    if (event.request.destination === 'script' || event.request.destination === 'style') {
-        event.respondWith(networkFirst(event.request));
-        return;
-    }
-
-    event.respondWith(cacheFirst(event.request));
+    // Static assets: Cache First, then Network
+    event.respondWith(
+        caches.match(event.request)
+            .then((response) => {
+                if (response) {
+                    // Update cache in background
+                    fetch(event.request).then(networkResponse => {
+                        if (networkResponse && networkResponse.ok) {
+                            caches.open(CACHE_NAME).then(cache => {
+                                cache.put(event.request, networkResponse);
+                            });
+                        }
+                    }).catch(() => { });
+                    return response;
+                }
+                return fetch(event.request).then(networkResponse => {
+                    // Cache successful responses
+                    if (networkResponse && networkResponse.ok) {
+                        const cloned = networkResponse.clone();
+                        caches.open(CACHE_NAME).then(cache => {
+                            cache.put(event.request, cloned);
+                        });
+                    }
+                    return networkResponse;
+                });
+            })
+    );
 });
 
 // Background sync for offline submissions
