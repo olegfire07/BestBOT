@@ -30,6 +30,8 @@ class ReportService:
         3. Updates Excel/Archive
         4. Sends to Telegram
         """
+        is_test = bool(data.get('is_test', False))
+
         # 1. Prepare Data
         db_data = {
             'department_number': data['department_number'],
@@ -37,6 +39,7 @@ class ReportService:
             'ticket_number': data['ticket_number'],
             'date': data['date'],
             'region': data['region'],
+            'is_test': is_test,
             'photo_desc': []
         }
         
@@ -85,15 +88,16 @@ class ReportService:
         user_name = "Web User"
         path = await create_document(user_id, user_name, db_data_override=db_data)
         
-        # 4. Update Excel and Archive
-        try:
-            await update_excel(db_data)
-            await archive_document(path, db_data)
-        except Exception as e:
-            logger.error(f"Failed to update Excel/Archive: {e}")
+        # 4. Update Excel and Archive for originals only.
+        # Site drafts are for local download/preview and must not pollute work stats.
+        if not is_test:
+            try:
+                await update_excel(db_data)
+                await archive_document(path, db_data)
+            except Exception as e:
+                logger.error(f"Failed to update Excel/Archive: {e}")
 
         # 5. Send to Group (if not test)
-        is_test = data.get('is_test', False)
         if not is_test:
             region = data.get('region')
             topic_id = REGION_TOPICS.get(region)
