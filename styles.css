@@ -55,18 +55,18 @@
     --primary-color: #007AFF;
     --primary-hover: #0062cc;
     --text-color: #1d1d1f;
-    --secondary-text: #86868b;
-    --card-bg: rgba(255, 255, 255, 0.65);
-    --input-bg: rgba(255, 255, 255, 0.5);
-    --input-bg-field: #f2f2f7;
-    --input-bg-field-main: #F5F5F7;
-    --border-color: rgba(0, 0, 0, 0.05);
+    --secondary-text: #5f6673;
+    --card-bg: rgba(255, 255, 255, 0.92);
+    --input-bg: rgba(255, 255, 255, 0.86);
+    --input-bg-field: #ffffff;
+    --input-bg-field-main: #ffffff;
+    --border-color: rgba(17, 24, 39, 0.14);
     --danger-color: #ff3b30;
     --success-color: #34c759;
     --error-color: #ff3b30;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 12px 24px rgba(0, 0, 0, 0.06);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+    --shadow-sm: 0 8px 22px rgba(15, 23, 42, 0.08);
+    --shadow-md: 0 16px 36px rgba(15, 23, 42, 0.12);
+    --glass-border: 1px solid rgba(17, 24, 39, 0.10);
     --radius-lg: 24px;
     --radius-md: 16px;
 }
@@ -104,9 +104,10 @@ body::before {
     z-index: -1;
     background-color: #fdfdfd;
     background-image:
-        radial-gradient(1200px circle at 10% 90%, rgba(255, 86, 86, 0.3), transparent 70%),
-        radial-gradient(1000px circle at 90% 10%, rgba(88, 220, 230, 0.35), transparent 65%),
-        radial-gradient(900px circle at 50% 50%, rgba(180, 240, 255, 0.25), transparent 70%);
+        linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.10)),
+        radial-gradient(1200px circle at 10% 90%, rgba(255, 86, 86, 0.22), transparent 70%),
+        radial-gradient(1000px circle at 90% 10%, rgba(88, 220, 230, 0.28), transparent 65%),
+        radial-gradient(900px circle at 50% 50%, rgba(180, 240, 255, 0.20), transparent 70%);
 }
 
 /* Dark Mode Override if needed, but keeping light for now as requested */
@@ -116,7 +117,7 @@ h1 {
     margin-bottom: 24px;
     font-size: 28px;
     font-weight: 800;
-    letter-spacing: -0.02em;
+    letter-spacing: 0;
     color: #1d1d1f;
     animation: fadeInUp 0.6s ease-out;
 }
@@ -191,6 +192,14 @@ h1 {
     border: var(--glass-border);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     animation: fadeInUp 0.6s ease-out 0.1s backwards;
+}
+
+.section,
+.item-card,
+.total-banner,
+.btn-dashed,
+.segmented-control {
+    outline: 1px solid rgba(255, 255, 255, 0.55);
 }
 
 /* Guide Modal Styles */
@@ -310,7 +319,6 @@ select {
     width: 100%;
     padding: 18px 18px 18px 50px;
     /* Increased padding for icon */
-    border: 1px solid transparent;
     background: var(--input-bg-field-main);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
@@ -324,6 +332,11 @@ select {
     /* Mobile fixes */
     box-sizing: border-box;
     max-width: 100%;
+}
+
+input::placeholder,
+select:invalid {
+    color: #747b87;
 }
 
 /* Hide spin buttons */
@@ -348,7 +361,8 @@ input:focus,
 select:focus {
     outline: none;
     background: #fff;
-    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.15);
+    border-color: rgba(0, 122, 255, 0.72);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.18);
     transform: translateY(-1px);
 }
 
@@ -387,7 +401,7 @@ select:focus+.input-icon,
     padding: 20px;
     margin-bottom: 16px;
     box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(17, 24, 39, 0.12);
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     animation: slideInUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     /* Spring animation for add/load */
@@ -409,9 +423,9 @@ select:focus+.input-icon,
 }
 
 .item-header {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(248, 250, 252, 0.92);
     padding: 16px 24px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(17, 24, 39, 0.08);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -502,7 +516,7 @@ select:focus+.input-icon,
     border-radius: var(--radius-lg);
     font-size: 17px;
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
     transition: all 0.3s ease;
     border: none;
     cursor: pointer;
@@ -589,10 +603,10 @@ select:focus+.input-icon,
 }
 
 .btn-secondary {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.86);
     color: var(--primary-color);
-    border: 1px solid rgba(0, 122, 255, 0.1);
-    box-shadow: none;
+    border: 1px solid rgba(0, 122, 255, 0.24);
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
 }
 
 .btn-secondary:hover {
@@ -799,8 +813,8 @@ select:focus+.input-icon,
     margin-top: 16px;
     border-radius: 16px;
     overflow: hidden;
-    background: rgba(0, 122, 255, 0.03);
-    border: 2px dashed rgba(0, 0, 0, 0.1);
+    background: rgba(248, 250, 252, 0.82);
+    border: 2px dashed rgba(0, 122, 255, 0.28);
     position: relative;
     height: 200px;
     /* Increased height */
@@ -813,7 +827,7 @@ select:focus+.input-icon,
 
 .photo-preview-container:hover {
     border-color: var(--primary-color);
-    background: rgba(0, 122, 255, 0.03);
+    background: rgba(239, 246, 255, 0.92);
 }
 
 .photo-preview {
@@ -954,20 +968,20 @@ select:focus+.input-icon,
     text-align: center;
     margin-top: 4px;
     /* Better contrast for mobile */
-    color: #666;
+    color: #5f6673;
     font-size: 13px;
 }
 
 /* Tooltip Hint */
 .input-hint {
     /* Improved contrast */
-    color: #666;
+    color: #5f6673;
     font-size: 13px;
     margin-top: 6px;
     display: flex;
     align-items: center;
     gap: 4px;
-    opacity: 0.8;
+    opacity: 1;
 }
 
 .input-hint svg {
@@ -990,13 +1004,13 @@ select:focus+.input-icon,
 
 .segmented-control {
     display: flex;
-    background: rgba(0, 0, 0, 0.06);
+    background: rgba(17, 24, 39, 0.08);
     /* iOS Segmented Control BG */
     border-radius: 9px;
     padding: 2px;
     margin-bottom: 24px;
     position: relative;
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(17, 24, 39, 0.14);
 }
 
 .segmented-control label {
@@ -1191,18 +1205,6 @@ select:focus+.input-icon,
     /* Prevent scrollbar overlap */
 }
 
-.flex-gap {
-    display: flex;
-    gap: 12px;
-    width: 100%;
-}
-
-.flex-gap .btn {
-    flex: 1;
-    margin: 0;
-}
-
-
 /* Prevent iOS Zoom on inputs */
 input,
 select,
@@ -1289,7 +1291,7 @@ textarea {
 
 .hint-text {
     font-size: 12px;
-    color: var(--secondary-text);
+    color: #5f6673;
     margin-top: 4px;
     margin-left: 4px;
 }
@@ -1460,7 +1462,7 @@ textarea {
     width: 100%;
     padding: 24px 16px 8px;
     /* Increased top padding for label */
-    border: 2px solid transparent;
+    border: 1px solid rgba(17, 24, 39, 0.13);
     background: var(--input-bg-field);
     border-radius: 14px;
     font-size: 16px;
@@ -1518,19 +1520,19 @@ textarea {
 }
 
 .item-field:focus::-webkit-input-placeholder {
-    color: #999;
+    color: #747b87;
 }
 
 .item-field:focus::-moz-placeholder {
-    color: #999;
+    color: #747b87;
 }
 
 .item-field:focus:-ms-input-placeholder {
-    color: #999;
+    color: #747b87;
 }
 
 .item-field:focus::placeholder {
-    color: #999;
+    color: #747b87;
 }
 
 .item-field:focus {
@@ -1781,7 +1783,7 @@ textarea {
 
 /* Total Cost Banner */
 .total-banner {
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.94);
     padding: 18px;
     /* Reduced padding */
     border-radius: 16px;
@@ -1789,7 +1791,7 @@ textarea {
     justify-content: space-between;
     align-items: center;
     margin-top: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(17, 24, 39, 0.12);
     box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
 
@@ -1807,7 +1809,7 @@ textarea {
     /* Smaller font */
     font-weight: 800;
     color: var(--primary-color);
-    letter-spacing: -0.5px;
+    letter-spacing: 0;
 }
 
 /* =============================================
@@ -1929,7 +1931,7 @@ textarea {
 
 .item-card {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(17, 24, 39, 0.12);
 }
 
 .item-card:hover {
@@ -2106,4 +2108,143 @@ body.dark-mode .motivation-item {
 
 body.dark-mode .step-icon-wrapper {
     background: rgba(0, 122, 255, 0.15);
+}
+
+
+/* === 2026 UI & CONTRAST UPGRADE === */
+/* Input Fields High-Contrast & Modern Styling */
+.section {
+    background: #ffffff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+    border-radius: 20px !important;
+}
+
+label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    margin-bottom: 7px !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    color: #1e293b !important;
+    letter-spacing: -0.01em !important;
+}
+
+.required-star {
+    color: #ef4444;
+    font-weight: bold;
+}
+
+input,
+select {
+    width: 100% !important;
+    padding: 16px 16px 16px 48px !important;
+    background: #f8fafc !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 14px !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    color: #0f172a !important;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-sizing: border-box !important;
+}
+
+input:hover,
+select:hover {
+    background: #ffffff !important;
+    border-color: #94a3b8 !important;
+}
+
+input:focus,
+select:focus {
+    outline: none !important;
+    background: #ffffff !important;
+    border-color: #007aff !important;
+    box-shadow: 0 0 0 3.5px rgba(0, 122, 255, 0.18), inset 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+    transform: translateY(-1px) !important;
+}
+
+.input-icon {
+    color: #007aff !important;
+    width: 20px !important;
+    height: 20px !important;
+    left: 15px !important;
+}
+
+.hint-text {
+    font-size: 12px !important;
+    color: #64748b !important;
+    margin-top: 5px !important;
+    margin-left: 4px !important;
+    line-height: 1.4 !important;
+}
+
+/* Item cards elevated style */
+.item-card {
+    background: #ffffff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05) !important;
+    margin-bottom: 18px !important;
+}
+
+.item-card .item-header {
+    background: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    border-top-left-radius: 16px !important;
+    border-top-right-radius: 16px !important;
+}
+
+/* Photo Upload Box Enhancement */
+.photo-preview-container {
+    border: 2px dashed #94a3b8 !important;
+    background: #f8fafc !important;
+    border-radius: 16px !important;
+    transition: all 0.2s ease !important;
+}
+
+.photo-preview-container:hover {
+    border-color: #007aff !important;
+    background: rgba(0, 122, 255, 0.03) !important;
+}
+
+/* TELEGRAM WEBAPP DEDICATED FIX (NO DOUBLE BUTTON) */
+body.in-telegram .sticky-footer,
+.in-telegram .sticky-footer {
+    display: none !important;
+}
+
+body.in-telegram {
+    padding-bottom: calc(25px + env(safe-area-inset-bottom)) !important;
+}
+
+/* Dark Mode High-Contrast Overrides */
+body.dark-mode .section,
+body.dark-mode .item-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+body.dark-mode label {
+    color: #f1f5f9 !important;
+}
+
+body.dark-mode input,
+body.dark-mode select {
+    background: #0f172a !important;
+    border-color: #475569 !important;
+    color: #f8fafc !important;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus {
+    background: #0f172a !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 3.5px rgba(56, 189, 248, 0.25) !important;
+}
+
+body.dark-mode .hint-text {
+    color: #94a3b8 !important;
 }

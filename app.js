@@ -14,6 +14,7 @@ const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp 
     showPopup: ({ message }) => alert(message),
     sendData: () => { },
     close: () => { },
+    onEvent: () => { },
     MainButton: {
         setText: () => { },
         show: () => { },
@@ -93,7 +94,12 @@ function requestFullScreen(force = false) {
     fullScreenRequested = true;
     try {
         tg.expand();
-        if (tg.requestFullscreen) tg.requestFullscreen();
+        const fullscreenSupported = typeof tg.isVersionAtLeast === 'function'
+            ? tg.isVersionAtLeast('8.0')
+            : parseFloat(tg.version || '0') >= 8;
+        if (fullscreenSupported && typeof tg.requestFullscreen === 'function') {
+            tg.requestFullscreen();
+        }
     } catch (e) { }
 }
 
@@ -113,8 +119,44 @@ function escapeHtml(unsafe) {
 
 const APP_CONFIG = {
     DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || "",
-    IMAGEBAN_CLIENT_ID: window.APP_IMAGEBAN_CLIENT_ID || "wlbeebCGLMGRtwNpk5YS"
+    IMAGEBAN_CLIENT_ID: window.APP_IMAGEBAN_CLIENT_ID || "JNo3V4ZQiuzGItX0zXj1kFFfdJ1ocGs7dfN"
 };
+const APP_BUILD_ID = '2406';
+
+function isTelegramWebAppRuntime() {
+    const platform = String(tg.platform || '').toLowerCase();
+    const knownTelegramPlatforms = new Set(['android', 'ios', 'macos', 'tdesktop', 'weba', 'webk', 'unigram']);
+    return Boolean(
+        (tg.initData && tg.initData.length > 0) ||
+        (tg.initDataUnsafe && tg.initDataUnsafe.user) ||
+        knownTelegramPlatforms.has(platform)
+    );
+}
+
+function showAppAlert(message) {
+    if (isTelegramWebAppRuntime() && typeof tg.showAlert === 'function') {
+        try {
+            tg.showAlert(message);
+            return;
+        } catch (e) { }
+    }
+    alert(message);
+}
+
+function showAppPopup(message) {
+    if (isTelegramWebAppRuntime() && typeof tg.showPopup === 'function') {
+        try {
+            tg.showPopup({ message });
+            return;
+        } catch (e) { }
+    }
+    alert(message);
+}
+
+function getCleanBotUrl() {
+    const baseUrl = typeof botUrl !== 'undefined' ? botUrl : '';
+    return String(baseUrl || '').trim().replace(/\/$/, "");
+}
 
 // Initialize
 tg.expand();
@@ -132,7 +174,7 @@ document.addEventListener('touchstart', firstGesture, { once: true });
 // URL params allow setting shared config for all users (e.g. from bot WebApp URL).
 const urlParams = new URLSearchParams(window.location.search);
 const urlBotUrl = (urlParams.get('bot_url') || '').trim();
-const isInTelegram = Boolean(tg.initDataUnsafe && tg.initDataUnsafe.user);
+const isInTelegram = isTelegramWebAppRuntime();
 const imagebanClientId = (urlParams.get('imageban_client') || APP_CONFIG.IMAGEBAN_CLIENT_ID || '').trim();
 
 // Load Bot URL (for standalone mode)
@@ -383,11 +425,27 @@ function showQuizResult() {
             `;
 }
 
-function forceUpdate() {
+async function forceUpdate() {
     haptic('medium');
+    try {
+        if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(registrations.map(registration => registration.unregister()));
+        }
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(
+                cacheNames
+                    .filter(name => name.startsWith('sklad-bot-') || name.startsWith('bestbot-pages-'))
+                    .map(name => caches.delete(name))
+            );
+        }
+    } catch (e) {
+        console.warn('Cache cleanup failed:', e);
+    }
     const url = new URL(window.location.href);
-    url.searchParams.set('v', Date.now());
-    window.location.href = url.toString();
+    url.searchParams.set('cache_bust', Date.now());
+    window.location.replace(url.toString());
 }
 
 // Theme handling
@@ -419,7 +477,9 @@ function applyTelegramTheme() {
 
 // Apply theme initially and listen for dynamic changes
 applyTelegramTheme();
-tg.onEvent('themeChanged', applyTelegramTheme);
+if (typeof tg.onEvent === 'function') {
+    tg.onEvent('themeChanged', applyTelegramTheme);
+}
 
 
 // Set today's date and max date (prevent future dates)
@@ -434,7 +494,7 @@ dateInput.addEventListener('change', function () {
     const todayDate = new Date(today);
 
     if (selectedDate > todayDate) {
-        tg.showAlert('⚠️ Нельзя выбрать будущую дату! Выберите сегодня или прошедшую дату.');
+        showAppAlert('⚠️ Нельзя выбрать будущую дату! Выберите сегодня или прошедшую дату.');
         this.value = today; // Reset to today
     }
 });
@@ -631,7 +691,7 @@ function addItem() {
                 </div>
                 <div class="item-body">
                     <div class="form-group desc-group">
-                        <input type="text" class="desc item-field" placeholder="Кольцо, металл желтого цвета" required id="desc-${itemCount}">
+                        <input type="text" class="desc item-field" placeholder="Икона деревянная, живопись на доске" required id="desc-${itemCount}">
                         <label class="floating-label" for="desc-${itemCount}">Описание</label>
                         <button type="button" class="mic-btn" onclick="startSpeechRecognition(this, 'desc-${itemCount}')" title="Голосовой ввод">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -715,9 +775,9 @@ function addItem() {
     const inputs = div.querySelectorAll('input');
     inputs.forEach(input => {
         input.addEventListener('input', () => {
-            input.classList.remove('invalid');
-            const errorMsg = input.closest('.form-group')?.querySelector('.error-message');
-            if (errorMsg) errorMsg.classList.remove('show');
+            if (shouldClearFieldError(input)) {
+                clearFieldError(input, true);
+            }
         });
     });
 
@@ -916,11 +976,9 @@ restoreDraft();
 // SERVICE WORKER & OFFLINE MODE
 // ============================================
 if ('serviceWorker' in navigator) {
-    const swVersion = '2400';
-    const basePath = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
-    const swUrl = `${basePath}service-worker.js?v=${swVersion}`;
+    const basePath = location.pathname.endsWith('/') ? location.pathname : location.pathname.replace(/[^/]*$/, '');
+    const swUrl = `${basePath}service-worker.js?v=${APP_BUILD_ID}`;
     navigator.serviceWorker.register(swUrl)
-        .then(reg => console.log('Service Worker registered:', reg.scope))
         .catch(err => console.error('Service Worker registration failed:', err));
 
     // Listen for sync messages from SW
@@ -991,7 +1049,6 @@ async function savePendingReport(data) {
             tx.oncomplete = resolve;
             tx.onerror = () => reject(tx.error);
         });
-        console.log('Report saved to offline queue');
         showOfflineBanner('📦 Заключение сохранено в очередь — отправится при появлении сети', false);
         return true;
     } catch (error) {
@@ -1015,7 +1072,6 @@ async function getPendingCount() {
 
 // Online event - sync pending reports
 window.addEventListener('online', async () => {
-    console.log('Connection restored, syncing...');
     showOfflineBanner('✅ Соединение восстановлено! Синхронизация...', true);
 
     try {
@@ -1232,16 +1288,8 @@ async function handleFileSelect(input) {
             fileType: 'image/jpeg'
         };
 
-        if (compressionAvailable) {
-            console.log(`Original: ${(file.size / 1024 / 1024).toFixed(2)} MB`);
-        }
-
         // Compress (fallback to original if library is unavailable)
         const compressedFile = compressionAvailable ? await imageCompression(file, options) : file;
-
-        if (compressionAvailable) {
-            console.log(`Compressed: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`);
-        }
 
         // Show preview
         const reader = new FileReader();
@@ -1345,8 +1393,10 @@ async function uploadImageToBot(file, onProgress) {
     const formData = new FormData();
     formData.append('image', compressedBlob, 'image.jpg');
 
-    const baseUrl = typeof botUrl !== 'undefined' ? botUrl : '';
-    const cleanBase = baseUrl.replace(/\/$/, "");
+    const cleanBase = getCleanBotUrl();
+    if (!cleanBase) {
+        throw new Error("Сайт открыт без подключения к серверу создания заключений. Откройте ссылку из Telegram или используйте ссылку с параметром bot_url.");
+    }
     const uploadUrl = `${cleanBase}/api/upload-photo`;
 
     const result = await uploadWithRetry(
@@ -1477,23 +1527,36 @@ function handleMainButton() {
 }
 
 function updateMainButton() {
-    // Keep HTML buttons visible
-    const mainFormBtn = document.querySelector('.btn-primary[onclick="showPreview()"]');
-    if (mainFormBtn) {
-        mainFormBtn.style.display = 'block';
-    }
+    const isTg = isTelegramWebAppRuntime();
+    const stickyFooter = document.querySelector('.sticky-footer');
     const finalBtn = document.getElementById('finalSubmitBtn');
-    if (finalBtn) {
-        finalBtn.style.display = 'block';
-    }
 
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        // We are in Telegram, configure the native MainButton too
-        mainButton.setText("ПРОВЕРИТЬ И ОТПРАВИТЬ");
+    if (isTg) {
+        document.body.classList.add('in-telegram');
+        if (stickyFooter) {
+            stickyFooter.style.display = 'none';
+        }
+        if (finalBtn) {
+            finalBtn.style.display = 'none';
+        }
+
+        if (appState === 'preview') {
+            mainButton.setText("ОТПРАВИТЬ ЗАКЛЮЧЕНИЕ 🚀");
+        } else {
+            mainButton.setText("ПРОВЕРИТЬ И ОТПРАВИТЬ");
+        }
         mainButton.show();
-        // Use single state-based handler and clear existing to prevent duplicates
+        mainButton.enable();
         mainButton.offClick(handleMainButton);
         mainButton.onClick(handleMainButton);
+    } else {
+        document.body.classList.remove('in-telegram');
+        if (stickyFooter) {
+            stickyFooter.style.display = 'flex';
+        }
+        if (finalBtn) {
+            finalBtn.style.display = 'block';
+        }
     }
 }
 
@@ -1505,7 +1568,7 @@ function haptic(type = 'light', opts = {}) {
     const sound = opts && opts.sound === true;
     const vibrate = opts && opts.vibrate === true;
 
-    if (tg.HapticFeedback) {
+    if (isTelegramWebAppRuntime() && tg.HapticFeedback) {
         switch (type) {
             case 'light':
             case 'medium':
@@ -1545,26 +1608,94 @@ document.querySelectorAll('.btn').forEach(btn => {
     btn.addEventListener('click', () => haptic('medium'));
 });
 
+const VALIDATION_MESSAGES = {
+    department: 'Укажите номер подразделения.',
+    issue: 'Укажите номер заключения.',
+    ticket: 'Номер билета должен состоять из 11 цифр.',
+    date: 'Укажите дату заключения.',
+    region: 'Выберите регион.',
+    desc: 'Добавьте описание предмета.',
+    eval: 'Укажите оценку предмета.'
+};
+
+function getFieldErrorElement(field) {
+    const group = field.closest('.form-group');
+    if (!group) return null;
+
+    let error = group.querySelector('.error-message');
+    if (!error) {
+        error = document.createElement('div');
+        error.className = 'error-message';
+        group.appendChild(error);
+    }
+    return error;
+}
+
+function clearFieldError(field, force = false) {
+    if (!force && field.classList.contains('invalid') && !shouldClearFieldError(field)) {
+        return;
+    }
+
+    field.classList.remove('invalid');
+    const error = getFieldErrorElement(field);
+    if (error) {
+        error.textContent = '';
+        error.classList.remove('show');
+    }
+}
+
+function shouldClearFieldError(field) {
+    if (field.id === 'ticket') return field.value.trim().length === 11;
+    return Boolean(field.value.trim());
+}
+
+function setFieldError(field, message) {
+    field.classList.add('invalid');
+    const error = getFieldErrorElement(field);
+    if (error) {
+        error.textContent = message;
+        error.classList.add('show');
+    }
+
+    const clear = () => {
+        if (shouldClearFieldError(field)) {
+            clearFieldError(field, true);
+        }
+    };
+    field.addEventListener('input', clear, { once: true });
+    field.addEventListener('change', clear, { once: true });
+}
+
 function validateForm() {
     let isValid = true;
     let firstInvalidField = null; // Track first invalid for auto-scroll
+    let firstInvalidMessage = '';
     const requiredIds = ['department', 'issue', 'ticket', 'date', 'region'];
+
+    document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+    document.querySelectorAll('.error-message.show').forEach(el => {
+        el.textContent = '';
+        el.classList.remove('show');
+    });
 
     requiredIds.forEach(id => {
         const el = document.getElementById(id);
         if (!el.value.trim()) {
             isValid = false;
-            el.classList.add('invalid');
-            if (!firstInvalidField) firstInvalidField = el;
-            // Add listener to remove invalid class on input
-            el.addEventListener('input', () => el.classList.remove('invalid'), { once: true });
+            setFieldError(el, VALIDATION_MESSAGES[id]);
+            if (!firstInvalidField) {
+                firstInvalidField = el;
+                firstInvalidMessage = VALIDATION_MESSAGES[id];
+            }
         } else {
             // Specific checks
             if (id === 'ticket' && el.value.length !== 11) {
                 isValid = false;
-                el.classList.add('invalid');
-                if (!firstInvalidField) firstInvalidField = el;
-                el.addEventListener('input', () => el.classList.remove('invalid'), { once: true });
+                setFieldError(el, VALIDATION_MESSAGES.ticket);
+                if (!firstInvalidField) {
+                    firstInvalidField = el;
+                    firstInvalidMessage = VALIDATION_MESSAGES.ticket;
+                }
             }
         }
     });
@@ -1576,18 +1707,22 @@ function validateForm() {
 
         if (desc && !desc.value.trim()) {
             isValid = false;
-            desc.classList.add('invalid');
+            setFieldError(desc, VALIDATION_MESSAGES.desc);
             card.classList.remove('collapsed');
-            if (!firstInvalidField) firstInvalidField = desc;
-            desc.addEventListener('input', () => desc.classList.remove('invalid'), { once: true });
+            if (!firstInvalidField) {
+                firstInvalidField = desc;
+                firstInvalidMessage = VALIDATION_MESSAGES.desc;
+            }
         }
 
         if (evalInput && !evalInput.value.trim()) {
             isValid = false;
-            evalInput.classList.add('invalid');
+            setFieldError(evalInput, VALIDATION_MESSAGES.eval);
             card.classList.remove('collapsed');
-            if (!firstInvalidField) firstInvalidField = evalInput;
-            evalInput.addEventListener('input', () => evalInput.classList.remove('invalid'), { once: true });
+            if (!firstInvalidField) {
+                firstInvalidField = evalInput;
+                firstInvalidMessage = VALIDATION_MESSAGES.eval;
+            }
         }
     });
 
@@ -1602,10 +1737,13 @@ function validateForm() {
             // Focus after scroll animation
             setTimeout(() => {
                 firstInvalidField.focus();
+                if (!shouldClearFieldError(firstInvalidField)) {
+                    setFieldError(firstInvalidField, firstInvalidMessage);
+                }
             }, 500);
         }
 
-        tg.showAlert("Пожалуйста, заполните все обязательные поля корректно.");
+        showAppAlert("Пожалуйста, заполните все обязательные поля корректно.");
         haptic('error');
     }
 
@@ -1652,7 +1790,7 @@ function showPreview() {
         if (firstMissingPhoto) {
             firstMissingPhoto.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        tg.showAlert("Пожалуйста, выберите фото для всех предметов!");
+        showAppAlert("Пожалуйста, выберите фото для всех предметов!");
         previewOpen = false;
         return;
     }
@@ -1856,7 +1994,7 @@ async function submitForm() {
             if (fileInput.files && fileInput.files[0]) {
                 // Photo selected but not uploaded yet (shouldn't happen with background upload)
                 allUploaded = false;
-                tg.showAlert('⏳ Дождитесь загрузки всех фотографий');
+                showAppAlert('⏳ Дождитесь загрузки всех фотографий');
                 btn.disabled = false;
                 btn.textContent = "Отправить";
 
@@ -1882,7 +2020,7 @@ async function submitForm() {
     }
 
     if (items.length === 0) {
-        tg.showAlert('❌ Нет загруженных фотографий');
+        showAppAlert('❌ Нет загруженных фотографий');
         btn.disabled = false;
         btn.textContent = "Отправить";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -1916,7 +2054,7 @@ async function submitForm() {
         selectedDate.setHours(0, 0, 0, 0);
 
         if (selectedDate > today) {
-            tg.showAlert('⚠️ Ошибка: Нельзя выбрать будущую дату!\n\nВыберите сегодняшнюю или прошедшую дату.');
+            showAppAlert('⚠️ Ошибка: Нельзя выбрать будущую дату!\n\nВыберите сегодняшнюю или прошедшую дату.');
             btn.disabled = false;
             btn.textContent = "Отправить";
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -1931,18 +2069,10 @@ async function submitForm() {
         // Check if running in Telegram
         // iOS Telegram 9.x bug: initData may be empty even in WebApp
         // Instead, check for platform/version which are always present in Telegram
-        console.log('tg.platform:', tg.platform);
-        console.log('tg.version:', tg.version);
-        console.log('tg.initData:', tg.initData);
-        console.log('tg.initDataUnsafe:', tg.initDataUnsafe);
-
         // Check if we're in Telegram by platform/version presence
-        const isInTelegram = (tg.platform && tg.platform.length > 0) ||
-            (tg.version && tg.version.length > 0) ||
-            (tg.initData && tg.initData.length > 0);
+        const isInTelegram = isTelegramWebAppRuntime();
 
         if (isInTelegram) {
-            console.log('Detected Telegram WebApp - sending via tg.sendData()');
             btn.textContent = "Отправка в Telegram...";
             tg.sendData(JSON.stringify(data));
             haptic('success', { sound: true, vibrate: true });
@@ -1963,7 +2093,12 @@ async function submitForm() {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
 
-            const response = await fetch(botUrl + '/api/generate', {
+            const cleanBase = getCleanBotUrl();
+            if (!cleanBase) {
+                throw new Error("Для скачивания DOCX на сайте нужен адрес сервера создания заключений. Откройте ссылку с параметром bot_url.");
+            }
+
+            const response = await fetch(`${cleanBase}/api/generate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -2001,11 +2136,7 @@ async function submitForm() {
             fireConfetti(); // 🎉 Celebration!
             haptic('success', { sound: true, vibrate: true });
 
-            if (tg.showPopup) {
-                tg.showPopup({ message: "✅ Документ готов и скачан!" });
-            } else {
-                alert("✅ Документ готов и скачан!");
-            }
+            showAppPopup("✅ Документ готов и скачан!");
             closePreview();
             btn.disabled = false;
             btn.textContent = "Отправить";
@@ -2021,17 +2152,9 @@ async function submitForm() {
         }
 
         if (e.name === 'AbortError') {
-            if (tg.showPopup) {
-                tg.showPopup({ message: "Ошибка: Превышено время ожидания (30с). Проверьте интернет или URL бота." });
-            } else {
-                alert("Ошибка: Превышено время ожидания (30с). Проверьте интернет или URL бота.");
-            }
+            showAppPopup("Ошибка: Превышено время ожидания (30с). Проверьте интернет или адрес сервера.");
         } else {
-            if (tg.showPopup) {
-                tg.showPopup({ message: `Ошибка при отправке: ${e.message}` });
-            } else {
-                alert(`Ошибка при отправке: ${e.message}`);
-            }
+            showAppPopup(`Ошибка при отправке: ${e.message}`);
         }
         btn.disabled = false;
         btn.textContent = "Отправить";

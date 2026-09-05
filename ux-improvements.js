@@ -182,10 +182,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }, true);
 
-    // 4. Handle sticky footer padding
+    // 4. Handle sticky footer padding (hide in Telegram, use native MainButton)
     const stickyFooter = document.querySelector('.sticky-footer');
-    if (stickyFooter) {
-        // Add padding to body to prevent content being hidden
+    if (stickyFooter && typeof isTelegramWebAppRuntime === 'function' && isTelegramWebAppRuntime()) {
+        stickyFooter.style.display = 'none';
+        document.body.classList.add('in-telegram');
+    } else if (stickyFooter) {
         document.body.style.paddingBottom = '100px';
     }
 
