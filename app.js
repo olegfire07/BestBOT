@@ -1765,24 +1765,31 @@ function showPreview() {
     let firstMissingPhoto = null;
     document.querySelectorAll('.item-card').forEach(div => {
         const input = div.querySelector('.file-input');
-        if (!input.files || !input.files[0]) {
+        const hasPhoto = Boolean(div.dataset.photoUrl || (input && input.files && input.files[0]));
+        if (!hasPhoto) {
             allPhotosSelected = false;
             const container = div.querySelector('.photo-preview-container');
             div.classList.remove('collapsed');
-            container.classList.add('photo-invalid');
-            container.style.borderColor = 'var(--danger-color)';
-            container.style.animation = 'shake 0.4s cubic-bezier(.36, .07, .19, .97) both';
-            if (!firstMissingPhoto) {
-                firstMissingPhoto = container;
+            if (container) {
+                container.classList.add('photo-invalid');
+                container.style.borderColor = 'var(--danger-color, #ef4444)';
+                container.style.animation = 'shake 0.4s cubic-bezier(.36, .07, .19, .97) both';
+                if (!firstMissingPhoto) {
+                    firstMissingPhoto = container;
+                }
             }
             haptic('error');
 
             // Remove error on click/drop
-            input.addEventListener('change', () => {
-                container.style.borderColor = 'rgba(0, 0, 0, 0.1)';
-                container.style.animation = 'none';
-                container.classList.remove('photo-invalid');
-            }, { once: true });
+            if (input) {
+                input.addEventListener('change', () => {
+                    if (container) {
+                        container.style.borderColor = '';
+                        container.style.animation = 'none';
+                        container.classList.remove('photo-invalid');
+                    }
+                }, { once: true });
+            }
         }
     });
 
@@ -1790,7 +1797,7 @@ function showPreview() {
         if (firstMissingPhoto) {
             firstMissingPhoto.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-        showAppAlert("Пожалуйста, выберите фото для всех предметов!");
+        showAppAlert("⚠️ Пожалуйста, прикрепите фото для каждого предмета перед отправкой!");
         previewOpen = false;
         return;
     }
@@ -1826,9 +1833,13 @@ function showPreview() {
     let itemsList = '';
     items.forEach((item, idx) => {
         // Get image preview URL
-        const fileInput = document.querySelectorAll('.item-card')[idx].querySelector('.file-input');
-        const file = fileInput.files[0];
-        const imgUrl = file ? URL.createObjectURL(file) : '';
+        const card = document.querySelectorAll('.item-card')[idx];
+        const fileInput = card ? card.querySelector('.file-input') : null;
+        const file = fileInput && fileInput.files ? fileInput.files[0] : null;
+        let imgUrl = file ? URL.createObjectURL(file) : '';
+        if (!imgUrl && card && card.dataset.photoUrl) {
+            imgUrl = card.dataset.photoUrl;
+        }
         const imgTag = imgUrl ? `<img src="${imgUrl}" class="preview-image">` : '<div class="preview-image"></div>';
 
         itemsList += `
@@ -1900,9 +1911,7 @@ function showPreview() {
 
     // Update state to preview mode
     appState = 'preview';
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        mainButton.setText("ОТПРАВИТЬ");
-    }
+    updateMainButton();
     haptic('success', { sound: true, vibrate: true });
 }
 
@@ -1919,9 +1928,7 @@ function closePreview() {
     // Revert state to editing
     appState = 'editing';
     previewOpen = false;
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        mainButton.setText("ПРОВЕРИТЬ И ОТПРАВИТЬ");
-    }
+    updateMainButton();
 }
 
 // Image Compression Helper
@@ -1970,14 +1977,16 @@ async function submitForm() {
     if (submitInProgress) return;
     submitInProgress = true;
     // Disable button
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        mainButton.showProgress();
-        mainButton.disable();
+    if (isTelegramWebAppRuntime() && tg.MainButton) {
+        tg.MainButton.showProgress();
+        tg.MainButton.disable();
     }
 
     const btn = document.getElementById('finalSubmitBtn');
-    btn.disabled = true;
-    btn.textContent = "Подготовка данных...";
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Подготовка данных...";
+    }
 
     const items = [];
     const cards = document.querySelectorAll('.item-card');
@@ -1991,16 +2000,18 @@ async function submitForm() {
         // Check if photo was uploaded
         if (!photoUrl) {
             const fileInput = div.querySelector('.file-input');
-            if (fileInput.files && fileInput.files[0]) {
+            if (fileInput && fileInput.files && fileInput.files[0]) {
                 // Photo selected but not uploaded yet (shouldn't happen with background upload)
                 allUploaded = false;
                 showAppAlert('⏳ Дождитесь загрузки всех фотографий');
-                btn.disabled = false;
-                btn.textContent = "Отправить";
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = "Отправить";
+                }
 
-                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    mainButton.hideProgress();
-                    mainButton.enable();
+                if (isTelegramWebAppRuntime() && tg.MainButton) {
+                    tg.MainButton.hideProgress();
+                    tg.MainButton.enable();
                 }
                 submitInProgress = false;
                 return;
@@ -2020,18 +2031,20 @@ async function submitForm() {
     }
 
     if (items.length === 0) {
-        showAppAlert('❌ Нет загруженных фотографий');
-        btn.disabled = false;
-        btn.textContent = "Отправить";
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            mainButton.hideProgress();
-            mainButton.enable();
+        showAppAlert('⚠️ Прикрепите фото к каждому предмету перед отправкой!');
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = "Отправить";
+        }
+        if (isTelegramWebAppRuntime() && tg.MainButton) {
+            tg.MainButton.hideProgress();
+            tg.MainButton.enable();
         }
         submitInProgress = false;
         return;
     }
 
-    btn.textContent = "Отправка данных...";
+    if (btn) btn.textContent = "Отправка данных...";
 
     try {
         const isTest = document.getElementById('mode-test').checked;
@@ -2074,7 +2087,11 @@ async function submitForm() {
 
         if (isInTelegram) {
             btn.textContent = "Отправка в Telegram...";
-            tg.sendData(JSON.stringify(data));
+            try {
+                tg.sendData(JSON.stringify(data));
+            } catch (err) {
+                console.error("tg.sendData error:", err);
+            }
             haptic('success', { sound: true, vibrate: true });
 
             // ✅ UX: Clear ticket for next form (always unique)
@@ -2084,7 +2101,13 @@ async function submitForm() {
             fireConfetti(); // 🎉 Celebration!
 
             // Close WebApp after sending data
-            setTimeout(() => tg.close(), 1000);
+            setTimeout(() => {
+                try {
+                    tg.close();
+                } catch (err) {
+                    console.error("tg.close error:", err);
+                }
+            }, 1000);
         } else {
             // Standalone Mode
             btn.textContent = "Подключение к серверу...";
@@ -2146,9 +2169,9 @@ async function submitForm() {
         console.error("Submission Error", e);
         haptic('error');
 
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            mainButton.hideProgress();
-            mainButton.enable();
+        if (isTelegramWebAppRuntime() && tg.MainButton) {
+            tg.MainButton.hideProgress();
+            tg.MainButton.enable();
         }
 
         if (e.name === 'AbortError') {
