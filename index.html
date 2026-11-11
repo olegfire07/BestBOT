@@ -5,15 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
-    <meta name="theme-color" content="#eef4f4" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#f8fafa" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>Заключение антиквариата • Фианит</title>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.6.0/cleave.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=6001">
+    <link rel="stylesheet" href="styles.css?v=6002">
 </head>
 
 <body>
@@ -29,18 +29,6 @@
             <!-- Header -->
             <header class="app-header" id="headerContainer">
                 <div class="header-actions-left">
-                    <button type="button" class="icon-pill trophy-btn" onclick="showMotivation()"
-                        aria-label="Баллы и ранги товароведов" title="Баллы и ранги">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" width="19" height="19" aria-hidden="true">
-                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
-                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
-                            <path d="M4 22h16" />
-                            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
-                            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
-                            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
-                        </svg>
-                    </button>
                     <button type="button" class="icon-pill palette-btn" onclick="openAppearanceModal()"
                         aria-label="Настроить стиль и тему" title="Стиль и тема">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -63,7 +51,7 @@
                 </div>
 
                 <div class="brand-badge" aria-label="Фианит Ломбард">
-                    <img src="fianit-logo.jpg?v=6001" alt="Фианит Ломбард" class="brand-logo" loading="eager">
+                    <img src="fianit-logo.jpg?v=6002" alt="Фианит Ломбард" class="brand-logo" loading="eager">
                 </div>
             </header>
 
@@ -286,7 +274,6 @@
                         </div>
                         <div class="total-right">
                             <span id="totalAmountDisplay" class="total-amount">0 ₽</span>
-                            <span id="estimatedPointsBadge" class="points-preview-pill">✨ +10 баллов</span>
                         </div>
                     </div>
 
@@ -382,52 +369,7 @@
         </div>
     </dialog>
 
-    <!-- Native Top-Layer Dialog 4: Motivation & Ranks -->
-    <dialog id="motivationModal" class="app-dialog" closedby="any" aria-labelledby="motivationTitle">
-        <div class="dialog-panel">
-            <div class="dialog-header">
-                <h2 id="motivationTitle">🏆 Баллы и ранги</h2>
-                <button type="button" class="dialog-close" onclick="closeMotivation()" aria-label="Закрыть окно">×</button>
-            </div>
-
-            <div class="dialog-body">
-                <p class="dialog-lead">За каждое оригинальное заключение автоматически начисляется рейтинг.</p>
-
-                <div class="rules-grid">
-                    <div class="rule-card accent-blue">
-                        <span class="rule-value">+10</span>
-                        <span class="rule-label">баллов за каждое новое заключение</span>
-                    </div>
-                    <div class="rule-card accent-gold">
-                        <span class="rule-value">+1</span>
-                        <span class="rule-label">балл за каждые 1 000 ₽ суммы оценки</span>
-                    </div>
-                </div>
-
-                <div class="note-callout">
-                    В режиме «Черновик» и при повторном билете документ формируется без начисления баллов.
-                </div>
-
-                <div class="ranks-section-title">Шкала рангов</div>
-                <div class="ranks-grid">
-                    <div class="rank-pill"><span>🥉 Новичок</span><span class="rank-pts">0+</span></div>
-                    <div class="rank-pill"><span>🥈 Ученик</span><span class="rank-pts">50+</span></div>
-                    <div class="rank-pill"><span>🥇 Стажёр</span><span class="rank-pts">150+</span></div>
-                    <div class="rank-pill"><span>🎖 Специалист</span><span class="rank-pts">400+</span></div>
-                    <div class="rank-pill"><span>🏆 Мастер</span><span class="rank-pts">1 000+</span></div>
-                    <div class="rank-pill"><span>🚀 Профи</span><span class="rank-pts">2 500+</span></div>
-                    <div class="rank-pill"><span>💎 Эксперт</span><span class="rank-pts">5 000+</span></div>
-                    <div class="rank-pill"><span>👑 Легенда</span><span class="rank-pts">10 000+</span></div>
-                </div>
-            </div>
-
-            <div class="dialog-footer">
-                <button type="button" class="btn btn-primary" onclick="closeMotivation()">Понятно</button>
-            </div>
-        </div>
-    </dialog>
-
-    <!-- Native Top-Layer Dialog 5: User Guide -->
+    <!-- Native Top-Layer Dialog 4: User Guide -->
     <dialog id="guideModal" class="app-dialog" closedby="any" aria-labelledby="guideTitle">
         <div class="dialog-panel">
             <div class="dialog-header">
@@ -439,29 +381,29 @@
                 <div class="guide-step">
                     <span class="guide-num">1</span>
                     <div>
-                        <div class="guide-step-title">Реквизиты и 11 цифр билета</div>
-                        <div class="guide-step-text">Введите код отделения (1–4 цифры), номер заключения и 11 цифр билета. Дубликаты определяются автоматически.</div>
+                        <div class="guide-step-title">Данные билета</div>
+                        <div class="guide-step-text">Укажите код отделения, номер заключения и 11 цифр билета. Если билет уже есть в базе — форма сразу подскажет.</div>
                     </div>
                 </div>
                 <div class="guide-step">
                     <span class="guide-num">2</span>
                     <div>
-                        <div class="guide-step-title">Теги, голос и фото</div>
-                        <div class="guide-step-text">Пользуйтесь быстрыми тегами, диктовкой через 🎙, вставкой фото через Ctrl+V и сортировкой карточек за ⋮⋮.</div>
+                        <div class="guide-step-title">Предметы и фото</div>
+                        <div class="guide-step-text">Опишите каждый предмет (можно надиктовать кнопкой 🎙), укажите сумму оценки и прикрепите фото.</div>
                     </div>
                 </div>
                 <div class="guide-step">
                     <span class="guide-num">3</span>
                     <div>
-                        <div class="guide-step-title">Только антиквариат</div>
-                        <div class="guide-step-text">Заключение не оформляется на золото, серебро 925/585 и драгоценные металлы — форма предупредит, если заметит такие слова.</div>
+                        <div class="guide-step-title">Что не принимаем</div>
+                        <div class="guide-step-text">На монеты, золото, серебро (925/585) и драгметаллы заключения не оформляются — форма покажет предупреждение.</div>
                     </div>
                 </div>
                 <div class="guide-step">
                     <span class="guide-num">4</span>
                     <div>
-                        <div class="guide-step-title">Стиль под себя</div>
-                        <div class="guide-step-text">Нажмите 🎨 в шапке, чтобы выбрать фирменную палитру («Фианит», «Антиквариат», «Графит», «Океан»), светлую/тёмную тему и звук.</div>
+                        <div class="guide-step-title">Черновик и оформление</div>
+                        <div class="guide-step-text">Для пробы без записи в базу выберите «Черновик». Цвета и тёмную тему можно поменять через 🎨 вверху.</div>
                     </div>
                 </div>
             </div>
@@ -475,11 +417,11 @@
         </div>
     </dialog>
 
-    <!-- Native Top-Layer Dialog 6: Appearance Customizer -->
+    <!-- Native Top-Layer Dialog 5: Appearance Customizer -->
     <dialog id="appearanceModal" class="app-dialog" closedby="any" aria-labelledby="appearanceTitle">
         <div class="dialog-panel">
             <div class="dialog-header">
-                <h2 id="appearanceTitle">🎨 Оформление и фишки</h2>
+                <h2 id="appearanceTitle">🎨 Оформление</h2>
                 <button type="button" class="dialog-close" onclick="closeAppearanceModal()" aria-label="Закрыть настройки">×</button>
             </div>
 
@@ -491,7 +433,7 @@
                             <span class="swatch swatch-fianit" aria-hidden="true"></span>
                             <span>
                                 <strong>Фианит</strong>
-                                <small>Бирюза и рубин</small>
+                                <small>Красный и бирюза</small>
                             </span>
                         </button>
                         <button type="button" class="palette-chip" data-palette="gold" onclick="setAccentPalette('gold')">
@@ -544,8 +486,8 @@
         </div>
     </dialog>
 
-    <script src="ux-improvements.js?v=6001"></script>
-    <script src="app.js?v=6001"></script>
+    <script src="ux-improvements.js?v=6002"></script>
+    <script src="app.js?v=6002"></script>
 </body>
 
 </html>

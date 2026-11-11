@@ -4,7 +4,8 @@
 
     const PRECIOUS_METALS_KEYWORDS = [
         'золото', 'золот', 'серебро', 'серебр', 'платина', 'платин',
-        'палладий', 'паллад', '585', '750', '925', '999', 'драгметал', 'драг.метал'
+        'палладий', 'паллад', '585', '750', '925', '999', 'драгметал', 'драг.метал',
+        'монет', 'нумизмат', 'полтинник', 'червон'
     ];
 
     function getLocalTodayIso() {
@@ -276,7 +277,7 @@
 
             if (data && data.exists) {
                 statusEl.className = 'ticket-check-status status-dup';
-                statusEl.textContent = `Билет № ${clean} уже есть в базе (${data.count || 1} раз). При повторном оформлении баллы не начисляются.`;
+                statusEl.textContent = `Билет № ${clean} уже есть в базе (${data.count || 1} раз). Можно оформить повторно.`;
             } else {
                 statusEl.className = 'ticket-check-status status-ok';
                 statusEl.textContent = '✓ Билет не найден в базе — можно оформлять новое заключение';
@@ -325,7 +326,7 @@
                     formGroup.appendChild(warnEl);
                 }
             }
-            warnEl.textContent = '⚠ Проверьте категорию: на золото, серебро (925/585) и драгметаллы заключение не оформляется.';
+            warnEl.textContent = '⛔ На монеты, золото, серебро (925/585) и драгметаллы заключение не оформляется.';
             warnEl.hidden = false;
         } else if (warnEl) {
             warnEl.hidden = true;

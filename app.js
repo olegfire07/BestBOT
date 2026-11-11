@@ -43,18 +43,16 @@ const APP_CONFIG = {
     DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || '',
     IMAGEBAN_CLIENT_ID: window.APP_IMAGEBAN_CLIENT_ID || 'JNo3V4ZQiuzGItX0zXj1kFFfdJ1ocGs7dfN'
 };
-const APP_BUILD_ID = '6001';
+const APP_BUILD_ID = '6002';
 const QUIZ_SIZE = 5;
-const QUIZ_VERSION = '6001';
+const QUIZ_VERSION = '6002';
 
 const PALETTE_CONFIG = {
-    fianit: { accent: '#0f766e', lightBg: '#edf3f3', darkBg: '#0b1120' },
+    fianit: { accent: '#e01b24', lightBg: '#f8fafa', darkBg: '#0d1117' },
     gold: { accent: '#b45309', lightBg: '#f5f1eb', darkBg: '#14100c' },
     graphite: { accent: '#334155', lightBg: '#f1f3f5', darkBg: '#0d1016' },
     ocean: { accent: '#1d4ed8', lightBg: '#eef2f8', darkBg: '#0b1120' }
 };
-
-const QUICK_ITEM_TAGS = ['Икона', 'Фарфор', 'Монеты', 'Часы', 'Бронза', 'Статуэтка', 'Картина', 'Клеймо'];
 
 const urlParams = new URLSearchParams(window.location.search);
 const urlBotUrl = (urlParams.get('bot_url') || '').trim();
@@ -425,7 +423,6 @@ function setupDialogDismissHandlers() {
             if (dialog.id === 'previewModal') closePreview();
             else if (dialog.id === 'lightboxModal') closeLightbox();
             else if (dialog.id === 'quizModal') closeQuiz();
-            else if (dialog.id === 'motivationModal') closeMotivation();
             else if (dialog.id === 'guideModal') closeGuide();
             else if (dialog.id === 'appearanceModal') closeAppearanceModal();
             else closeDialog(dialog);
@@ -450,16 +447,6 @@ function showUserGuide() {
 function closeGuide() {
     haptic('light');
     closeDialog(document.getElementById('guideModal'));
-}
-
-function showMotivation() {
-    haptic('light');
-    openDialog(document.getElementById('motivationModal'));
-}
-
-function closeMotivation() {
-    haptic('light');
-    closeDialog(document.getElementById('motivationModal'));
 }
 
 function openLightbox(src) {
@@ -511,23 +498,6 @@ function setTodayDate() {
     if (window.UX) window.UX.clearFieldError(dateEl);
     saveFormData();
     updateFormCompletion();
-    haptic('light');
-}
-
-function appendQuickTag(idx, tag) {
-    const descEl = document.getElementById(`desc-${idx}`);
-    if (!descEl) return;
-
-    const current = descEl.value.trim();
-    const lowCurrent = current.toLowerCase();
-    const lowTag = tag.toLowerCase();
-    if (!lowCurrent.includes(lowTag)) {
-        const nextVal = current ? `${current}, ${lowTag}` : tag;
-        descEl.value = nextVal.slice(0, 800);
-        descEl.dataset.touched = '1';
-        descEl.dispatchEvent(new Event('input', { bubbles: true }));
-    }
-    descEl.focus();
     haptic('light');
 }
 
@@ -740,10 +710,6 @@ let itemCount = 0;
 let dragSrcCard = null;
 
 function createCardHtml(idx) {
-    const tagsHtml = QUICK_ITEM_TAGS.map((tag) =>
-        `<button type="button" class="quick-tag-chip" onclick="appendQuickTag(${idx}, '${tag}')">+ ${tag}</button>`
-    ).join('');
-
     return `
         <div class="swipe-delete-indicator" aria-hidden="true">Удалить</div>
         <div class="item-header">
@@ -783,7 +749,6 @@ function createCardHtml(idx) {
                         </svg>
                     </button>
                 </div>
-                <div class="quick-tags" aria-label="Быстрые теги для описания">${tagsHtml}</div>
                 <span class="field-hint" id="hint-desc-${idx}">Наименование, материал, период, клейма или дефекты</span>
                 <span class="error-message" id="err-desc-${idx}" hidden></span>
             </div>
@@ -821,7 +786,7 @@ function createCardHtml(idx) {
                         <div class="upload-label">
                             <div class="upload-icon-circle" aria-hidden="true">📷</div>
                             <span class="btn-text">Добавить фото</span>
-                            <span class="hint">Нажмите, перетащите или вставьте (Ctrl+V)</span>
+                            <span class="hint">Нажмите, чтобы выбрать фото</span>
                         </div>
                         <div class="photo-actions">
                             <button type="button" class="photo-action-btn"
@@ -1020,21 +985,9 @@ function updateTotal() {
 
     const totalEl = document.getElementById('totalAmountDisplay');
     const metaEl = document.getElementById('totalItemsMeta');
-    const pointsEl = document.getElementById('estimatedPointsBadge');
-    const isTest = document.getElementById('mode-test')?.checked || false;
 
     if (totalEl) totalEl.textContent = `${formatNumber(total)} ₽`;
     if (metaEl) metaEl.textContent = `${cards.length} ${pluralizeItems(cards.length)} • ${photoCount} фото`;
-    if (pointsEl) {
-        if (isTest) {
-            pointsEl.textContent = 'Черновик • 0 баллов';
-            pointsEl.classList.add('is-draft');
-        } else {
-            const estimatedPoints = 10 + Math.floor(total / 1000);
-            pointsEl.textContent = `✨ +${formatNumber(estimatedPoints)} баллов`;
-            pointsEl.classList.remove('is-draft');
-        }
-    }
 }
 
 function pluralizeItems(n) {
