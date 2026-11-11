@@ -1,17 +1,22 @@
-/* =============================================
-   app.js - Extracted from index.html v5.4
-   ============================================= */
+/* Фианит Экспертиза — Mini App Logic (v6.0) */
+'use strict';
 
+// ============================================
+// 1. TELEGRAM SHIM & CONFIG
+// ============================================
 const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : {
-    initDataUnsafe: {},
-    platform: '',
-    version: '',
     initData: '',
-    ready: () => { },
+    initDataUnsafe: {},
+    colorScheme: 'light',
+    platform: 'unknown',
+    themeParams: {},
     expand: () => { },
+    ready: () => { },
     requestFullscreen: () => { },
-    showAlert: (message) => alert(message),
-    showPopup: ({ message }) => alert(message),
+    setHeaderColor: () => { },
+    setBackgroundColor: () => { },
+    showAlert: (message) => window.alert(message),
+    showPopup: ({ message }) => window.alert(message),
     sendData: () => { },
     close: () => { },
     onEvent: () => { },
@@ -21,10 +26,10 @@ const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp 
         hide: () => { },
         enable: () => { },
         disable: () => { },
-        onClick: () => { },
-        offClick: () => { },
         showProgress: () => { },
-        hideProgress: () => { }
+        hideProgress: () => { },
+        onClick: () => { },
+        offClick: () => { }
     },
     HapticFeedback: {
         impactOccurred: () => { },
@@ -33,151 +38,31 @@ const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp 
     }
 };
 
-let audioCtx = null;
-let audioUnlocked = false;
-let fullScreenRequested = false;
-
-function getAudioContext() {
-    const Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return null;
-    if (!audioCtx) audioCtx = new Ctx();
-    return audioCtx;
-}
-
-function unlockAudio() {
-    const ctx = getAudioContext();
-    if (!ctx || audioUnlocked) return;
-    const resume = ctx.state === 'suspended' ? ctx.resume() : Promise.resolve();
-    resume.then(() => {
-        const buffer = ctx.createBuffer(1, 1, 22050);
-        const source = ctx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(ctx.destination);
-        source.start(0);
-        audioUnlocked = true;
-    }).catch(() => { });
-}
-
-function playTone(kind = 'success') {
-    const ctx = getAudioContext();
-    if (!ctx) return;
-    if (ctx.state === 'suspended') {
-        ctx.resume().catch(() => { });
-    }
-
-    let freq = 660;
-    let duration = 0.08;
-    if (kind === 'error') {
-        freq = 220;
-        duration = 0.12;
-    } else if (kind === 'tap') {
-        freq = 520;
-        duration = 0.05;
-    }
-
-    const now = ctx.currentTime;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(freq, now);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.12, now + 0.01);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + duration + 0.02);
-}
-
-function requestFullScreen(force = false) {
-    if (fullScreenRequested && !force) return;
-    fullScreenRequested = true;
-    try {
-        tg.expand();
-        const fullscreenSupported = typeof tg.isVersionAtLeast === 'function'
-            ? tg.isVersionAtLeast('8.0')
-            : parseFloat(tg.version || '0') >= 8;
-        if (fullscreenSupported && typeof tg.requestFullscreen === 'function') {
-            tg.requestFullscreen();
-        }
-    } catch (e) { }
-}
-
-// --- CONFIGURATION ---
-// WARNING: These are default values for local/demo use.
-// For production, consider injecting these via environment variables or a build step.
-// --- SECURITY: XSS PROTECTION ---
-function escapeHtml(unsafe) {
-    if (!unsafe) return '';
-    return String(unsafe)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
 const APP_CONFIG = {
-    DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || "",
-    IMAGEBAN_CLIENT_ID: window.APP_IMAGEBAN_CLIENT_ID || "JNo3V4ZQiuzGItX0zXj1kFFfdJ1ocGs7dfN"
+    DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || '',
+    IMAGEBAN_CLIENT_ID: window.APP_IMAGEBAN_CLIENT_ID || 'JNo3V4ZQiuzGItX0zXj1kFFfdJ1ocGs7dfN'
 };
-const APP_BUILD_ID = '2406';
+const APP_BUILD_ID = '6000';
+const QUIZ_SIZE = 5;
+const QUIZ_VERSION = '6000';
+
+const urlParams = new URLSearchParams(window.location.search);
+const urlBotUrl = (urlParams.get('bot_url') || '').trim();
+const urlImgbbKey = (urlParams.get('imgbb_key') || '').trim();
+const imagebanClientId = (urlParams.get('imageban_client') || APP_CONFIG.IMAGEBAN_CLIENT_ID || '').trim();
 
 function isTelegramWebAppRuntime() {
     const platform = String(tg.platform || '').toLowerCase();
     const knownTelegramPlatforms = new Set(['android', 'ios', 'macos', 'tdesktop', 'weba', 'webk', 'unigram']);
     return Boolean(
         (tg.initData && tg.initData.length > 0) ||
-        (tg.initDataUnsafe && tg.initDataUnsafe.user) ||
+        (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) ||
         knownTelegramPlatforms.has(platform)
     );
 }
 
-function showAppAlert(message) {
-    if (isTelegramWebAppRuntime() && typeof tg.showAlert === 'function') {
-        try {
-            tg.showAlert(message);
-            return;
-        } catch (e) { }
-    }
-    alert(message);
-}
-
-function showAppPopup(message) {
-    if (isTelegramWebAppRuntime() && typeof tg.showPopup === 'function') {
-        try {
-            tg.showPopup({ message });
-            return;
-        } catch (e) { }
-    }
-    alert(message);
-}
-
-function getCleanBotUrl() {
-    const baseUrl = typeof botUrl !== 'undefined' ? botUrl : '';
-    return String(baseUrl || '').trim().replace(/\/$/, "");
-}
-
-// Initialize
-tg.expand();
-if (tg.ready) tg.ready();
-requestFullScreen();
-const firstGesture = () => {
-    requestFullScreen(true);
-    unlockAudio();
-};
-document.addEventListener('click', firstGesture, { once: true });
-document.addEventListener('touchstart', firstGesture, { once: true });
-// Assuming restoreDraft() exists elsewhere or will be added.
-// restoreDraft();
-
-// URL params allow setting shared config for all users (e.g. from bot WebApp URL).
-const urlParams = new URLSearchParams(window.location.search);
-const urlBotUrl = (urlParams.get('bot_url') || '').trim();
 const isInTelegram = isTelegramWebAppRuntime();
-const imagebanClientId = (urlParams.get('imageban_client') || APP_CONFIG.IMAGEBAN_CLIENT_ID || '').trim();
 
-// Load Bot URL (for standalone mode)
 let botUrl = urlBotUrl || APP_CONFIG.DEFAULT_BOT_URL;
 if (!isInTelegram) {
     try {
@@ -189,75 +74,330 @@ if (!isInTelegram) {
     } catch (e) { }
 }
 
+function getCleanBotUrl() {
+    return String(botUrl || '').trim().replace(/\/$/, '');
+}
+
+function escapeHtml(unsafe) {
+    return String(unsafe || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function cleanNumber(str) {
+    return parseInt(String(str || '').replace(/[^\d]/g, ''), 10) || 0;
+}
+
+function formatNumber(num) {
+    return (Number(num) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+function formatNumberWithSpaces(num) {
+    return formatNumber(num);
+}
+
+function showAppAlert(message) {
+    if (isTelegramWebAppRuntime() && typeof tg.showAlert === 'function') {
+        try {
+            tg.showAlert(message);
+            return;
+        } catch (e) { }
+    }
+    window.alert(message);
+}
+
+function showAppPopup(message) {
+    if (isTelegramWebAppRuntime() && typeof tg.showPopup === 'function') {
+        try {
+            tg.showPopup({ message });
+            return;
+        } catch (e) { }
+    }
+    window.alert(message);
+}
+
+// ============================================
+// 2. AUDIO, HAPTICS & THEME SYNC
+// ============================================
+let audioCtx = null;
+
+function getAudioContext() {
+    if (!audioCtx && (window.AudioContext || window.webkitAudioContext)) {
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new Ctx();
+    }
+    return audioCtx;
+}
+
+function unlockAudio() {
+    const ctx = getAudioContext();
+    if (ctx && ctx.state === 'suspended') {
+        ctx.resume().catch(() => { });
+    }
+}
+
+function playTone(kind = 'success') {
+    const ctx = getAudioContext();
+    if (!ctx || ctx.state !== 'running') return;
+    try {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const now = ctx.currentTime;
+
+        if (kind === 'error') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(210, now);
+            osc.frequency.linearRampToValueAtTime(140, now + 0.14);
+        } else {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, now);
+            osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1);
+        }
+
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.17);
+    } catch (e) { }
+}
+
+function haptic(type = 'light', opts = {}) {
+    if (isTelegramWebAppRuntime() && tg.HapticFeedback) {
+        try {
+            if (type === 'success' || type === 'error' || type === 'warning') {
+                tg.HapticFeedback.notificationOccurred(type);
+            } else {
+                tg.HapticFeedback.impactOccurred(type);
+            }
+        } catch (e) { }
+    } else if (opts && opts.vibrate && navigator.vibrate) {
+        navigator.vibrate(type === 'error' ? [30, 40, 30] : 12);
+    }
+    if (opts && opts.sound) {
+        playTone(type === 'error' ? 'error' : 'success');
+    }
+}
+
+function applyTheme() {
+    const paramTheme = (urlParams.get('theme') || '').toLowerCase();
+    const osPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const tgDark = isTelegramWebAppRuntime() && tg.colorScheme === 'dark';
+    const isDark = paramTheme ? paramTheme === 'dark' : (isTelegramWebAppRuntime() ? tgDark : osPrefersDark);
+
+    const htmlEl = document.documentElement;
+    if (paramTheme === 'dark' || paramTheme === 'light' || isTelegramWebAppRuntime()) {
+        htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    } else {
+        htmlEl.removeAttribute('data-theme');
+    }
+
+    document.body.classList.toggle('dark-mode', isDark);
+
+    if (isTelegramWebAppRuntime()) {
+        document.body.classList.add('in-telegram');
+        try {
+            const bgColor = isDark ? '#0b1120' : '#eef2f8';
+            if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor(bgColor);
+            if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor(bgColor);
+        } catch (e) { }
+    }
+}
+
+applyTheme();
+if (typeof tg.onEvent === 'function') {
+    tg.onEvent('themeChanged', applyTheme);
+}
+if (window.matchMedia) {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (typeof mq.addEventListener === 'function') {
+        mq.addEventListener('change', applyTheme);
+    }
+}
+
+try {
+    if (typeof tg.expand === 'function') tg.expand();
+    if (typeof tg.ready === 'function') tg.ready();
+} catch (e) { }
+
+document.addEventListener('click', unlockAudio, { once: true });
+document.addEventListener('touchstart', unlockAudio, { once: true });
+
+// ============================================
+// 3. TOP-LAYER NATIVE <dialog> HELPERS
+// ============================================
+let appState = 'editing';
+let previewOpen = false;
+let submitInProgress = false;
+
+function supportsTopLayerAnimation() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return false;
+    }
+    return Boolean(
+        typeof CSS !== 'undefined' &&
+        typeof CSS.supports === 'function' &&
+        CSS.supports('transition-behavior', 'allow-discrete') &&
+        CSS.supports('overlay', 'auto')
+    );
+}
+
+function finishDialogClose(dialog) {
+    if (!dialog) return;
+    delete dialog.dataset.closing;
+    if (dialog.open) {
+        dialog.close();
+    }
+}
+
+function openDialog(dialog) {
+    if (!dialog) return;
+    delete dialog.dataset.closing;
+    if (supportsTopLayerAnimation()) {
+        dialog.classList.add('is-animating-top-layer');
+    } else {
+        dialog.classList.remove('is-animating-top-layer');
+    }
+    if (!dialog.open) {
+        dialog.showModal();
+    }
+}
+
+function closeDialog(dialog) {
+    if (!dialog || !dialog.open) return;
+
+    if (!dialog.classList.contains('is-animating-top-layer')) {
+        finishDialogClose(dialog);
+        return;
+    }
+
+    if (dialog.dataset.closing === '1') return;
+    dialog.dataset.closing = '1';
+
+    let finished = false;
+    const done = () => {
+        if (finished) return;
+        finished = true;
+        finishDialogClose(dialog);
+    };
+
+    dialog.addEventListener('transitionend', (evt) => {
+        if (evt.target === dialog) done();
+    }, { once: true });
+
+    window.setTimeout(done, 260);
+}
+
+function setupDialogDismissHandlers() {
+    document.querySelectorAll('dialog.app-dialog').forEach((dialog) => {
+        let pointerDownOnBackdrop = false;
+
+        dialog.addEventListener('pointerdown', (e) => {
+            pointerDownOnBackdrop = (e.target === dialog);
+        });
+
+        dialog.addEventListener('pointerup', (e) => {
+            const shouldClose = pointerDownOnBackdrop && e.target === dialog;
+            pointerDownOnBackdrop = false;
+            if (!shouldClose) return;
+
+            if (dialog.id === 'previewModal') closePreview();
+            else if (dialog.id === 'lightboxModal') closeLightbox();
+            else if (dialog.id === 'quizModal') closeQuiz();
+            else if (dialog.id === 'motivationModal') closeMotivation();
+            else if (dialog.id === 'guideModal') closeGuide();
+            else closeDialog(dialog);
+        });
+
+        dialog.addEventListener('close', () => {
+            delete dialog.dataset.closing;
+            if (dialog.id === 'previewModal') {
+                appState = 'editing';
+                previewOpen = false;
+                updateMainButton();
+            }
+        });
+    });
+}
 
 function showUserGuide() {
-    document.getElementById('guideModal').style.display = 'flex';
     haptic('light');
+    openDialog(document.getElementById('guideModal'));
 }
 
 function closeGuide() {
-    document.getElementById('guideModal').style.display = 'none';
     haptic('light');
+    closeDialog(document.getElementById('guideModal'));
 }
 
 function showMotivation() {
-    document.getElementById('motivationModal').style.display = 'flex';
     haptic('light');
+    openDialog(document.getElementById('motivationModal'));
 }
 
 function closeMotivation() {
-    document.getElementById('motivationModal').style.display = 'none';
+    haptic('light');
+    closeDialog(document.getElementById('motivationModal'));
+}
+
+function openLightbox(src) {
+    if (!src) return;
+    const modal = document.getElementById('lightboxModal');
+    const img = document.getElementById('lightboxImage');
+    if (!modal || !img) return;
+    img.src = src;
+    openDialog(modal);
     haptic('light');
 }
 
+function closeLightbox() {
+    const modal = document.getElementById('lightboxModal');
+    if (!modal) return;
+    closeDialog(modal);
+}
+
+// ============================================
+// 4. QUIZ MODULE
+// ============================================
 let quizQuestions = [];
 let quizState = null;
-const QUIZ_SIZE = 5;
-const QUIZ_VERSION = '2328';
+
 const QUIZ_FACTS = [
-    'Самые ценные предметы обычно сопровождаются четкой историей происхождения.',
+    'Самые ценные предметы обычно сопровождаются чёткой историей происхождения.',
     'Бережная чистка ценится выше агрессивной полировки.',
     'Наличие клейм и маркировок повышает доверие к предмету.',
-    'Даже небольшие повреждения стоит фиксировать в описании.',
-    'Фотография в хорошем свете экономит время на проверке.',
-    'Редкость модели зачастую важнее возраста.',
-    'Комплектность (коробка, документы) добавляет ценность.',
-    'Следы реставрации нужно указывать отдельно.',
-    'Качественное описание помогает быстрее согласовать оценку.',
-    'Одинаковый формат описания упрощает работу всей команды.'
+    'Фотография при дневном освещении лучше всего передаёт детали и фактуру.',
+    'Указание точных размеров помогает эксперту быстрее оценить лот.'
 ];
 
 function getQuizRegion() {
-    const regionEl = document.getElementById('region');
-    const current = regionEl ? regionEl.value.trim() : '';
+    const regionSelect = document.getElementById('region');
+    const current = regionSelect ? regionSelect.value.trim() : '';
     if (current) {
-        try {
-            localStorage.setItem('last_region', current);
-        } catch (e) { }
+        try { localStorage.setItem('last_region', current); } catch (e) { }
         return current;
     }
-    try {
-        return localStorage.getItem('last_region') || '';
-    } catch (e) {
-        return '';
-    }
+    try { return localStorage.getItem('last_region') || ''; } catch (e) { return ''; }
 }
 
 function getQuizUserMeta() {
-    const user = tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user : null;
-    if (!user) return {};
+    const user = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : {};
+    const nameParts = [user.first_name, user.last_name].filter(Boolean);
     return {
-        user_id: user.id,
-        username: user.username,
-        first_name: user.first_name,
-        last_name: user.last_name
+        user_id: user.id || null,
+        username: user.username || null,
+        full_name: nameParts.join(' ') || null
     };
 }
 
 function sendQuizStats(payload) {
-    const base = (botUrl || '').trim();
-    if (!base) return;
-    const cleanBase = base.replace(/\/$/, "");
+    const cleanBase = getCleanBotUrl();
+    if (!cleanBase) return;
     fetch(`${cleanBase}/api/quiz/submit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -267,770 +407,1345 @@ function sendQuizStats(payload) {
 }
 
 function reportQuizAttempt() {
-    if (!quizState) return;
-    const total = quizState.questions ? quizState.questions.length : 0;
-    const payload = {
-        correct: quizState.correct || 0,
-        wrong: quizState.wrong || 0,
-        total: total,
+    if (!quizState || quizState.reported) return;
+    quizState.reported = true;
+    const total = quizState.questions ? quizState.questions.length : QUIZ_SIZE;
+    const userMeta = getQuizUserMeta();
+    sendQuizStats({
+        ...userMeta,
         region: getQuizRegion(),
-        quiz_version: QUIZ_VERSION
-    };
-    Object.assign(payload, getQuizUserMeta());
-    sendQuizStats(payload);
+        correct: quizState.score || 0,
+        total,
+        finished_at: new Date().toISOString(),
+        source: isInTelegram ? 'telegram_webapp' : 'browser'
+    });
 }
 
 async function loadQuizQuestions() {
-    if (quizQuestions.length > 0) return;
+    if (quizQuestions.length > 0) return quizQuestions;
     const response = await fetch(`quiz_questions.json?v=${QUIZ_VERSION}`, { cache: 'no-store' });
-    if (!response.ok) {
-        throw new Error(`Ошибка загрузки вопросов (${response.status})`);
-    }
+    if (!response.ok) throw new Error('Quiz fetch failed');
     const data = await response.json();
-    if (!Array.isArray(data) || data.length === 0) {
-        throw new Error('Нет доступных вопросов');
-    }
+    if (!Array.isArray(data) || data.length === 0) throw new Error('Quiz data empty');
     quizQuestions = data;
+    return quizQuestions;
 }
 
 function shuffleArray(source) {
-    const array = source.slice();
-    for (let i = array.length - 1; i > 0; i--) {
+    const copy = source.slice();
+    for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [copy[i], copy[j]] = [copy[j], copy[i]];
     }
-    return array;
+    return copy;
 }
 
 async function openQuiz() {
-    if (quizOpen || quizLoading) return;
-    quizOpen = true;
-    quizLoading = true;
+    haptic('light');
     const modal = document.getElementById('quizModal');
     const body = document.getElementById('quizBody');
-    modal.style.display = 'flex';
-    body.innerHTML = `<div class="quiz-progress">⏱ 1 минута • Загрузка вопросов...</div>`;
+    if (!modal || !body) return;
+
+    openDialog(modal);
+    body.innerHTML = '<div class="quiz-progress">⏱ 1 минута • Загрузка вопросов...</div>';
 
     try {
         await loadQuizQuestions();
         startQuiz();
-    } catch (err) {
+    } catch (e) {
         body.innerHTML = `
-                    <div class="quiz-result">Не удалось загрузить викторину. Попробуйте позже.</div>
-                    <div class="quiz-footer">
-                        <button type="button" class="btn btn-secondary" onclick="closeQuiz()">Закрыть</button>
-                    </div>
-                `;
-    } finally {
-        quizLoading = false;
+            <div class="quiz-result">Не удалось загрузить викторину. Попробуйте позже.</div>
+            <div class="quiz-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeQuiz()">Закрыть</button>
+            </div>
+        `;
     }
 }
 
 function closeQuiz() {
     const modal = document.getElementById('quizModal');
-    modal.style.display = 'none';
-    quizOpen = false;
-    quizLoading = false;
+    if (!modal) return;
+    if (quizState && quizState.answers && quizState.answers.length > 0 && !quizState.reported) {
+        reportQuizAttempt();
+    }
+    closeDialog(modal);
 }
 
 function startQuiz() {
     const pool = shuffleArray(quizQuestions);
-    const selected = pool.slice(0, Math.min(QUIZ_SIZE, pool.length));
+    const chosen = pool.slice(0, Math.min(QUIZ_SIZE, pool.length));
     quizState = {
-        questions: selected,
+        questions: chosen,
         current: 0,
-        correct: 0,
-        wrong: 0,
-        answered: false
+        score: 0,
+        answered: false,
+        reported: false,
+        answers: []
     };
     renderQuizQuestion();
 }
 
 function renderQuizQuestion() {
     const body = document.getElementById('quizBody');
+    if (!body || !quizState) return;
     const q = quizState.questions[quizState.current];
-    const optionsHtml = q.options.map((opt, idx) => (
+    const optionsHtml = q.options.map((opt, idx) =>
         `<button type="button" class="quiz-option" onclick="selectQuizOption(${idx})">${escapeHtml(opt)}</button>`
-    )).join('');
+    ).join('');
 
     body.innerHTML = `
-                <div class="quiz-progress">⏱ 1 минута • Вопрос ${quizState.current + 1} из ${quizState.questions.length}</div>
-                <div class="quiz-question">${escapeHtml(q.question)}</div>
-                <div class="quiz-options">${optionsHtml}</div>
-                <div class="quiz-footer" id="quizNext" style="display:none;">
-                    <button type="button" class="btn btn-primary" onclick="goToNextQuestion()" id="quizNextBtn">Дальше</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeQuiz()">Отмена</button>
-                </div>
-            `;
+        <div class="quiz-progress">⏱ 1 минута • Вопрос ${quizState.current + 1} из ${quizState.questions.length}</div>
+        <div class="quiz-question">${escapeHtml(q.question)}</div>
+        <div class="quiz-options">${optionsHtml}</div>
+        <div class="quiz-footer" id="quizNext" hidden>
+            <button type="button" class="btn btn-primary" onclick="goToNextQuestion()" id="quizNextBtn">Дальше</button>
+            <button type="button" class="btn btn-secondary" onclick="closeQuiz()">Отмена</button>
+        </div>
+    `;
 }
 
 function selectQuizOption(index) {
     if (!quizState || quizState.answered) return;
     quizState.answered = true;
-
     const q = quizState.questions[quizState.current];
-    const buttons = document.querySelectorAll('.quiz-option');
+    const buttons = document.querySelectorAll('#quizBody .quiz-option');
     buttons.forEach((btn, idx) => {
         btn.disabled = true;
-        if (idx === q.answer) {
-            btn.classList.add('correct');
-        } else if (idx === index) {
-            btn.classList.add('incorrect');
-        }
+        if (idx === q.answerIndex) btn.classList.add('correct');
+        if (idx === index && idx !== q.answerIndex) btn.classList.add('wrong');
     });
 
-    if (index === q.answer) {
-        quizState.correct += 1;
-    } else {
-        quizState.wrong += 1;
-    }
+    const isCorrect = index === q.answerIndex;
+    if (isCorrect) quizState.score += 1;
+    quizState.answers.push({ index, isCorrect });
+    haptic(isCorrect ? 'success' : 'error');
 
-    const nextWrap = document.getElementById('quizNext');
-    const nextBtn = document.getElementById('quizNextBtn');
-    if (nextBtn) {
-        nextBtn.textContent = quizState.current + 1 >= quizState.questions.length ? 'Результат' : 'Дальше';
-    }
-    if (nextWrap) {
-        nextWrap.style.display = 'flex';
+    const body = document.getElementById('quizBody');
+    const feedback = document.createElement('div');
+    feedback.className = 'quiz-feedback';
+    feedback.innerHTML = `${isCorrect ? '✅ Верно!' : '❌ Неверно.'} ${escapeHtml(q.explanation || '')}`;
+    const nextFooter = document.getElementById('quizNext');
+    if (nextFooter) {
+        body.insertBefore(feedback, nextFooter);
+        nextFooter.hidden = false;
+        const nextBtn = document.getElementById('quizNextBtn');
+        if (nextBtn) {
+            nextBtn.textContent = (quizState.current + 1 >= quizState.questions.length) ? 'Результат' : 'Дальше';
+        }
     }
 }
 
 function goToNextQuestion() {
     if (!quizState) return;
-    if (quizState.current + 1 >= quizState.questions.length) {
+    if (quizState.current + 1 < quizState.questions.length) {
+        quizState.current += 1;
+        quizState.answered = false;
+        renderQuizQuestion();
+    } else {
         showQuizResult();
-        return;
     }
-    quizState.current += 1;
-    quizState.answered = false;
-    renderQuizQuestion();
 }
 
 function showQuizResult() {
-    reportQuizAttempt();
     const body = document.getElementById('quizBody');
-    const fact = QUIZ_FACTS.length
-        ? QUIZ_FACTS[Math.floor(Math.random() * QUIZ_FACTS.length)]
-        : '';
+    if (!body || !quizState) return;
+    reportQuizAttempt();
+    const total = quizState.questions.length;
+    const score = quizState.score;
+    const fact = QUIZ_FACTS[Math.floor(Math.random() * QUIZ_FACTS.length)];
+
     body.innerHTML = `
-                <div class="quiz-result">
-                    ✅ Верно: <b>${quizState.correct}</b><br>
-                    ❌ Неверно: <b>${quizState.wrong}</b>
-                </div>
-                ${fact ? `<div class="quiz-fact">💡 ${escapeHtml(fact)}</div>` : ''}
-                <div class="quiz-footer">
-                    <button type="button" class="btn btn-secondary" onclick="startQuiz()">Ещё раз</button>
-                    <button type="button" class="btn btn-primary" onclick="closeQuiz()">Закрыть</button>
-                </div>
-            `;
+        <div class="quiz-result">
+            <strong>Ваш результат: ${score} из ${total}</strong>
+        </div>
+        ${fact ? `<div class="quiz-fact">💡 ${escapeHtml(fact)}</div>` : ''}
+        <div class="quiz-footer">
+            <button type="button" class="btn btn-primary" onclick="startQuiz()">Сыграть ещё раз</button>
+            <button type="button" class="btn btn-secondary" onclick="closeQuiz()">Закрыть</button>
+        </div>
+    `;
 }
 
-async function forceUpdate() {
-    haptic('medium');
-    try {
-        if ('serviceWorker' in navigator) {
-            const registrations = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(registrations.map(registration => registration.unregister()));
-        }
-        if ('caches' in window) {
-            const cacheNames = await caches.keys();
-            await Promise.all(
-                cacheNames
-                    .filter(name => name.startsWith('sklad-bot-') || name.startsWith('bestbot-pages-'))
-                    .map(name => caches.delete(name))
-            );
-        }
-    } catch (e) {
-        console.warn('Cache cleanup failed:', e);
-    }
-    const url = new URL(window.location.href);
-    url.searchParams.set('cache_bust', Date.now());
-    window.location.replace(url.toString());
-}
-
-// Theme handling
-function applyTelegramTheme() {
-    if (tg.colorScheme === 'dark') {
-        document.body.classList.add('dark-mode');
-    } else {
-        document.body.classList.remove('dark-mode');
-    }
-
-    if (tg.themeParams) {
-        const root = document.documentElement.style;
-        if (tg.themeParams.button_color) {
-            root.setProperty('--primary-color', tg.themeParams.button_color);
-            root.setProperty('--primary-hover', tg.themeParams.button_color);
-        }
-        if (tg.themeParams.text_color) {
-            root.setProperty('--text-color', tg.themeParams.text_color);
-        }
-        if (tg.themeParams.hint_color) {
-            root.setProperty('--secondary-text', tg.themeParams.hint_color);
-        }
-        if (tg.colorScheme === 'dark' && tg.themeParams.secondary_bg_color) {
-            root.setProperty('--input-bg-field', tg.themeParams.secondary_bg_color);
-            root.setProperty('--input-bg-field-main', tg.themeParams.secondary_bg_color);
-        }
-    }
-}
-
-// Apply theme initially and listen for dynamic changes
-applyTelegramTheme();
-if (typeof tg.onEvent === 'function') {
-    tg.onEvent('themeChanged', applyTelegramTheme);
-}
-
-
-// Set today's date and max date (prevent future dates)
-const today = new Date().toISOString().split('T')[0];
-const dateInput = document.getElementById('date');
-dateInput.valueAsDate = new Date();
-dateInput.setAttribute('max', today);
-
-// Additional validation on change (for iOS compatibility)
-dateInput.addEventListener('change', function () {
-    const selectedDate = new Date(this.value);
-    const todayDate = new Date(today);
-
-    if (selectedDate > todayDate) {
-        showAppAlert('⚠️ Нельзя выбрать будущую дату! Выберите сегодня или прошедшую дату.');
-        this.value = today; // Reset to today
-    }
-});
-
-const regionInput = document.getElementById('region');
-if (regionInput) {
-    regionInput.addEventListener('change', () => {
-        const value = regionInput.value.trim();
-        if (!value) return;
-        try {
-            localStorage.setItem('last_region', value);
-        } catch (e) { }
-    });
-}
-
+// ============================================
+// 5. ITEM CARDS, CLEAVE, DRAG-DROP & SWIPE
+// ============================================
 let itemCount = 0;
-let appState = 'editing'; // State: 'editing' or 'preview'
-let autosaveTimeout; // For debounced autosave
-let previewOpen = false;
-let submitInProgress = false;
-let quizOpen = false;
-let quizLoading = false;
+let dragSrcCard = null;
 
-// Swipe gesture support
-let touchStartX = 0;
-let touchStartY = 0;
-let currentCard = null;
-
-function handleTouchStart(e) {
-    const card = e.currentTarget.closest('.item-card');
-    if (!card) return;
-    currentCard = card;
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-    currentCard.style.transition = 'none';
-}
-
-function handleTouchMove(e) {
-    if (!currentCard) return;
-    const touchX = e.touches[0].clientX;
-    const touchY = e.touches[0].clientY;
-    const diffX = touchX - touchStartX;
-    const diffY = touchY - touchStartY;
-
-    // Only horizontal swipe to the left
-    if (Math.abs(diffX) > Math.abs(diffY) && diffX < 0) {
-        currentCard.style.transform = `translateX(${diffX}px)`;
-        currentCard.style.opacity = 1 + diffX / 200;
-    }
-}
-
-function handleTouchEnd(e) {
-    if (!currentCard) return;
-
-    const touchX = e.changedTouches[0].clientX;
-    const diffX = touchX - touchStartX;
-
-    if (diffX < -100) {
-        // Swipe threshold reached - delete
-        currentCard.style.transition = 'transform 0.3s, opacity 0.3s';
-        currentCard.style.transform = 'translateX(-100%)';
-        currentCard.style.opacity = '0';
-
-        setTimeout(() => {
-            currentCard.remove();
-            updateBadge();
-            haptic('medium');
-        }, 300);
-    } else {
-        // Reset position
-        currentCard.style.transition = 'transform 0.3s, opacity 0.3s';
-        currentCard.style.transform = 'translateX(0)';
-        currentCard.style.opacity = '1';
-    }
-
-    currentCard = null;
-}
-
-// Real-time Total Calculation
-function updateTotalCost() {
-    let total = 0;
-    document.querySelectorAll('.eval').forEach(input => {
-        const val = input.value.replace(/\s/g, ''); // Remove spaces
-        total += parseInt(val) || 0;
-    });
-
-    const banner = document.getElementById('realTimeTotal');
-    const display = document.getElementById('totalAmountDisplay');
-
-    // Get current displayed value to animate from
-    const currentText = display.textContent.replace(/\D/g, '');
-    let currentVal = parseInt(currentText);
-    if (isNaN(currentVal)) currentVal = 0;
-
-    // If banner was hidden, current value should visually start from 0
-    if (banner.style.display === 'none' || banner.style.display === '') {
-        currentVal = 0;
-    }
-
-    if (total > 0) {
-        banner.style.display = 'flex';
-
-        // Only animate if value changed
-        if (currentVal !== total) {
-            animateValue(display, currentVal, total, 500); // 500ms duration
-        }
-    } else {
-        banner.style.display = 'none';
-        display.textContent = '0 ₽';
-    }
-}
-
-// Helper to pluralize points in Russian
-function getPointsPlural(n) {
-    const lastDigit = n % 10;
-    const lastTwo = n % 100;
-    if (lastTwo >= 11 && lastTwo <= 19) return 'баллов';
-    if (lastDigit === 1) return 'балл';
-    if (lastDigit >= 2 && lastDigit <= 4) return 'балла';
-    return 'баллов';
-}
-
-// Easing function and animation for count-up effect
-function animateValue(obj, start, end, duration) {
-    let startTimestamp = null;
-
-    // Cancel any existing animation on this object
-    if (obj.animationId) {
-        window.cancelAnimationFrame(obj.animationId);
-    }
-
-    const step = (timestamp) => {
-        if (!startTimestamp) startTimestamp = timestamp;
-        // Don't animate if duration is 0
-        if (duration === 0) {
-            const points = 10 + Math.floor(end / 1000);
-            obj.textContent = end.toLocaleString('ru-RU') + ' ₽ | 🏆 +' + points + ' ' + getPointsPlural(points);
-            return;
-        }
-
-        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-        // easeOutQuart
-        const ease = 1 - Math.pow(1 - progress, 4);
-        const current = Math.floor(ease * (end - start) + start);
-
-        const currentPoints = 10 + Math.floor(current / 1000);
-        obj.textContent = current.toLocaleString('ru-RU') + ' ₽ | 🏆 +' + currentPoints + ' ' + getPointsPlural(currentPoints);
-
-        if (progress < 1) {
-            obj.animationId = window.requestAnimationFrame(step);
-        } else {
-            const points = 10 + Math.floor(end / 1000);
-            obj.textContent = end.toLocaleString('ru-RU') + ' ₽ | 🏆 +' + points + ' ' + getPointsPlural(points);
-            obj.animationId = null;
-        }
-    };
-
-    obj.animationId = window.requestAnimationFrame(step);
-}
-
-
-function addItem() {
-    // Collapse existing items
-    collapseAllItems();
-
-    // Create new item
-    const div = document.createElement('div');
-    div.className = 'item-card';
-    // ID and Title will be fixed by renumberItems()
-    div.innerHTML = `
-                <div class="item-header" onclick="toggleItem(this)">
-                    <div class="item-header-left">
-                        <span class="drag-handle" title="Перетащите для сортировки">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="3" y1="6" x2="21" y2="6"></line>
-                                <line x1="3" y1="12" x2="21" y2="12"></line>
-                                <line x1="3" y1="18" x2="21" y2="18"></line>
-                            </svg>
-                        </span>
-                        <div class="item-header-info">
-                            <span class="item-title">Предмет</span>
-                            <span class="item-summary"></span>
-                        </div>
-                    </div>
-                    <div class="item-header-actions">
-                        <span class="item-toggle" aria-hidden="true">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </span>
-                        <!-- Remove button will be added by renumberItems if needed -->
-                    </div>
+function createCardHtml(idx) {
+    return `
+        <div class="swipe-delete-indicator" aria-hidden="true">Удалить</div>
+        <div class="item-header">
+            <span class="drag-handle" aria-hidden="true" title="Перетащить для сортировки">⋮⋮</span>
+            <button type="button" class="item-header-toggle" onclick="toggleItem(this)"
+                aria-expanded="true" aria-controls="item-body-${idx}">
+                <span class="item-number">#${idx}</span>
+                <span class="item-summary">Новый предмет</span>
+                <span class="collapse-chevron" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                </span>
+            </button>
+        </div>
+        <div class="item-body" id="item-body-${idx}">
+            <div class="form-group">
+                <label class="field-label" for="desc-${idx}">
+                    Описание предмета <span class="required" aria-hidden="true">*</span>
+                </label>
+                <div class="input-wrapper textarea-wrapper">
+                    <textarea id="desc-${idx}" class="desc item-field" rows="2"
+                        placeholder="Например: Икона Николай Чудотворец, XIX век, дерево, темпера, 27×22 см"
+                        required aria-invalid="false"
+                        data-hint="hint-desc-${idx}" data-error="err-desc-${idx}"
+                        aria-describedby="hint-desc-${idx}"></textarea>
+                    <button type="button" class="mic-btn"
+                        onclick="startSpeechRecognition(this, 'desc-${idx}')"
+                        aria-label="Голосовой ввод описания" title="Голосовой ввод">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                            <line x1="12" y1="19" x2="12" y2="23" />
+                            <line x1="8" y1="23" x2="16" y2="23" />
+                        </svg>
+                    </button>
                 </div>
-                <div class="item-body">
-                    <div class="form-group desc-group">
-                        <input type="text" class="desc item-field" placeholder="Икона деревянная, живопись на доске" required id="desc-${itemCount}">
-                        <label class="floating-label" for="desc-${itemCount}">Описание</label>
-                        <button type="button" class="mic-btn" onclick="startSpeechRecognition(this, 'desc-${itemCount}')" title="Голосовой ввод">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-                                <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                <line x1="12" y1="19" x2="12" y2="22"></line>
-                            </svg>
-                        </button>
-                        <div class="error-message"></div>
-                        <div class="input-hint">
-                            Добавьте краткое описание предмета или надиктуйте голосом
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <input type="tel" class="eval item-field" placeholder="Сумма" required inputmode="numeric" id="eval-${itemCount}">
-                        <label class="floating-label" for="eval-${itemCount}">Оценка (руб.)</label>
-                        <div class="error-message"></div>
-                        <div class="input-hint">Только цифры (например, 10 000)</div>
-                    </div>
-                    <div class="photo-preview-container" 
-                         ondragover="handleDragOver(event)" 
-                         ondragleave="handleDragLeave(event)" 
-                         ondrop="handleDrop(event, this)"
-                         ontouchstart="handleTouchStart(event)"
-                         ontouchmove="handleTouchMove(event)"
-                         ontouchend="handleTouchEnd(event)">
-                        <div class="skeleton-loader"></div>
-                        <div class="photo-preview"></div>
-                        <label class="upload-label">
-                            <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
-                            </svg>
-                            <input type="file" class="file-input" accept="image/*" onchange="handleFileSelect(this)" style="display:none">
+                <span class="field-hint" id="hint-desc-${idx}">Наименование, материал, период, клейма или дефекты</span>
+                <span class="error-message" id="err-desc-${idx}" hidden></span>
+            </div>
+
+            <div class="form-group">
+                <label class="field-label" for="eval-${idx}">
+                    Оценка <span class="required" aria-hidden="true">*</span>
+                </label>
+                <div class="input-wrapper has-suffix">
+                    <input type="text" id="eval-${idx}" class="eval item-field" inputmode="numeric"
+                        placeholder="Например: 15 000" required aria-invalid="false"
+                        data-hint="hint-eval-${idx}" data-error="err-eval-${idx}"
+                        aria-describedby="hint-eval-${idx}">
+                    <span class="input-suffix" aria-hidden="true">₽</span>
+                </div>
+                <span class="field-hint" id="hint-eval-${idx}">Сумма оценки в рублях</span>
+                <span class="error-message" id="err-eval-${idx}" hidden></span>
+            </div>
+
+            <div class="form-group">
+                <span class="field-label">Фотография предмета <span class="required" aria-hidden="true">*</span></span>
+                <div class="photo-upload-container" id="photo-box-${idx}">
+                    <input type="file" accept="image/*" class="file-input sr-only" id="file-${idx}"
+                        onchange="handleFileSelect(this)" aria-label="Выбрать фото предмета ${idx}">
+                    <div class="photo-preview" id="preview-${idx}"
+                        role="button" tabindex="0"
+                        aria-label="Добавить фото предмета ${idx}"
+                        aria-describedby="status-photo-${idx}"
+                        onclick="triggerFileInput(this)"
+                        onkeydown="handlePreviewKeydown(event, this)"
+                        ondragover="handleDragOver(event)"
+                        ondragleave="handleDragLeave(event)"
+                        ondrop="handleDrop(event, this.parentElement)">
+                        <div class="skeleton-loader" hidden></div>
+                        <div class="upload-label">
+                            <div class="upload-icon-circle" aria-hidden="true">📷</div>
                             <span class="btn-text">Добавить фото</span>
-                            <span class="hint">Нажмите для выбора или перетащите</span>
-                        </label>
+                            <span class="hint">Нажмите, перетащите или вставьте (Ctrl+V)</span>
+                        </div>
                         <div class="photo-actions">
-                            <button type="button" class="photo-action-btn" onclick="handleReplacePhoto(this, event)">Заменить</button>
-                            <button type="button" class="photo-action-btn danger" onclick="handleRemovePhoto(this, event)">Удалить</button>
+                            <button type="button" class="photo-action-btn"
+                                onclick="handleReplacePhoto(this, event)">Заменить</button>
+                            <button type="button" class="photo-action-btn danger"
+                                onclick="handleRemovePhoto(this, event)">Удалить</button>
                         </div>
                         <div class="upload-progress">
                             <div class="upload-progress-bar"></div>
                         </div>
                     </div>
-                    <div class="upload-status">Добавьте одно фото предмета</div>
+                    <div class="upload-status" id="status-photo-${idx}">Добавьте одно фото предмета</div>
+                    <span class="error-message" id="err-photo-${idx}" hidden></span>
                 </div>
-            `;
-    // --- ADDED EVENT LISTENERS ---
-    // 1. Input Mask for Evaluation (Cleave.js)
-    const evalInput = div.querySelector('.eval');
-    if (window.Cleave) {
-        new Cleave(evalInput, {
+            </div>
+        </div>
+    `;
+}
+
+function handlePreviewKeydown(event, previewEl) {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        triggerFileInput(previewEl);
+    }
+}
+
+function triggerFileInput(previewEl) {
+    if (!previewEl) return;
+    if (previewEl.classList.contains('has-photo')) {
+        const img = previewEl.querySelector('.photo-preview-img');
+        if (img && img.src) openLightbox(img.src);
+        return;
+    }
+    const container = previewEl.closest('.photo-upload-container');
+    const fileInput = container ? container.querySelector('.file-input') : null;
+    if (fileInput) fileInput.click();
+}
+
+function addItem(scrollToNew = true) {
+    itemCount += 1;
+    const list = document.getElementById('itemsList');
+    if (!list) return null;
+
+    const card = document.createElement('article');
+    card.className = 'item-card';
+    card.id = `item-${itemCount}`;
+    card.innerHTML = createCardHtml(itemCount);
+
+    list.appendChild(card);
+
+    const evalInput = card.querySelector('.eval');
+    const descInput = card.querySelector('.desc');
+
+    if (typeof window.Cleave === 'function' && evalInput) {
+        new window.Cleave(evalInput, {
             numeral: true,
             numeralThousandsGroupStyle: 'thousand',
-            delimiter: ' '
-        });
-    } else {
-        evalInput.addEventListener('input', () => {
-            evalInput.value = evalInput.value.replace(/\D/g, '');
+            delimiter: ' ',
+            numeralDecimalScale: 0,
+            numeralPositiveOnly: true
         });
     }
 
-    // Real-time total update
-    evalInput.addEventListener('input', updateTotalCost);
-
-    // 2. File Input Trigger
-    const fileInput = div.querySelector('.file-input');
-    const previewContainer = div.querySelector('.photo-preview-container');
-
-    // Handle click on container to trigger file input
-    previewContainer.onclick = (e) => {
-        // Prevent double trigger if clicking on label/input directly
-        if (e.target !== fileInput && !e.target.closest('.upload-label')) {
-            fileInput.click();
-        }
-    };
-
-    // 3. Validation clearing
-    const inputs = div.querySelectorAll('input');
-    inputs.forEach(input => {
-        input.addEventListener('input', () => {
-            if (shouldClearFieldError(input)) {
-                clearFieldError(input, true);
-            }
+    if (evalInput) {
+        evalInput.addEventListener('input', () => {
+            updateTotal();
+            updateItemSummary(card);
         });
-    });
+        evalInput.addEventListener('change', () => updateItemSummary(card));
+        if (window.UX) window.UX.bindFieldValidation(evalInput);
+    }
 
+    if (descInput) {
+        descInput.addEventListener('input', () => {
+            updateItemSummary(card);
+        });
+        if (window.UX) window.UX.bindFieldValidation(descInput);
+    }
 
-    // Fix numbering
-    document.getElementById('itemsList').appendChild(div);
-
-    // Enable drag-and-drop on new card
-    initDragAndDrop(div);
-
+    initDragAndDrop(card);
+    initTouchSwipe(card);
     renumberItems();
+    updateTotal();
+    updateFormCompletion();
+
+    if (scrollToNew && itemCount > 1) {
+        haptic('light');
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    return card;
 }
 
 function removeItem(btn, event) {
     if (event) event.stopPropagation();
-    btn.closest('.item-card').remove();
-    renumberItems();
-    updateTotalCost();
+    const cards = document.querySelectorAll('.item-card');
+    if (cards.length <= 1) {
+        showAppAlert('Должен остаться хотя бы один предмет.');
+        return;
+    }
+    const card = btn.closest('.item-card');
+    if (card) {
+        card.remove();
+        renumberItems();
+        updateTotal();
+        updateFormCompletion();
+        saveFormData();
+        haptic('medium');
+    }
 }
 
 function renumberItems() {
-    const items = document.querySelectorAll('.item-card');
-    items.forEach((card, index) => {
-        const num = index + 1;
-        card.id = `item-${num}`;
+    const cards = document.querySelectorAll('.item-card');
+    cards.forEach((card, index) => {
+        const number = index + 1;
+        const badge = card.querySelector('.item-number');
+        if (badge) badge.textContent = `#${number}`;
 
-        // Update Title
-        const title = card.querySelector('.item-title');
-        if (title) title.textContent = `Предмет #${num}`;
+        const header = card.querySelector('.item-header');
+        if (!header) return;
 
-        // Update Remove Button visibility
-        const headerBtnContainer = card.querySelector('.item-header-actions');
-        if (headerBtnContainer) {
-            const removeBtn = headerBtnContainer.querySelector('.btn-remove');
-            if (num > 1) {
-                if (!removeBtn) {
-                    headerBtnContainer.insertAdjacentHTML(
-                        'beforeend',
-                        `<button type="button" class="btn-remove" onclick="removeItem(this, event)">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                                    Удалить
-                                </button>`
-                    );
-                }
-            } else if (removeBtn) {
-                removeBtn.remove();
+        let removeBtn = header.querySelector('.btn-remove');
+        if (cards.length > 1) {
+            if (!removeBtn) {
+                removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'btn-remove';
+                removeBtn.setAttribute('aria-label', `Удалить предмет ${number}`);
+                removeBtn.setAttribute('title', 'Удалить предмет');
+                removeBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round" width="16" height="16" aria-hidden="true">
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14H6L5 6" />
+                        <path d="M10 11v6" />
+                        <path d="M14 11v6" />
+                    </svg>
+                `;
+                removeBtn.onclick = function (e) { removeItem(this, e); };
+                header.appendChild(removeBtn);
+            } else {
+                removeBtn.setAttribute('aria-label', `Удалить предмет ${number}`);
             }
+        } else if (removeBtn) {
+            removeBtn.remove();
         }
     });
-
-    // Update global counter
-    itemCount = items.length;
     updateBadge();
 }
 
-function collapseAllItems() {
-    document.querySelectorAll('.item-card').forEach(card => {
-        card.classList.add('collapsed');
-        updateItemSummary(card);
-    });
-}
-
 function updateItemSummary(card) {
-    const desc = card.querySelector('.desc').value;
-    const price = card.querySelector('.eval').value;
-    const hasPhoto = card.querySelector('.file-input').files.length > 0;
+    if (!card) return;
+    const desc = (card.querySelector('.desc')?.value || '').trim();
+    const evalVal = cleanNumber(card.querySelector('.eval')?.value);
+    const summaryEl = card.querySelector('.item-summary');
+    if (!summaryEl) return;
 
-    let summary = [];
-    if (desc) summary.push(desc);
-    if (price) {
-        // Check if formatNumberWithSpaces exists (might not be loaded yet on initial load)
-        if (typeof formatNumberWithSpaces === 'function') {
-            summary.push(formatNumberWithSpaces(price) + ' ₽');
-        } else {
-            summary.push(price + ' ₽');
-        }
+    if (!desc && !evalVal) {
+        summaryEl.textContent = 'Новый предмет';
+        return;
     }
-    if (hasPhoto) summary.push('📷 Фото');
-
-    const summaryText = summary.join(', ') || 'Нет данных';
-    card.querySelector('.item-summary').textContent = summaryText;
+    const shortDesc = desc.length > 26 ? `${desc.slice(0, 26)}…` : (desc || 'Без описания');
+    const evalText = evalVal > 0 ? ` • ${formatNumber(evalVal)} ₽` : '';
+    summaryEl.textContent = `${shortDesc}${evalText}`;
 }
 
-function toggleItem(header) {
-    const card = header.closest('.item-card');
-    if (card.classList.contains('collapsed')) {
-        card.classList.remove('collapsed');
-    } else {
-        card.classList.add('collapsed');
-        updateItemSummary(card);
+function toggleItem(trigger) {
+    const card = trigger.closest('.item-card');
+    if (!card) return;
+    const collapsed = card.classList.toggle('collapsed');
+    const toggleBtn = card.querySelector('.item-header-toggle');
+    if (toggleBtn) {
+        toggleBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
     }
+    updateItemSummary(card);
+    haptic('light');
 }
 
 function updateBadge() {
-    const count = document.getElementById('itemsList').children.length;
+    const count = document.querySelectorAll('.item-card').length;
     const badge = document.getElementById('itemCountBadge');
-    if (badge) {
-        badge.textContent = count;
-        // Optional: Hide badge if 0 (though we always have 1 item)
-        // badge.style.display = count > 0 ? 'inline-block' : 'none';
-    }
+    if (badge) badge.textContent = String(count);
 }
 
-// --- UX Features ---
+function updateTotal() {
+    const cards = document.querySelectorAll('.item-card');
+    let total = 0;
+    let photoCount = 0;
 
-// Helper for formatting numbers
-function formatNumberWithSpaces(num) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    cards.forEach((card) => {
+        total += cleanNumber(card.querySelector('.eval')?.value);
+        const container = card.querySelector('.photo-upload-container');
+        if (container && container.dataset.photoUrl) {
+            photoCount += 1;
+        }
+    });
+
+    const totalEl = document.getElementById('totalAmountDisplay');
+    const metaEl = document.getElementById('totalItemsMeta');
+    if (totalEl) totalEl.textContent = `${formatNumber(total)} ₽`;
+    if (metaEl) metaEl.textContent = `${cards.length} ${pluralizeItems(cards.length)} • ${photoCount} фото`;
 }
 
-// 1. Drag & Drop
+function pluralizeItems(n) {
+    const mod10 = n % 10;
+    const mod100 = n % 100;
+    if (mod10 === 1 && mod100 !== 11) return 'предмет';
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'предмета';
+    return 'предметов';
+}
+
+function initDragAndDrop(card) {
+    const handle = card.querySelector('.drag-handle');
+    if (!handle) return;
+
+    handle.addEventListener('pointerdown', () => {
+        card.setAttribute('draggable', 'true');
+    });
+
+    card.addEventListener('dragstart', (e) => {
+        dragSrcCard = card;
+        card.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', card.id);
+        haptic('medium');
+    });
+
+    card.addEventListener('dragend', () => {
+        card.classList.remove('dragging');
+        card.removeAttribute('draggable');
+        document.querySelectorAll('.item-card.drag-over').forEach((c) => c.classList.remove('drag-over'));
+        dragSrcCard = null;
+    });
+
+    card.addEventListener('dragover', (e) => {
+        if (!dragSrcCard || dragSrcCard === card) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (!card.classList.contains('drag-over')) {
+            haptic('light');
+        }
+        card.classList.add('drag-over');
+    });
+
+    card.addEventListener('dragleave', () => {
+        card.classList.remove('drag-over');
+    });
+
+    card.addEventListener('drop', (e) => {
+        if (!dragSrcCard || dragSrcCard === card) return;
+        e.preventDefault();
+        card.classList.remove('drag-over');
+        const list = document.getElementById('itemsList');
+        const cards = Array.from(list.children);
+        const fromIdx = cards.indexOf(dragSrcCard);
+        const toIdx = cards.indexOf(card);
+        if (fromIdx < toIdx) {
+            list.insertBefore(dragSrcCard, card.nextSibling);
+        } else {
+            list.insertBefore(dragSrcCard, card);
+        }
+        renumberItems();
+        haptic('success');
+        saveFormData();
+    });
+}
+
+function initTouchSwipe(card) {
+    let startX = 0;
+    let startY = 0;
+    let currentX = 0;
+    let swiping = false;
+    const header = card.querySelector('.item-header');
+    const indicator = card.querySelector('.swipe-delete-indicator');
+    if (!header || !indicator) return;
+
+    header.addEventListener('touchstart', (e) => {
+        if (e.target.closest('button') || e.target.closest('.drag-handle')) return;
+        if (document.querySelectorAll('.item-card').length <= 1) return;
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        currentX = 0;
+        swiping = false;
+    }, { passive: true });
+
+    header.addEventListener('touchmove', (e) => {
+        if (!startX) return;
+        const dx = e.touches[0].clientX - startX;
+        const dy = e.touches[0].clientY - startY;
+        if (Math.abs(dy) > Math.abs(dx) + 8) {
+            startX = 0;
+            return;
+        }
+        if (dx < -18) {
+            swiping = true;
+            currentX = Math.max(dx, -110);
+            card.style.transform = `translateX(${currentX}px)`;
+            indicator.style.display = 'flex';
+        }
+    }, { passive: true });
+
+    header.addEventListener('touchend', () => {
+        if (swiping && currentX <= -85 && document.querySelectorAll('.item-card').length > 1) {
+            const btn = card.querySelector('.btn-remove');
+            if (btn) removeItem(btn);
+        }
+        card.style.transform = '';
+        indicator.style.display = 'none';
+        startX = 0;
+        currentX = 0;
+        swiping = false;
+    });
+}
+
+// ============================================
+// 6. PHOTO UPLOAD, PASTE & DICTATION
+// ============================================
 function handleDragOver(e) {
     e.preventDefault();
     e.stopPropagation();
-    e.currentTarget.style.borderColor = 'var(--primary-color)';
-    e.currentTarget.style.background = 'rgba(0, 122, 255, 0.05)';
+    e.currentTarget.classList.add('dragover');
 }
 
 function handleDragLeave(e) {
     e.preventDefault();
     e.stopPropagation();
-    e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.1)';
-    e.currentTarget.style.background = 'rgba(0, 0, 0, 0.03)';
+    e.currentTarget.classList.remove('dragover');
 }
 
 function handleDrop(e, container) {
     e.preventDefault();
     e.stopPropagation();
-
-    container.style.borderColor = 'rgba(0, 0, 0, 0.1)';
-    container.style.background = 'rgba(0, 0, 0, 0.03)';
-
-    const dt = e.dataTransfer;
-    const files = dt.files;
-
-    if (files && files[0]) {
+    const preview = container.querySelector('.photo-preview');
+    if (preview) preview.classList.remove('dragover');
+    const files = e.dataTransfer && e.dataTransfer.files;
+    if (files && files.length > 0 && files[0].type.startsWith('image/')) {
         const fileInput = container.querySelector('.file-input');
-        fileInput.files = files;
+        const dt = new DataTransfer();
+        dt.items.add(files[0]);
+        fileInput.files = dt.files;
         handleFileSelect(fileInput);
     }
 }
 
-// 3. Input Mask for Ticket (Digits only, max 11) + Auto-focus
-document.getElementById('ticket').addEventListener('input', function (e) {
-    e.target.value = e.target.value.replace(/\D/g, '').substring(0, 11);
+function setUploadProgress(previewContainer, percent) {
+    const progressEl = previewContainer.querySelector('.upload-progress');
+    const barEl = previewContainer.querySelector('.upload-progress-bar');
+    if (!progressEl || !barEl) return;
 
-    // \u2705 UX: Auto-focus to date field when 11 digits entered
-    if (e.target.value.length === 11) {
-        document.getElementById('date').focus();
+    if (percent === null || typeof percent === 'undefined') {
+        progressEl.classList.remove('active', 'indeterminate');
+        barEl.style.width = '0%';
+        return;
+    }
+    progressEl.classList.add('active');
+    if (percent < 0) {
+        progressEl.classList.add('indeterminate');
+        barEl.style.width = '';
+    } else {
+        progressEl.classList.remove('indeterminate');
+        barEl.style.width = `${Math.max(0, Math.min(100, percent))}%`;
+    }
+}
+
+function handleReplacePhoto(button, event) {
+    if (event) event.stopPropagation();
+    const container = button.closest('.photo-upload-container');
+    const input = container ? container.querySelector('.file-input') : null;
+    if (input) input.click();
+}
+
+function handleRemovePhoto(button, event) {
+    if (event) event.stopPropagation();
+    const container = button.closest('.photo-upload-container');
+    if (!container) return;
+    resetPhotoContainer(container);
+    updateTotal();
+    updateFormCompletion();
+    saveFormData();
+    haptic('light');
+}
+
+function resetPhotoContainer(container) {
+    const preview = container.querySelector('.photo-preview');
+    const status = container.querySelector('.upload-status');
+    const btnText = container.querySelector('.btn-text');
+    const input = container.querySelector('.file-input');
+    const card = container.closest('.item-card');
+    const cardIdx = card ? card.id.replace('item-', '') : '1';
+    const errEl = document.getElementById(`err-photo-${cardIdx}`) || container.querySelector('.error-message');
+
+    if (input) input.value = '';
+    delete container.dataset.photoUrl;
+
+    if (preview) {
+        preview.classList.remove('has-photo', 'loading', 'photo-invalid');
+        const img = preview.querySelector('.photo-preview-img');
+        if (img) img.remove();
+        const skeleton = preview.querySelector('.skeleton-loader');
+        if (skeleton) skeleton.hidden = true;
+        setUploadProgress(preview, null);
+    }
+
+    if (btnText) btnText.textContent = 'Добавить фото';
+    if (status) {
+        status.textContent = 'Добавьте одно фото предмета';
+        status.className = 'upload-status';
+    }
+    if (errEl) {
+        errEl.textContent = '';
+        errEl.hidden = true;
+    }
+}
+
+async function handleFileSelect(input) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    const container = input.closest('.photo-upload-container');
+    const previewContainer = container.querySelector('.photo-preview');
+    const status = container.querySelector('.upload-status');
+    const btnText = previewContainer.querySelector('.btn-text');
+    const skeleton = previewContainer.querySelector('.skeleton-loader');
+    const card = container.closest('.item-card');
+    const cardIdx = card ? card.id.replace('item-', '') : '1';
+    const errEl = document.getElementById(`err-photo-${cardIdx}`);
+
+    previewContainer.classList.remove('photo-invalid');
+    if (errEl) {
+        errEl.textContent = '';
+        errEl.hidden = true;
+    }
+
+    previewContainer.classList.add('loading');
+    if (skeleton) skeleton.hidden = false;
+
+    const compressionAvailable = typeof window.imageCompression === 'function';
+    if (btnText) btnText.textContent = compressionAvailable ? 'Сжатие...' : 'Подготовка...';
+    if (status) {
+        status.textContent = '⏳ Обработка фото...';
+        status.className = 'upload-status';
+    }
+    delete container.dataset.photoUrl;
+    setUploadProgress(previewContainer, -1);
+
+    try {
+        const compressedFile = compressionAvailable
+            ? await window.imageCompression(file, {
+                maxSizeMB: 1,
+                maxWidthOrHeight: 1280,
+                useWebWorker: true,
+                fileType: 'image/jpeg'
+            })
+            : file;
+
+        const dataUrl = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = () => reject(new Error('Ошибка чтения файла'));
+            reader.readAsDataURL(compressedFile);
+        });
+
+        let img = previewContainer.querySelector('.photo-preview-img');
+        if (!img) {
+            img = document.createElement('img');
+            img.className = 'photo-preview-img';
+            img.alt = 'Превью предмета';
+            previewContainer.appendChild(img);
+        }
+        img.src = dataUrl;
+        img.onclick = (evt) => {
+            evt.stopPropagation();
+            openLightbox(dataUrl);
+        };
+
+        if (skeleton) skeleton.hidden = true;
+        previewContainer.classList.add('has-photo');
+
+        if (btnText) btnText.textContent = 'Загрузка...';
+        if (status) status.textContent = '⏳ Загрузка: 0%';
+        setUploadProgress(previewContainer, 0);
+
+        const uploadedUrl = await uploadImageToBot(compressedFile, (percent) => {
+            const safePercent = Math.max(0, Math.min(100, percent));
+            setUploadProgress(previewContainer, safePercent);
+            if (status && safePercent > 0 && safePercent < 100) {
+                status.textContent = `⏳ Загрузка: ${safePercent}%`;
+            }
+        });
+
+        container.dataset.photoUrl = uploadedUrl;
+        previewContainer.classList.remove('loading');
+        setUploadProgress(previewContainer, 100);
+        window.setTimeout(() => setUploadProgress(previewContainer, null), 600);
+
+        if (btnText) btnText.textContent = '✓ Загружено';
+        if (status) {
+            status.textContent = '✅ Готово к отправке';
+            status.className = 'upload-status success';
+        }
+
+        haptic('success', { sound: true, vibrate: true });
+        updateTotal();
+        updateFormCompletion();
+        saveFormData();
+    } catch (error) {
+        console.error('Upload failed:', error);
+        if (skeleton) skeleton.hidden = true;
+        previewContainer.classList.remove('loading');
+        resetPhotoContainer(container);
+        if (status) status.textContent = `⚠ ${error.message || 'Ошибка загрузки фото'}`;
+        if (errEl) {
+            errEl.textContent = error.message || 'Не удалось загрузить фото';
+            errEl.hidden = false;
+        }
+        haptic('error', { sound: true });
+        updateTotal();
+        updateFormCompletion();
+    }
+}
+
+async function uploadImageToBot(file, onProgress) {
+    const cleanBase = getCleanBotUrl();
+    if (!cleanBase) {
+        return uploadWithRetry(() => uploadImageToImageBan(file, onProgress));
+    }
+
+    const uploadUrl = `${cleanBase}/api/upload-photo`;
+    const formData = new FormData();
+    formData.append('photo', file, 'photo.jpg');
+
+    const headers = {};
+    if (tg.initData) headers['X-Telegram-Init-Data'] = tg.initData;
+
+    try {
+        const result = await uploadWithRetry(() => uploadWithProgress(uploadUrl, formData, headers, onProgress));
+        if (!result || !result.url) throw new Error('Сервер не вернул ссылку на фото');
+        return result.url;
+    } catch (botErr) {
+        console.warn('Bot upload fallback to ImageBan:', botErr);
+        return uploadWithRetry(() => uploadImageToImageBan(file, onProgress));
+    }
+}
+
+async function uploadImageToImageBan(file, onProgress) {
+    if (!imagebanClientId) {
+        throw new Error('Не настроен ключ загрузки фото');
+    }
+    const formData = new FormData();
+    formData.append('image', file, 'photo.jpg');
+    const result = await uploadWithProgress(
+        'https://api.imageban.ru/v1',
+        formData,
+        { Authorization: `TOKEN ${imagebanClientId}` },
+        onProgress
+    );
+    if (!result || !result.success || !result.data || !result.data.link) {
+        throw new Error('Ошибка фотохостинга ImageBan');
+    }
+    return result.data.link;
+}
+
+function shouldRetryUpload(error) {
+    const msg = String((error && error.message) || '').toLowerCase();
+    return msg.includes('сеть') || msg.includes('таймаут') || msg.includes('502') || msg.includes('503') || msg.includes('504');
+}
+
+async function uploadWithRetry(fn, retries = 1) {
+    let lastErr = null;
+    for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+            return await fn();
+        } catch (err) {
+            lastErr = err;
+            if (attempt >= retries || !shouldRetryUpload(err)) break;
+            await new Promise((r) => setTimeout(r, 700));
+        }
+    }
+    throw lastErr;
+}
+
+function uploadWithProgress(url, formData, headers, onProgress) {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.timeout = 45000;
+        xhr.open('POST', url, true);
+        if (headers) {
+            Object.entries(headers).forEach(([k, v]) => xhr.setRequestHeader(k, v));
+        }
+        if (xhr.upload && onProgress) {
+            xhr.upload.onprogress = (e) => {
+                if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+            };
+        }
+        xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    resolve(JSON.parse(xhr.responseText || '{}'));
+                } catch (err) {
+                    reject(new Error('Некорректный ответ сервера'));
+                }
+            } else {
+                reject(new Error(`Ошибка сервера (${xhr.status})`));
+            }
+        };
+        xhr.onerror = () => reject(new Error('Ошибка сети при загрузке фото'));
+        xhr.ontimeout = () => reject(new Error('Таймаут загрузки фото'));
+        xhr.send(formData);
+    });
+}
+
+// Clipboard image paste (Ctrl+V / Cmd+V) into first empty photo slot or focused card
+document.addEventListener('paste', (e) => {
+    const clipboardItems = e.clipboardData && e.clipboardData.items;
+    if (!clipboardItems) return;
+
+    let imageFile = null;
+    for (const item of clipboardItems) {
+        if (item.type && item.type.startsWith('image/')) {
+            imageFile = item.getAsFile();
+            break;
+        }
+    }
+    if (!imageFile) return;
+
+    const activeCard = document.activeElement ? document.activeElement.closest('.item-card') : null;
+    let targetContainer = activeCard ? activeCard.querySelector('.photo-upload-container') : null;
+
+    if (!targetContainer || targetContainer.dataset.photoUrl) {
+        targetContainer = Array.from(document.querySelectorAll('.photo-upload-container'))
+            .find((c) => !c.dataset.photoUrl) || document.querySelector('.photo-upload-container');
+    }
+    if (!targetContainer) return;
+
+    const input = targetContainer.querySelector('.file-input');
+    if (input) {
+        const dt = new DataTransfer();
+        dt.items.add(imageFile);
+        input.files = dt.files;
+        handleFileSelect(input);
     }
 });
 
-// Input Mask for Department and Issue (Digits only)
-['department', 'issue'].forEach(id => {
-    document.getElementById(id).addEventListener('input', function (e) {
-        e.target.value = e.target.value.replace(/\D/g, '');
-    });
-});
+// Voice Dictation
+function startSpeechRecognition(btn, inputId) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        showAppAlert('Голосовой ввод не поддерживается вашим браузером.');
+        return;
+    }
+    const field = document.getElementById(inputId);
+    if (!field) return;
 
-// Smart focus: move to next field on Enter
-const focusOrder = ['department', 'issue', 'ticket', 'date', 'region'];
-focusOrder.forEach((id, index) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.setAttribute('enterkeyhint', index < focusOrder.length - 1 ? 'next' : 'done');
-    el.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            const nextId = focusOrder[index + 1];
-            if (nextId) {
-                document.getElementById(nextId)?.focus();
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ru-RU';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    btn.classList.add('recording');
+    haptic('light');
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        field.value = field.value ? `${field.value.trim()} ${transcript}` : transcript;
+        field.dataset.touched = '1';
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+        haptic('success');
+    };
+
+    recognition.onerror = () => {
+        btn.classList.remove('recording');
+        haptic('error');
+    };
+
+    recognition.onend = () => {
+        btn.classList.remove('recording');
+    };
+
+    recognition.start();
+}
+
+// ============================================
+// 7. VALIDATION, COMPLETION BAR & MAINBUTTON
+// ============================================
+function updateMainButton() {
+    const isTg = isTelegramWebAppRuntime();
+    const stickyFooter = document.getElementById('stickyFooter');
+    const mainButton = tg.MainButton;
+
+    if (isTg) {
+        document.body.classList.add('in-telegram');
+        if (stickyFooter) stickyFooter.style.display = 'none';
+        if (mainButton) {
+            mainButton.setText(appState === 'preview' ? 'ПОДТВЕРДИТЬ И ОТПРАВИТЬ' : 'ПРОВЕРИТЬ И ОТПРАВИТЬ');
+            mainButton.show();
+            mainButton.enable();
+            mainButton.offClick(handleMainButton);
+            mainButton.onClick(handleMainButton);
+        }
+    } else {
+        document.body.classList.remove('in-telegram');
+        if (stickyFooter) stickyFooter.style.display = '';
+        if (mainButton) mainButton.hide();
+    }
+}
+
+function handleMainButton() {
+    if (appState === 'preview') submitForm();
+    else showPreview();
+}
+
+function updateFormCompletion() {
+    const ux = window.UX;
+    if (!ux) return;
+
+    const deptOk = ux.cleanDigits(document.getElementById('department')?.value).length >= 1;
+    const issueOk = ux.cleanDigits(document.getElementById('issue')?.value).length >= 1;
+    const ticketOk = ux.cleanDigits(document.getElementById('ticket')?.value).length === 11;
+    const dateVal = document.getElementById('date')?.value || '';
+    const dateOk = Boolean(dateVal && dateVal <= ux.getLocalTodayIso());
+    const regionOk = Boolean(document.getElementById('region')?.value);
+
+    const cards = Array.from(document.querySelectorAll('.item-card'));
+    const itemsOk = cards.length > 0 && cards.every((card) => {
+        const desc = (card.querySelector('.desc')?.value || '').trim();
+        const evalNum = cleanNumber(card.querySelector('.eval')?.value);
+        const photoUrl = card.querySelector('.photo-upload-container')?.dataset.photoUrl;
+        return desc.length >= 3 && evalNum > 0 && Boolean(photoUrl);
+    });
+
+    const completed = [deptOk, issueOk, ticketOk, dateOk, regionOk, itemsOk].filter(Boolean).length;
+    const percent = Math.round((completed / 6) * 100);
+
+    const pill = document.getElementById('formCompletionPill');
+    const bar = document.getElementById('progressBar');
+    const container = document.getElementById('progressContainer');
+
+    if (pill) {
+        pill.textContent = `${completed} / 6`;
+        pill.classList.toggle('is-complete', completed === 6);
+    }
+    if (bar) {
+        bar.style.width = `${percent}%`;
+        bar.classList.toggle('complete', completed === 6);
+    }
+    if (container) {
+        container.setAttribute('aria-valuenow', String(percent));
+    }
+}
+
+function validateForm() {
+    const ux = window.UX;
+    const errors = [];
+    let firstFocusTarget = null;
+
+    const fields = [
+        { id: 'department', label: 'Подразделение' },
+        { id: 'issue', label: '№ заключения' },
+        { id: 'ticket', label: 'Номер билета' },
+        { id: 'date', label: 'Дата заключения' },
+        { id: 'region', label: 'Регион' }
+    ];
+
+    fields.forEach(({ id, label }) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.dataset.touched = '1';
+        const res = ux.validateField(el, { force: true });
+        if (!res.valid) {
+            if (!firstFocusTarget) firstFocusTarget = el;
+            errors.push({ summaryLabel: label, message: res.message, focusTarget: el });
+        }
+    });
+
+    const cards = document.querySelectorAll('.item-card');
+    cards.forEach((card, index) => {
+        const num = index + 1;
+        const cardIdx = card.id.replace('item-', '');
+        const descEl = card.querySelector('.desc');
+        const evalEl = card.querySelector('.eval');
+        const photoBox = card.querySelector('.photo-upload-container');
+        const previewEl = card.querySelector('.photo-preview');
+        const photoErrEl = document.getElementById(`err-photo-${cardIdx}`);
+        let cardHasErr = false;
+
+        if (descEl) {
+            descEl.dataset.touched = '1';
+            const res = ux.validateField(descEl, { force: true });
+            if (!res.valid) {
+                cardHasErr = true;
+                if (!firstFocusTarget) firstFocusTarget = descEl;
+                errors.push({ summaryLabel: `Предмет #${num} (описание)`, message: res.message, focusTarget: descEl });
             }
         }
-    });
-});
 
-// Input Mask for Evaluation (Thousands Separator)
-// Dynamically attached in addItem() but also need utility function
-function formatNumber(num) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-}
+        if (evalEl) {
+            evalEl.dataset.touched = '1';
+            const res = ux.validateField(evalEl, { force: true });
+            if (!res.valid) {
+                cardHasErr = true;
+                if (!firstFocusTarget) firstFocusTarget = evalEl;
+                errors.push({ summaryLabel: `Предмет #${num} (оценка)`, message: res.message, focusTarget: evalEl });
+            }
+        }
 
-function cleanNumber(str) {
-    return str.replace(/\s/g, '');
-}
+        if (photoBox && !photoBox.dataset.photoUrl) {
+            cardHasErr = true;
+            if (previewEl) previewEl.classList.add('photo-invalid');
+            const isLoading = previewEl && previewEl.classList.contains('loading');
+            const msg = isLoading ? 'Дождитесь завершения загрузки фото' : 'Прикрепите фотографию предмета';
+            if (photoErrEl) {
+                photoErrEl.textContent = msg;
+                photoErrEl.hidden = false;
+            }
+            if (!firstFocusTarget && previewEl) firstFocusTarget = previewEl;
+            errors.push({ summaryLabel: `Предмет #${num} (фото)`, message: msg, focusTarget: previewEl });
+        } else if (previewEl) {
+            previewEl.classList.remove('photo-invalid');
+            if (photoErrEl) {
+                photoErrEl.textContent = '';
+                photoErrEl.hidden = true;
+            }
+        }
 
-// Auto-save on input
-['department', 'issue', 'ticket', 'date', 'region'].forEach(id => {
-    document.getElementById(id)?.addEventListener('change', saveDraft);
-});
-
-// Restore draft on load
-restoreDraft();
-
-// ============================================
-// SERVICE WORKER & OFFLINE MODE
-// ============================================
-if ('serviceWorker' in navigator) {
-    const basePath = location.pathname.endsWith('/') ? location.pathname : location.pathname.replace(/[^/]*$/, '');
-    const swUrl = `${basePath}service-worker.js?v=${APP_BUILD_ID}`;
-    navigator.serviceWorker.register(swUrl)
-        .catch(err => console.error('Service Worker registration failed:', err));
-
-    // Listen for sync messages from SW
-    navigator.serviceWorker.addEventListener('message', (event) => {
-        if (event.data && event.data.type === 'SYNC_COMPLETE') {
-            showOfflineBanner('✅ Заключение из очереди успешно отправлено!', true);
+        if (cardHasErr && card.classList.contains('collapsed')) {
+            card.classList.remove('collapsed');
+            const toggleBtn = card.querySelector('.item-header-toggle');
+            if (toggleBtn) toggleBtn.setAttribute('aria-expanded', 'true');
         }
     });
+
+    if (errors.length > 0) {
+        ux.renderErrorSummary(errors);
+        ux.announceFormError(`Найдены ошибки (${errors.length}): ${errors[0].summaryLabel} — ${errors[0].message}`);
+        haptic('error', { sound: true, vibrate: true });
+
+        if (firstFocusTarget) {
+            firstFocusTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            window.setTimeout(() => {
+                if (typeof firstFocusTarget.focus === 'function') {
+                    firstFocusTarget.focus({ preventScroll: true });
+                }
+            }, 220);
+        }
+        return false;
+    }
+
+    ux.clearErrorSummary();
+    return true;
 }
 
-// --- Offline Banner UI ---
+// ============================================
+// 8. PREVIEW, SUBMIT & OFFLINE SYNC
+// ============================================
+function collectFormData() {
+    const cards = document.querySelectorAll('.item-card');
+    const items = [];
+    cards.forEach((card) => {
+        const description = (card.querySelector('.desc')?.value || '').trim();
+        const evaluation = String(cleanNumber(card.querySelector('.eval')?.value));
+        const photoUrl = card.querySelector('.photo-upload-container')?.dataset.photoUrl || '';
+        items.push({ description, evaluation, photo_url: photoUrl });
+    });
+
+    const isTest = document.getElementById('mode-test')?.checked || false;
+    const rawDate = document.getElementById('date').value;
+    const cleanTicket = window.UX ? window.UX.cleanDigits(document.getElementById('ticket').value) : document.getElementById('ticket').value;
+
+    return {
+        department_number: document.getElementById('department').value.trim(),
+        issue_number: document.getElementById('issue').value.trim(),
+        ticket_number: cleanTicket,
+        date: rawDate ? rawDate.split('-').reverse().join('.') : '',
+        region: document.getElementById('region').value,
+        items,
+        is_test: isTest
+    };
+}
+
+function showPreview() {
+    if (!validateForm()) return;
+
+    const previewContent = document.getElementById('previewContent');
+    const data = collectFormData();
+    const totalSum = data.items.reduce((acc, item) => acc + cleanNumber(item.evaluation), 0);
+
+    const itemsHtml = Array.from(document.querySelectorAll('.item-card')).map((card, i) => {
+        const desc = card.querySelector('.desc')?.value.trim() || '';
+        const evalNum = cleanNumber(card.querySelector('.eval')?.value);
+        const imgSrc = card.querySelector('.photo-preview-img')?.src || card.querySelector('.photo-upload-container')?.dataset.photoUrl || '';
+
+        return `
+            <div class="preview-item">
+                ${imgSrc ? `<img src="${escapeHtml(imgSrc)}" alt="Предмет ${i + 1}" class="preview-thumb">` : ''}
+                <div class="preview-item-copy">
+                    <div class="preview-item-title">#${i + 1}. ${escapeHtml(desc)}</div>
+                    <div class="preview-item-eval">${formatNumber(evalNum)} ₽</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    previewContent.innerHTML = `
+        <div class="preview-grid">
+            <div class="preview-kv">
+                <span class="preview-k">Подразделение</span>
+                <span class="preview-v">${escapeHtml(data.department_number)}</span>
+            </div>
+            <div class="preview-kv">
+                <span class="preview-k">№ заключения</span>
+                <span class="preview-v">${escapeHtml(data.issue_number)}</span>
+            </div>
+            <div class="preview-kv full">
+                <span class="preview-k">Билет</span>
+                <span class="preview-v">${escapeHtml(data.ticket_number)}</span>
+            </div>
+            <div class="preview-kv">
+                <span class="preview-k">Дата</span>
+                <span class="preview-v">${escapeHtml(data.date)}</span>
+            </div>
+            <div class="preview-kv">
+                <span class="preview-k">Регион</span>
+                <span class="preview-v">${escapeHtml(data.region)}</span>
+            </div>
+            <div class="preview-kv">
+                <span class="preview-k">Режим</span>
+                <span class="preview-v">${data.is_test ? '🧪 Черновик' : '📄 Оригинал'}</span>
+            </div>
+            <div class="preview-kv">
+                <span class="preview-k">Итого</span>
+                <span class="preview-v">${formatNumber(totalSum)} ₽</span>
+            </div>
+        </div>
+        ${itemsHtml}
+    `;
+
+    openDialog(document.getElementById('previewModal'));
+    appState = 'preview';
+    previewOpen = true;
+    updateMainButton();
+    haptic('success', { sound: true, vibrate: true });
+}
+
+function closePreview() {
+    haptic('light');
+    closeDialog(document.getElementById('previewModal'));
+    appState = 'editing';
+    previewOpen = false;
+    updateMainButton();
+}
+
+async function postReportToBot(data) {
+    const cleanBase = getCleanBotUrl();
+    if (!cleanBase) {
+        throw new Error('Для отправки в браузере откройте ссылку с параметром bot_url.');
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 30000);
+    try {
+        const response = await fetch(`${cleanBase}/api/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+            signal: controller.signal
+        });
+        if (!response.ok) {
+            const text = await response.text().catch(() => '');
+            throw new Error(text || `Ошибка сервера (${response.status})`);
+        }
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        const prefix = data.is_test ? 'TEST_' : '';
+        a.download = `${prefix}Заключение_${data.ticket_number || 'doc'}.docx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.setTimeout(() => window.URL.revokeObjectURL(url), 3000);
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
+async function submitForm() {
+    if (submitInProgress) return;
+    submitInProgress = true;
+
+    const btn = document.getElementById('finalSubmitBtn');
+    const resetBtnState = () => {
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Подтвердить и отправить';
+        }
+        if (isTelegramWebAppRuntime() && tg.MainButton) {
+            tg.MainButton.hideProgress();
+            tg.MainButton.enable();
+        }
+        submitInProgress = false;
+    };
+
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Подготовка...';
+    }
+    if (isTelegramWebAppRuntime() && tg.MainButton) {
+        tg.MainButton.showProgress();
+        tg.MainButton.disable();
+    }
+
+    const data = collectFormData();
+    const missingPhoto = data.items.some((item) => !item.photo_url);
+    if (missingPhoto) {
+        showAppAlert('⚠️ Прикрепите фото к каждому предмету перед отправкой!');
+        resetBtnState();
+        return;
+    }
+
+    try {
+        recordRegionUsage(data.region);
+
+        if (isTelegramWebAppRuntime()) {
+            if (btn) btn.textContent = 'Отправка в Telegram...';
+            tg.sendData(JSON.stringify(data));
+            haptic('success', { sound: true, vibrate: true });
+
+            try {
+                localStorage.removeItem('formDraft');
+            } catch (e) { }
+
+            const ticketEl = document.getElementById('ticket');
+            if (ticketEl) {
+                ticketEl.value = '';
+                if (window.UX) window.UX.updateTicketCounter('');
+            }
+            closePreview();
+            resetBtnState();
+            return;
+        }
+
+        if (!navigator.onLine) {
+            await savePendingReport(data);
+            closePreview();
+            resetBtnState();
+            return;
+        }
+
+        if (btn) btn.textContent = '⏳ Создание Word...';
+        await postReportToBot(data);
+
+        try {
+            localStorage.removeItem('formDraft');
+        } catch (e) { }
+
+        haptic('success', { sound: true, vibrate: true });
+        closePreview();
+        resetBtnState();
+    } catch (e) {
+        console.error('Submission error:', e);
+        haptic('error', { sound: true });
+        if (e.name === 'AbortError') {
+            showAppPopup('Ошибка: превышено время ожидания (30с). Проверьте подключение к интернету.');
+        } else {
+            showAppPopup(e.message || 'Не удалось отправить данные.');
+        }
+        resetBtnState();
+    }
+}
+
+// ============================================
+// 9. OFFLINE QUEUE (IndexedDB) & DRAFTS
+// ============================================
 function showOfflineBanner(text, isOnline) {
     const banner = document.getElementById('offlineBanner');
     const bannerText = document.getElementById('offlineBannerText');
-    if (!banner) return;
+    if (!banner || !bannerText) return;
+
     banner.classList.remove('hiding', 'online');
     if (isOnline) banner.classList.add('online');
     bannerText.textContent = text || (isOnline ? 'Подключение восстановлено' : 'Нет подключения');
-    banner.style.display = 'flex';
+    banner.hidden = false;
 
     if (isOnline) {
-        setTimeout(() => {
+        window.setTimeout(() => {
             banner.classList.add('hiding');
-            setTimeout(() => { banner.style.display = 'none'; }, 400);
+            window.setTimeout(() => { banner.hidden = true; }, 300);
         }, 3000);
     }
 }
 
-function hideOfflineBanner() {
-    const banner = document.getElementById('offlineBanner');
-    if (!banner) return;
-    banner.classList.add('hiding');
-    setTimeout(() => { banner.style.display = 'none'; }, 400);
-}
-
-// Monitor network status
-window.addEventListener('offline', () => {
-    showOfflineBanner('📴 Нет подключения — данные будут сохранены и отправлены автоматически', false);
-});
-
-// Show banner on load if offline
-if (!navigator.onLine) {
-    showOfflineBanner('📴 Нет подключения — данные будут сохранены', false);
-}
-
-// Offline queue using IndexedDB
-async function openOfflineDB() {
+function openOfflineDB() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('ReportsDB', 1);
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => resolve(request.result);
-        request.onupgradeneeded = (event) => {
+        const req = indexedDB.open('ReportsDB', 1);
+        req.onerror = () => reject(req.error);
+        req.onsuccess = () => resolve(req.result);
+        req.onupgradeneeded = (event) => {
             const db = event.target.result;
             if (!db.objectStoreNames.contains('pending')) {
                 db.createObjectStore('pending', { keyPath: 'id', autoIncrement: true });
@@ -1043,1398 +1758,253 @@ async function savePendingReport(data) {
     try {
         const db = await openOfflineDB();
         const tx = db.transaction('pending', 'readwrite');
-        const store = tx.objectStore('pending');
-        store.add({ data, timestamp: Date.now() });
+        tx.objectStore('pending').add({ data, timestamp: Date.now() });
         await new Promise((resolve, reject) => {
             tx.oncomplete = resolve;
             tx.onerror = () => reject(tx.error);
         });
-        showOfflineBanner('📦 Заключение сохранено в очередь — отправится при появлении сети', false);
+        showOfflineBanner('📦 Сохранено в очередь — отправится при восстановлении сети', false);
         return true;
-    } catch (error) {
-        console.error('Failed to save to offline queue:', error);
+    } catch (e) {
         return false;
     }
 }
 
-async function getPendingCount() {
-    try {
-        const db = await openOfflineDB();
-        const tx = db.transaction('pending', 'readonly');
-        const store = tx.objectStore('pending');
-        return new Promise((resolve) => {
-            const req = store.count();
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => resolve(0);
-        });
-    } catch { return 0; }
-}
+window.addEventListener('offline', () => {
+    showOfflineBanner('📴 Нет сети — заключение можно сохранить в очередь', false);
+});
 
-// Online event - sync pending reports
 window.addEventListener('online', async () => {
-    showOfflineBanner('✅ Соединение восстановлено! Синхронизация...', true);
-
+    showOfflineBanner('🔄 Соединение восстановлено...', true);
     try {
         const db = await openOfflineDB();
         const tx = db.transaction('pending', 'readonly');
-        const store = tx.objectStore('pending');
-        const getAllReq = store.getAll();
+        const req = tx.objectStore('pending').getAll();
         const pending = await new Promise((resolve) => {
-            getAllReq.onsuccess = () => resolve(getAllReq.result);
-            getAllReq.onerror = () => resolve([]);
+            req.onsuccess = () => resolve(req.result || []);
+            req.onerror = () => resolve([]);
         });
-
-        if (pending.length > 0) {
-            let synced = 0;
-            for (const item of pending) {
-                try {
-                    await submitData(item.data);
-                    const deleteTx = db.transaction('pending', 'readwrite');
-                    deleteTx.objectStore('pending').delete(item.id);
-                    synced++;
-                } catch (error) {
-                    console.error('Failed to sync report:', error);
-                }
-            }
-            if (synced > 0) {
-                showOfflineBanner(`🎉 Синхронизировано ${synced} из ${pending.length} заключений!`, true);
-            }
-        } else {
+        if (pending.length === 0 || isTelegramWebAppRuntime() || !getCleanBotUrl()) {
             showOfflineBanner('✅ Подключение восстановлено', true);
-        }
-    } catch (error) {
-        console.error('Failed to sync:', error);
-    }
-});
-
-// ============================================
-// DRAG-AND-DROP CARD SORTING
-// ============================================
-let dragSrcCard = null;
-
-function initDragAndDrop(card) {
-    card.setAttribute('draggable', 'true');
-
-    card.addEventListener('dragstart', (e) => {
-        dragSrcCard = card;
-        card.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', card.id);
-        haptic('medium'); // Haptic on pickup
-    });
-
-    card.addEventListener('dragend', () => {
-        card.classList.remove('dragging');
-        document.querySelectorAll('.item-card.drag-over').forEach(c => c.classList.remove('drag-over'));
-        dragSrcCard = null;
-    });
-
-    card.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        if (card !== dragSrcCard) {
-            if (!card.classList.contains('drag-over')) {
-                haptic('light'); // Haptic when crossing over another card
-            }
-            card.classList.add('drag-over');
-        }
-    });
-
-    card.addEventListener('dragleave', () => {
-        card.classList.remove('drag-over');
-    });
-
-    card.addEventListener('drop', (e) => {
-        e.preventDefault();
-        card.classList.remove('drag-over');
-        if (dragSrcCard && dragSrcCard !== card) {
-            const list = document.getElementById('itemsList');
-            const cards = Array.from(list.children);
-            const fromIndex = cards.indexOf(dragSrcCard);
-            const toIndex = cards.indexOf(card);
-
-            if (fromIndex < toIndex) {
-                list.insertBefore(dragSrcCard, card.nextSibling);
-            } else {
-                list.insertBefore(dragSrcCard, card);
-            }
-
-            renumberItems();
-            haptic('light');
-        }
-    });
-}
-
-
-// 4. Smart Memory (Department & Region)
-const deptInput = document.getElementById('department');
-
-// Load defaults if not draft
-if (deptInput && regionInput && !localStorage.getItem('formDraft')) {
-    const savedDept = localStorage.getItem('default_department');
-    const savedRegion = localStorage.getItem('default_region');
-    if (savedDept) deptInput.value = savedDept;
-    if (savedRegion) regionInput.value = savedRegion;
-}
-
-// Save on change
-if (deptInput) {
-    deptInput.addEventListener('change', (e) => {
-        localStorage.setItem('default_department', e.target.value);
-    });
-}
-
-if (regionInput) {
-    regionInput.addEventListener('change', (e) => {
-        localStorage.setItem('default_region', e.target.value);
-    });
-}
-
-function setUploadProgress(previewContainer, percent) {
-    const progress = previewContainer.querySelector('.upload-progress');
-    const bar = previewContainer.querySelector('.upload-progress-bar');
-    if (!progress || !bar) return;
-
-    if (percent === null) {
-        progress.classList.remove('visible');
-        bar.style.width = '0%';
-        return;
-    }
-
-    const safePercent = Math.max(0, Math.min(100, percent));
-    progress.classList.add('visible');
-    bar.style.width = `${safePercent}%`;
-
-    if (safePercent >= 100) {
-        setTimeout(() => {
-            progress.classList.remove('visible');
-            bar.style.width = '0%';
-        }, 400);
-    }
-}
-
-function handleReplacePhoto(button, event) {
-    if (event) event.stopPropagation();
-    const container = button.closest('.item-card');
-    const input = container?.querySelector('.file-input');
-    if (input) {
-        input.click();
-    }
-}
-
-function handleRemovePhoto(button, event) {
-    if (event) event.stopPropagation();
-    const container = button.closest('.item-card');
-    if (!container) return;
-
-    const input = container.querySelector('.file-input');
-    const previewContainer = container.querySelector('.photo-preview-container');
-    const status = container.querySelector('.upload-status');
-    const btnText = container.querySelector('.btn-text');
-
-    if (input) {
-        input.value = '';
-    }
-
-    const img = previewContainer.querySelector('.photo-preview-img');
-    if (img) img.remove();
-
-    const label = previewContainer.querySelector('.upload-label');
-    if (label) label.style.opacity = '1';
-
-    previewContainer.classList.remove('loading');
-    previewContainer.classList.remove('has-photo');
-    delete container.dataset.photoUrl;
-
-    setUploadProgress(previewContainer, null);
-
-    if (btnText) btnText.textContent = "Добавить фото";
-    if (status) {
-        status.textContent = "Добавьте одно фото предмета";
-        status.className = "upload-status";
-    }
-}
-
-async function handleFileSelect(input) {
-    const file = input.files[0];
-    if (!file) return;
-
-    const container = input.closest('.item-card');
-    const previewContainer = container.querySelector('.photo-preview-container');
-    const btnText = container.querySelector('.btn-text');
-    const status = container.querySelector('.upload-status');
-
-    previewContainer.classList.remove('photo-invalid');
-    previewContainer.style.borderColor = '';
-    previewContainer.style.animation = 'none';
-
-    // Show loading state
-    previewContainer.classList.add('loading');
-    const skeleton = previewContainer.querySelector('.skeleton-loader');
-    if (skeleton) skeleton.style.display = 'block';
-    const compressionAvailable = typeof imageCompression === 'function';
-    btnText.textContent = compressionAvailable ? "Сжатие..." : "Подготовка...";
-    status.textContent = "⏳ Обработка фото...";
-    status.className = "upload-status";
-    delete container.dataset.photoUrl;
-    setUploadProgress(previewContainer, null);
-
-    try {
-        // Compression options
-        const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1280, // Optimized for speed
-            useWebWorker: true,
-            fileType: 'image/jpeg'
-        };
-
-        // Compress (fallback to original if library is unavailable)
-        const compressedFile = compressionAvailable ? await imageCompression(file, options) : file;
-
-        // Show preview
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            // Create or get IMG element
-            let img = previewContainer.querySelector('.photo-preview-img');
-            if (!img) {
-                img = document.createElement('img');
-                img.className = 'photo-preview-img';
-                img.style.cssText = 'position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 10; border-radius: 16px;';
-                previewContainer.appendChild(img);
-            }
-
-            img.src = e.target.result;
-            img.style.display = 'block';
-
-            if (skeleton) skeleton.style.display = 'none';
-
-            // Hide placeholder elements
-            const label = previewContainer.querySelector('.upload-label');
-            if (label) label.style.opacity = '0';
-
-            previewContainer.classList.add('has-photo');
-
-            // Lightbox trigger
-            img.onclick = (evt) => {
-                evt.stopPropagation();
-                openLightbox(e.target.result);
-            };
-        };
-        reader.readAsDataURL(compressedFile);
-
-        // 🚀 BACKGROUND UPLOAD with Compressed File
-        btnText.textContent = "Загрузка...";
-        status.textContent = "⏳ Загрузка: 0%";
-        setUploadProgress(previewContainer, 0);
-
-        const uploadedUrl = await uploadImageToBot(compressedFile, (percent) => {
-            const safePercent = Math.max(0, Math.min(100, percent));
-            setUploadProgress(previewContainer, safePercent);
-            if (safePercent > 0 && safePercent < 100) {
-                status.textContent = `⏳ Загрузка: ${safePercent}%`;
-            }
-        });
-
-        // Store URL
-        container.dataset.photoUrl = uploadedUrl;
-
-        // Success UI
-        previewContainer.classList.remove('loading');
-        setUploadProgress(previewContainer, 100);
-        btnText.textContent = "✓ Загружено";
-        status.textContent = "✅ Готово к отправке";
-        status.className = "upload-status success";
-        haptic('success', { sound: true, vibrate: true });
-
-    } catch (error) {
-        const skeleton = previewContainer.querySelector('.skeleton-loader');
-        if (skeleton) skeleton.style.display = 'none';
-        console.error('Processing failed:', error);
-        btnText.textContent = "❌ Ошибка";
-        status.textContent = `⚠️ ${error.message || 'Ошибка обработки'}`;
-        status.className = "upload-status";
-        haptic('error');
-
-        // Reset UI
-        input.value = '';
-        const previewDiv = previewContainer.querySelector('.photo-preview');
-        previewDiv.style.backgroundImage = ''; // Clear background image
-        previewDiv.innerHTML = ''; // Clear any content
-
-        // Restore default upload label content if it was removed/hidden
-        const uploadLabel = previewContainer.querySelector('.upload-label');
-        if (uploadLabel) {
-            uploadLabel.style.display = 'flex'; // Ensure it's visible
-            btnText.textContent = "Добавить фото"; // Reset text
-            previewContainer.querySelector('.hint').style.display = 'block'; // Show hint
-        }
-
-        previewContainer.classList.remove('loading');
-        previewContainer.classList.remove('has-photo');
-        delete container.dataset.photoUrl;
-        setUploadProgress(previewContainer, null);
-
-        // Re-attach click handler for upload
-        previewContainer.onclick = (e) => {
-            if (e.target !== input && !e.target.closest('.upload-label')) {
-                input.click();
-            }
-        };
-    }
-}
-
-// New function to handle Bot API upload
-async function uploadImageToBot(file, onProgress) {
-    if (imagebanClientId) {
-        return await uploadImageToImageBan(file, onProgress);
-    }
-
-    const compressedBlob = file;
-    const formData = new FormData();
-    formData.append('image', compressedBlob, 'image.jpg');
-
-    const cleanBase = getCleanBotUrl();
-    if (!cleanBase) {
-        throw new Error("Сайт открыт без подключения к серверу создания заключений. Откройте ссылку из Telegram или используйте ссылку с параметром bot_url.");
-    }
-    const uploadUrl = `${cleanBase}/api/upload-photo`;
-
-    const result = await uploadWithRetry(
-        () => uploadWithProgress(uploadUrl, formData, {}, onProgress),
-        1
-    );
-    if (result && result.data && result.data.url) {
-        return result.data.url;
-    }
-    throw new Error(result?.error || "Неизвестная ошибка загрузки");
-}
-
-async function uploadImageToImageBan(file, onProgress) {
-    const formData = new FormData();
-    formData.append('image', file, file.name || 'image.jpg');
-    const result = await uploadWithRetry(
-        () => uploadWithProgress(
-            'https://api.imageban.ru/v1',
-            formData,
-            { 'Authorization': `TOKEN ${imagebanClientId}` },
-            onProgress
-        ),
-        1
-    );
-    const link = result?.data?.[0]?.link || result?.data?.link;
-    if (result?.success && link) {
-        return link;
-    }
-
-    const message = result?.message || result?.error || "Ошибка загрузки в ImageBan";
-    throw new Error(message);
-}
-
-function shouldRetryUpload(error) {
-    const msg = (error && error.message) ? error.message : '';
-    if (msg.startsWith('HTTP 4')) return false;
-    return true;
-}
-
-async function uploadWithRetry(fn, retries = 1) {
-    let lastErr;
-    for (let attempt = 0; attempt <= retries; attempt += 1) {
-        try {
-            return await fn();
-        } catch (err) {
-            lastErr = err;
-            if (attempt >= retries || !shouldRetryUpload(err)) {
-                break;
-            }
-            await new Promise(resolve => setTimeout(resolve, 800 * (attempt + 1)));
-        }
-    }
-    throw lastErr;
-}
-
-function uploadWithProgress(url, formData, headers, onProgress) {
-    return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.timeout = 45000;
-        xhr.open('POST', url, true);
-        if (headers) {
-            Object.entries(headers).forEach(([key, value]) => {
-                xhr.setRequestHeader(key, value);
-            });
-        }
-
-        if (xhr.upload && onProgress) {
-            xhr.upload.onprogress = (event) => {
-                if (!event.lengthComputable) return;
-                const percent = Math.round((event.loaded / event.total) * 100);
-                onProgress(percent);
-            };
-        }
-
-        xhr.onload = () => {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                try {
-                    resolve(JSON.parse(xhr.responseText));
-                } catch (err) {
-                    reject(new Error('Ошибка ответа сервера'));
-                }
-            } else {
-                reject(new Error(`HTTP ${xhr.status}`));
-            }
-        };
-
-        xhr.onerror = () => reject(new Error('Ошибка сети'));
-        xhr.ontimeout = () => reject(new Error('Превышено время ожидания'));
-        xhr.send(formData);
-    });
-}
-
-// Lightbox Functions
-function openLightbox(src) {
-    const modal = document.getElementById('lightboxModal');
-    const img = document.getElementById('lightboxImage');
-    img.src = src;
-    modal.style.display = 'flex'; // Flex to center
-    modal.style.alignItems = 'center';
-    modal.style.justifyContent = 'center';
-}
-
-function closeLightbox() {
-    document.getElementById('lightboxModal').style.display = 'none';
-}
-
-// Confetti Trigger
-function fireConfetti() {
-    if (typeof confetti === 'function') {
-        confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.6 }
-        });
-    }
-}
-
-// 5. Telegram Native UI & Haptic Feedback
-const mainButton = tg.MainButton;
-
-// State Machine Button Handler
-function handleMainButton() {
-    if (appState === 'editing') {
-        showPreview();
-    } else if (appState === 'preview') {
-        submitForm();
-    }
-}
-
-function updateMainButton() {
-    const isTg = isTelegramWebAppRuntime();
-    const stickyFooter = document.querySelector('.sticky-footer');
-    const finalBtn = document.getElementById('finalSubmitBtn');
-
-    if (isTg) {
-        document.body.classList.add('in-telegram');
-        if (stickyFooter) {
-            stickyFooter.style.display = 'none';
-        }
-        if (finalBtn) {
-            finalBtn.style.display = 'none';
-        }
-
-        if (appState === 'preview') {
-            mainButton.setText("ОТПРАВИТЬ ЗАКЛЮЧЕНИЕ 🚀");
-        } else {
-            mainButton.setText("ПРОВЕРИТЬ И ОТПРАВИТЬ");
-        }
-        mainButton.show();
-        mainButton.enable();
-        mainButton.offClick(handleMainButton);
-        mainButton.onClick(handleMainButton);
-    } else {
-        document.body.classList.remove('in-telegram');
-        if (stickyFooter) {
-            stickyFooter.style.display = 'flex';
-        }
-        if (finalBtn) {
-            finalBtn.style.display = 'block';
-        }
-    }
-}
-
-// Call on load
-updateMainButton();
-
-// Haptic Feedback Helper
-function haptic(type = 'light', opts = {}) {
-    const sound = opts && opts.sound === true;
-    const vibrate = opts && opts.vibrate === true;
-
-    if (isTelegramWebAppRuntime() && tg.HapticFeedback) {
-        switch (type) {
-            case 'light':
-            case 'medium':
-            case 'heavy':
-            case 'rigid':
-            case 'soft':
-                tg.HapticFeedback.impactOccurred(type);
-                break;
-            case 'error':
-            case 'success':
-            case 'warning':
-                tg.HapticFeedback.notificationOccurred(type);
-                break;
-            case 'selection':
-                tg.HapticFeedback.selectionChanged();
-                break;
-            default:
-                tg.HapticFeedback.impactOccurred('light');
-        }
-    } else if (vibrate && navigator.vibrate) {
-        const pattern = type === 'error' ? [30, 40, 30] : 20;
-        navigator.vibrate(pattern);
-    }
-
-    if (sound) {
-        const soundKind = type === 'error' ? 'error' : (type === 'success' ? 'success' : 'tap');
-        playTone(soundKind);
-    }
-}
-
-// Add haptic to interactive elements
-document.querySelectorAll('input, select').forEach(el => {
-    el.addEventListener('focus', () => haptic('light'));
-});
-
-document.querySelectorAll('.btn').forEach(btn => {
-    btn.addEventListener('click', () => haptic('medium'));
-});
-
-const VALIDATION_MESSAGES = {
-    department: 'Укажите номер подразделения.',
-    issue: 'Укажите номер заключения.',
-    ticket: 'Номер билета должен состоять из 11 цифр.',
-    date: 'Укажите дату заключения.',
-    region: 'Выберите регион.',
-    desc: 'Добавьте описание предмета.',
-    eval: 'Укажите оценку предмета.'
-};
-
-function getFieldErrorElement(field) {
-    const group = field.closest('.form-group');
-    if (!group) return null;
-
-    let error = group.querySelector('.error-message');
-    if (!error) {
-        error = document.createElement('div');
-        error.className = 'error-message';
-        group.appendChild(error);
-    }
-    return error;
-}
-
-function clearFieldError(field, force = false) {
-    if (!force && field.classList.contains('invalid') && !shouldClearFieldError(field)) {
-        return;
-    }
-
-    field.classList.remove('invalid');
-    const error = getFieldErrorElement(field);
-    if (error) {
-        error.textContent = '';
-        error.classList.remove('show');
-    }
-}
-
-function shouldClearFieldError(field) {
-    if (field.id === 'ticket') return field.value.trim().length === 11;
-    return Boolean(field.value.trim());
-}
-
-function setFieldError(field, message) {
-    field.classList.add('invalid');
-    const error = getFieldErrorElement(field);
-    if (error) {
-        error.textContent = message;
-        error.classList.add('show');
-    }
-
-    const clear = () => {
-        if (shouldClearFieldError(field)) {
-            clearFieldError(field, true);
-        }
-    };
-    field.addEventListener('input', clear, { once: true });
-    field.addEventListener('change', clear, { once: true });
-}
-
-function validateForm() {
-    let isValid = true;
-    let firstInvalidField = null; // Track first invalid for auto-scroll
-    let firstInvalidMessage = '';
-    const requiredIds = ['department', 'issue', 'ticket', 'date', 'region'];
-
-    document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
-    document.querySelectorAll('.error-message.show').forEach(el => {
-        el.textContent = '';
-        el.classList.remove('show');
-    });
-
-    requiredIds.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el.value.trim()) {
-            isValid = false;
-            setFieldError(el, VALIDATION_MESSAGES[id]);
-            if (!firstInvalidField) {
-                firstInvalidField = el;
-                firstInvalidMessage = VALIDATION_MESSAGES[id];
-            }
-        } else {
-            // Specific checks
-            if (id === 'ticket' && el.value.length !== 11) {
-                isValid = false;
-                setFieldError(el, VALIDATION_MESSAGES.ticket);
-                if (!firstInvalidField) {
-                    firstInvalidField = el;
-                    firstInvalidMessage = VALIDATION_MESSAGES.ticket;
-                }
-            }
-        }
-    });
-
-    // Validate item fields (description and evaluation)
-    document.querySelectorAll('.item-card').forEach((card) => {
-        const desc = card.querySelector('.desc');
-        const evalInput = card.querySelector('.eval');
-
-        if (desc && !desc.value.trim()) {
-            isValid = false;
-            setFieldError(desc, VALIDATION_MESSAGES.desc);
-            card.classList.remove('collapsed');
-            if (!firstInvalidField) {
-                firstInvalidField = desc;
-                firstInvalidMessage = VALIDATION_MESSAGES.desc;
-            }
-        }
-
-        if (evalInput && !evalInput.value.trim()) {
-            isValid = false;
-            setFieldError(evalInput, VALIDATION_MESSAGES.eval);
-            card.classList.remove('collapsed');
-            if (!firstInvalidField) {
-                firstInvalidField = evalInput;
-                firstInvalidMessage = VALIDATION_MESSAGES.eval;
-            }
-        }
-    });
-
-    if (!isValid) {
-        // Auto-scroll to first invalid field
-        if (firstInvalidField) {
-            firstInvalidField.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center'
-            });
-
-            // Focus after scroll animation
-            setTimeout(() => {
-                firstInvalidField.focus();
-                if (!shouldClearFieldError(firstInvalidField)) {
-                    setFieldError(firstInvalidField, firstInvalidMessage);
-                }
-            }, 500);
-        }
-
-        showAppAlert("Пожалуйста, заполните все обязательные поля корректно.");
-        haptic('error');
-    }
-
-    return isValid;
-}
-
-function showPreview() {
-    if (previewOpen || appState === 'preview') return;
-    previewOpen = true;
-    haptic('medium');
-    // Centralized validation
-    if (!validateForm()) {
-        previewOpen = false;
-        return;
-    }
-
-    // Check photos
-    let allPhotosSelected = true;
-    let firstMissingPhoto = null;
-    document.querySelectorAll('.item-card').forEach(div => {
-        const input = div.querySelector('.file-input');
-        const hasPhoto = Boolean(div.dataset.photoUrl || (input && input.files && input.files[0]));
-        if (!hasPhoto) {
-            allPhotosSelected = false;
-            const container = div.querySelector('.photo-preview-container');
-            div.classList.remove('collapsed');
-            if (container) {
-                container.classList.add('photo-invalid');
-                container.style.borderColor = 'var(--danger-color, #ef4444)';
-                container.style.animation = 'shake 0.4s cubic-bezier(.36, .07, .19, .97) both';
-                if (!firstMissingPhoto) {
-                    firstMissingPhoto = container;
-                }
-            }
-            haptic('error');
-
-            // Remove error on click/drop
-            if (input) {
-                input.addEventListener('change', () => {
-                    if (container) {
-                        container.style.borderColor = '';
-                        container.style.animation = 'none';
-                        container.classList.remove('photo-invalid');
-                    }
-                }, { once: true });
-            }
-        }
-    });
-
-    if (!allPhotosSelected) {
-        if (firstMissingPhoto) {
-            firstMissingPhoto.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-        showAppAlert("⚠️ Пожалуйста, прикрепите фото для каждого предмета перед отправкой!");
-        previewOpen = false;
-        return;
-    }
-
-    const isTest = document.getElementById('mode-test').checked;
-    const modeText = isTest ? "Черновик (Тест)" : "Оригинал (В группу)";
-    const modeExplanation = isTest
-        ? "Сообщение будет отправлено только вам для проверки."
-        : "Сообщение будет отправлено в рабочий чат. Изменить после отправки нельзя.";
-
-    // Calculate total cost (remove spaces before parsing)
-    let totalCost = 0;
-    const items = [];
-    document.querySelectorAll('.item-card').forEach(div => {
-        const evalInput = div.querySelector('.eval');
-        const descInput = div.querySelector('.desc');
-        if (evalInput && evalInput.value) {
-            // Remove spaces and parse
-            const cleanValue = evalInput.value.replace(/\s/g, '');
-            const price = parseInt(cleanValue) || 0;
-            totalCost += price;
-            items.push({
-                desc: descInput.value,
-                price: price
-            });
-        }
-    });
-
-    // Get ticket value
-    const ticketValue = document.getElementById('ticket').value;
-
-    // Build items list
-    let itemsList = '';
-    items.forEach((item, idx) => {
-        // Get image preview URL
-        const card = document.querySelectorAll('.item-card')[idx];
-        const fileInput = card ? card.querySelector('.file-input') : null;
-        const file = fileInput && fileInput.files ? fileInput.files[0] : null;
-        let imgUrl = file ? URL.createObjectURL(file) : '';
-        if (!imgUrl && card && card.dataset.photoUrl) {
-            imgUrl = card.dataset.photoUrl;
-        }
-        const imgTag = imgUrl ? `<img src="${imgUrl}" class="preview-image">` : '<div class="preview-image"></div>';
-
-        itemsList += `
-                    <div class="preview-item">
-                        ${imgTag}
-                        <div class="preview-item-content">
-                            <div class="preview-item-desc">#${idx + 1} ${escapeHtml(item.desc)}</div>
-                            <div class="preview-item-price">${item.price.toLocaleString('ru-RU')} ₽</div>
-                        </div>
-                    </div>
-                `;
-    });
-
-    // Format Date
-    const dateValue = document.getElementById('date').value;
-    const dateParts = dateValue.split('-');
-    const formattedDate = dateParts.length === 3 ? `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}` : dateValue;
-
-    // Build preview with premium structure
-    const content = document.getElementById('previewContent');
-    content.innerHTML = `
-                <!-- Mode Section -->
-                <div class="preview-card ${isTest ? 'mode-test' : 'mode-final'}">
-                    <div class="preview-section-title" style="color: ${isTest ? '#FF8C00' : '#28a745'}; margin-bottom: 6px;">
-                        ${isTest ? '🧪' : '🚀'} Режим: ${modeText}
-                    </div>
-                    <div style="font-size: 13px; color: var(--secondary-text); line-height: 1.4;">${modeExplanation}</div>
-                </div>
-
-                <!-- Main Data Section -->
-                <div class="preview-card">
-                    <div class="preview-section-title">📋 Основные данные</div>
-                    <div class="preview-grid">
-                        <span class="preview-label">Подразделение:</span>
-                        <span class="preview-value">${escapeHtml(document.getElementById('department').value)}</span>
-                        
-                        <span class="preview-label">Регион:</span>
-                        <span class="preview-value">${escapeHtml(document.getElementById('region').value)}</span>
-                        
-                        <span class="preview-label">Дата:</span>
-                        <span class="preview-value">${formattedDate}</span>
-                        
-                        <span class="preview-label">№ заключения:</span>
-                        <span class="preview-value">${escapeHtml(document.getElementById('issue').value)}</span>
-                        
-                        <span class="preview-label">№ билета:</span>
-                        <span class="preview-value">${escapeHtml(document.getElementById('ticket').value)}</span>
-                    </div>
-                </div>
-
-                <!-- Items Section -->
-                <div class="preview-card">
-                    <div class="preview-section-title">📦 Предметы (${items.length})</div>
-                    ${itemsList}
-
-                    <!-- SMART GUARD: Price Warning -->
-                    ${totalCost > 100000 ? `
-                        <div style="margin-top: 12px; padding: 10px; background: rgba(255, 152, 0, 0.1); border-left: 3px solid #FF9800; border-radius: 8px;">
-                            <div style="color: #FF9800; font-weight: 600; font-size: 13px; margin-bottom: 4px;">💰 Крупная сумма</div>
-                            <div style="color: var(--secondary-text); font-size: 12px;">Убедитесь, что оценка произведена корректно.</div>
-                        </div>
-                    ` : ''}
-                </div>
-            `;
-
-    const previewModal = document.getElementById('previewModal');
-    previewModal.style.display = 'block';
-    requestAnimationFrame(() => previewModal.classList.add('show'));
-
-    // Update state to preview mode
-    appState = 'preview';
-    updateMainButton();
-    haptic('success', { sound: true, vibrate: true });
-}
-
-function closePreview() {
-    haptic('light');
-    const previewModal = document.getElementById('previewModal');
-    previewModal.classList.remove('show');
-    setTimeout(() => {
-        if (!previewModal.classList.contains('show')) {
-            previewModal.style.display = 'none';
-        }
-    }, 250);
-
-    // Revert state to editing
-    appState = 'editing';
-    previewOpen = false;
-    updateMainButton();
-}
-
-// Image Compression Helper
-function compressImage(file) {
-    return new Promise((resolve, reject) => {
-        const maxWidth = 1280;
-        const maxHeight = 1280;
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function (event) {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = function () {
-                let width = img.width;
-                let height = img.height;
-
-                if (width > height) {
-                    if (width > maxWidth) {
-                        height *= maxWidth / width;
-                        width = maxWidth;
-                    }
-                } else {
-                    if (height > maxHeight) {
-                        width *= maxHeight / height;
-                        height = maxHeight;
-                    }
-                }
-
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-
-                canvas.toBlob(function (blob) {
-                    resolve(blob);
-                }, 'image/jpeg', 0.8); // 80% quality
-            };
-            img.onerror = reject;
-        };
-        reader.onerror = reject;
-    });
-}
-
-async function submitForm() {
-    if (submitInProgress) return;
-    submitInProgress = true;
-    // Disable button
-    if (isTelegramWebAppRuntime() && tg.MainButton) {
-        tg.MainButton.showProgress();
-        tg.MainButton.disable();
-    }
-
-    const btn = document.getElementById('finalSubmitBtn');
-    if (btn) {
-        btn.disabled = true;
-        btn.textContent = "Подготовка данных...";
-    }
-
-    const items = [];
-    const cards = document.querySelectorAll('.item-card');
-
-    // 🚀 NEW: Use pre-uploaded URLs instead of uploading again
-    let allUploaded = true;
-    for (let i = 0; i < cards.length; i++) {
-        const div = cards[i];
-        const photoUrl = div.dataset.photoUrl;
-
-        // Check if photo was uploaded
-        if (!photoUrl) {
-            const fileInput = div.querySelector('.file-input');
-            if (fileInput && fileInput.files && fileInput.files[0]) {
-                // Photo selected but not uploaded yet (shouldn't happen with background upload)
-                allUploaded = false;
-                showAppAlert('⏳ Дождитесь загрузки всех фотографий');
-                if (btn) {
-                    btn.disabled = false;
-                    btn.textContent = "Отправить";
-                }
-
-                if (isTelegramWebAppRuntime() && tg.MainButton) {
-                    tg.MainButton.hideProgress();
-                    tg.MainButton.enable();
-                }
-                submitInProgress = false;
-                return;
-            }
-            continue; // Skip items without photos
-        }
-
-        const rawEval = div.querySelector('.eval').value;
-        const cleanEval = rawEval ? rawEval.replace(/\s/g, '') : '';
-
-        // Use pre-uploaded URL
-        items.push({
-            description: div.querySelector('.desc').value,
-            evaluation: cleanEval,
-            photo_url: photoUrl
-        });
-    }
-
-    if (items.length === 0) {
-        showAppAlert('⚠️ Прикрепите фото к каждому предмету перед отправкой!');
-        if (btn) {
-            btn.disabled = false;
-            btn.textContent = "Отправить";
-        }
-        if (isTelegramWebAppRuntime() && tg.MainButton) {
-            tg.MainButton.hideProgress();
-            tg.MainButton.enable();
-        }
-        submitInProgress = false;
-        return;
-    }
-
-    if (btn) btn.textContent = "Отправка данных...";
-
-    try {
-        const isTest = document.getElementById('mode-test').checked;
-
-        const data = {
-            department_number: document.getElementById('department').value,
-            issue_number: document.getElementById('issue').value,
-            ticket_number: document.getElementById('ticket').value,
-            date: document.getElementById('date').value.split('-').reverse().join('.'),
-            region: document.getElementById('region').value,
-            items: items,
-            is_test: isTest
-        };
-
-        // CRITICAL: Validate date is not in the future (after formatting)
-        const dateValue = document.getElementById('date').value; // YYYY-MM-DD
-        const selectedDate = new Date(dateValue);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        selectedDate.setHours(0, 0, 0, 0);
-
-        if (selectedDate > today) {
-            showAppAlert('⚠️ Ошибка: Нельзя выбрать будущую дату!\n\nВыберите сегодняшнюю или прошедшую дату.');
-            btn.disabled = false;
-            btn.textContent = "Отправить";
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                mainButton.hideProgress();
-                mainButton.enable();
-            }
-            haptic('error');
-            submitInProgress = false;
             return;
         }
-
-        // Check if running in Telegram
-        // iOS Telegram 9.x bug: initData may be empty even in WebApp
-        // Instead, check for platform/version which are always present in Telegram
-        // Check if we're in Telegram by platform/version presence
-        const isInTelegram = isTelegramWebAppRuntime();
-
-        if (isInTelegram) {
-            btn.textContent = "Отправка в Telegram...";
+        let synced = 0;
+        for (const row of pending) {
             try {
-                tg.sendData(JSON.stringify(data));
-            } catch (err) {
-                console.error("tg.sendData error:", err);
+                await postReportToBot(row.data);
+                const delTx = db.transaction('pending', 'readwrite');
+                delTx.objectStore('pending').delete(row.id);
+                synced += 1;
+            } catch (e) {
+                console.warn('Sync row skipped:', e);
             }
-            haptic('success', { sound: true, vibrate: true });
+        }
+        if (synced > 0) {
+            showOfflineBanner(`✅ Синхронизировано заключений: ${synced}`, true);
+        }
+    } catch (e) { }
+});
 
-            // ✅ UX: Clear ticket for next form (always unique)
-            document.getElementById('ticket').value = '';
-            clearDraft();
-
-            fireConfetti(); // 🎉 Celebration!
-
-            // Close WebApp after sending data
-            setTimeout(() => {
-                try {
-                    tg.close();
-                } catch (err) {
-                    console.error("tg.close error:", err);
-                }
-            }, 1000);
-        } else {
-            // Standalone Mode
-            btn.textContent = "Подключение к серверу...";
-
-            // Add timeout to fetch
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
-
-            const cleanBase = getCleanBotUrl();
-            if (!cleanBase) {
-                throw new Error("Для скачивания DOCX на сайте нужен адрес сервера создания заключений. Откройте ссылку с параметром bot_url.");
-            }
-
-            const response = await fetch(`${cleanBase}/api/generate`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data),
-                signal: controller.signal
+function saveFormData() {
+    try {
+        const cards = document.querySelectorAll('.item-card');
+        const items = [];
+        cards.forEach((card) => {
+            items.push({
+                description: card.querySelector('.desc')?.value || '',
+                evaluation: card.querySelector('.eval')?.value || ''
             });
-
-            clearTimeout(timeoutId);
-
-            if (!response.ok) {
-                btn.textContent = "Ошибка сервера...";
-                const err = await response.json().catch(() => ({}));
-                throw new Error(err.error || `Server Error: ${response.status}`);
-            }
-
-            btn.textContent = "Скачивание файла...";
-
-            // Download File
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Conclusion_${data.ticket_number}.docx`;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-
-            clearDraft();
-
-            // ✅ UX: Clear ticket for next form (always unique)
-            document.getElementById('ticket').value = '';
-
-            fireConfetti(); // 🎉 Celebration!
-            haptic('success', { sound: true, vibrate: true });
-
-            showAppPopup("✅ Документ готов и скачан!");
-            closePreview();
-            btn.disabled = false;
-            btn.textContent = "Отправить";
-            submitInProgress = false;
-        }
-    } catch (e) {
-        console.error("Submission Error", e);
-        haptic('error');
-
-        if (isTelegramWebAppRuntime() && tg.MainButton) {
-            tg.MainButton.hideProgress();
-            tg.MainButton.enable();
-        }
-
-        if (e.name === 'AbortError') {
-            showAppPopup("Ошибка: Превышено время ожидания (30с). Проверьте интернет или адрес сервера.");
-        } else {
-            showAppPopup(`Ошибка при отправке: ${e.message}`);
-        }
-        btn.disabled = false;
-        btn.textContent = "Отправить";
-        submitInProgress = false;
-    }
+        });
+        const draft = {
+            department: document.getElementById('department')?.value || '',
+            issue: document.getElementById('issue')?.value || '',
+            ticket: document.getElementById('ticket')?.value || '',
+            date: document.getElementById('date')?.value || '',
+            region: document.getElementById('region')?.value || '',
+            items,
+            savedAt: Date.now()
+        };
+        localStorage.setItem('formDraft', JSON.stringify(draft));
+    } catch (e) { }
 }
 
-// Initial item
-addItem();
+function discardDraft() {
+    try {
+        localStorage.removeItem('formDraft');
+    } catch (e) { }
+    const notice = document.getElementById('draftNotice');
+    if (notice) notice.hidden = true;
 
-// ============================================
-// AUTO-SAVE DRAFT & RESTORE
-// ============================================
-function saveDraft() {
-    const draft = {
-        department: document.getElementById('department').value,
-        issue: document.getElementById('issue').value,
-        // ticket: excluded - always unique per form
-        date: document.getElementById('date').value,
-        region: document.getElementById('region').value,
-        timestamp: Date.now()
-    };
-    localStorage.setItem('formDraft', JSON.stringify(draft));
+    const form = document.getElementById('mainForm');
+    if (form) form.reset();
+
+    const dateEl = document.getElementById('date');
+    if (dateEl && window.UX) {
+        const today = window.UX.getLocalTodayIso();
+        dateEl.value = today;
+        dateEl.max = today;
+    }
+
+    const list = document.getElementById('itemsList');
+    if (list) {
+        list.innerHTML = '';
+        itemCount = 0;
+        addItem(false);
+    }
+
+    if (window.UX) {
+        window.UX.clearErrorSummary();
+        window.UX.updateTicketCounter('');
+    }
+    updateTotal();
+    updateFormCompletion();
+    haptic('light');
 }
 
 function restoreDraft() {
-    const draftStr = localStorage.getItem('formDraft');
-    if (!draftStr) return;
-
-    const draft = JSON.parse(draftStr);
-    // Only restore if draft is less than 24 hours old
-    const hoursSinceLastSave = (Date.now() - draft.timestamp) / (1000 * 60 * 60);
-    if (hoursSinceLastSave > 24) {
-        localStorage.removeItem('formDraft');
-        return;
-    }
-
-    // Restore values (ticket excluded - always unique)
-    if (draft.department) document.getElementById('department').value = draft.department;
-    if (draft.issue) document.getElementById('issue').value = draft.issue;
-    // if (draft.ticket) document.getElementById('ticket').value = draft.ticket;  // ❌ Never restore
-    if (draft.date) document.getElementById('date').value = draft.date;
-
-    // Smart Auto-fill for Region
-    const regionSelect = document.getElementById('region');
-    if (draft.region) {
-        regionSelect.value = draft.region;
-    } else {
-        // Check smart history
-        const history = JSON.parse(localStorage.getItem('region_history') || '{}');
-        // Find region with > 5 consecutive uses
-        const smartRegion = Object.keys(history).find(r => history[r] >= 5);
-        if (smartRegion) {
-            regionSelect.value = smartRegion;
-            // Optional: Visual cue that it was auto-selected?
+    try {
+        const raw = localStorage.getItem('formDraft');
+        if (!raw) return false;
+        const draft = JSON.parse(raw);
+        if (!draft || Date.now() - (draft.savedAt || 0) > 86400000) {
+            localStorage.removeItem('formDraft');
+            return false;
         }
-    }
+        const hasUseful = Boolean(
+            draft.department || draft.issue || draft.ticket ||
+            (Array.isArray(draft.items) && draft.items.some((i) => i.description || i.evaluation))
+        );
+        if (!hasUseful) return false;
 
-    // Show notice
-    const notice = document.getElementById('draftNotice');
-    notice.style.display = 'block';
-    setTimeout(() => {
-        notice.style.opacity = '0';
-        notice.style.transition = 'opacity 1s';
-        setTimeout(() => notice.style.display = 'none', 1000);
-    }, 3000);
-}
+        if (draft.department) document.getElementById('department').value = draft.department;
+        if (draft.issue) document.getElementById('issue').value = draft.issue;
+        if (draft.ticket) document.getElementById('ticket').value = draft.ticket;
+        if (draft.date) document.getElementById('date').value = draft.date;
+        if (draft.region) document.getElementById('region').value = draft.region;
 
-// Track Region Selection
-document.getElementById('region').addEventListener('change', (e) => {
-    const region = e.target.value;
-    if (!region) return;
-
-    const history = JSON.parse(localStorage.getItem('region_history') || '{}');
-
-    // Reset others, increment selected
-    Object.keys(history).forEach(key => {
-        if (key !== region) history[key] = 0;
-    });
-
-    history[region] = (history[region] || 0) + 1;
-    localStorage.setItem('region_history', JSON.stringify(history));
-});
-
-function clearDraft() {
-    localStorage.removeItem('formDraft');
-}
-
-// Update progress bar
-function updateProgress(current, total) {
-    const progressContainer = document.getElementById('progressContainer');
-    const progressBar = document.getElementById('progressBar');
-    const percent = (current / total) * 100;
-
-    progressContainer.style.display = 'block';
-    progressBar.style.width = percent + '%';
-
-    if (current === total) {
-        setTimeout(() => {
-            progressContainer.style.display = 'none';
-            progressBar.style.width = '0%';
-        }, 1000);
-    }
-}
-
-// Debounced auto-save (saves 1s after last input)
-function debouncedAutosave() {
-    clearTimeout(autosaveTimeout);
-    autosaveTimeout = setTimeout(() => {
-        saveDraft();
-    }, 1000); // Save 1 second after last change
-}
-
-// Attach to all input/change events
-document.getElementById('mainForm').addEventListener('input', debouncedAutosave);
-document.getElementById('mainForm').addEventListener('change', debouncedAutosave);
-
-// Smart Region: Load saved region
-const savedRegion = localStorage.getItem('last_region');
-if (savedRegion) {
-    const regionSelect = document.getElementById('region');
-    if (regionSelect) {
-        regionSelect.value = savedRegion;
-    }
-}
-
-// Save region on change
-document.getElementById('region').addEventListener('change', (e) => {
-    localStorage.setItem('last_region', e.target.value);
-});
-
-// Restore draft on page load
-restoreDraft();
-
-// --- SPEECH-TO-TEXT FOR DESCRIPTIONS ---
-function startSpeechRecognition(btn, inputId) {
-    const input = document.getElementById(inputId);
-    if (!input) return;
-
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.showAlert) {
-            window.Telegram.WebApp.showAlert("Голосовой ввод не поддерживается в вашем браузере/приложении. Пожалуйста, введите текст вручную.");
-        } else {
-            alert("Голосовой ввод не поддерживается в вашем браузере. Пожалуйста, введите текст вручную.");
-        }
-        return;
-    }
-
-    if (btn.classList.contains('listening')) {
-        if (window.activeRecognition) {
-            window.activeRecognition.stop();
-        }
-        return;
-    }
-
-    if (window.activeRecognition) {
-        window.activeRecognition.stop();
-    }
-
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'ru-RU';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.onstart = function() {
-        btn.classList.add('listening');
-        btn.title = "Прослушивание... Нажмите, чтобы остановить";
-        window.activeRecognition = recognition;
-        
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-            window.Telegram.WebApp.HapticFeedback.triggerNotification('success');
-        }
-    };
-
-    recognition.onresult = function(event) {
-        const result = event.results[0][0].transcript;
-        if (result) {
-            if (input.value) {
-                input.value += ' ' + result;
-            } else {
-                input.value = result;
-            }
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-    };
-
-    recognition.onerror = function(event) {
-        console.error('Speech recognition error:', event.error);
-        if (event.error === 'not-allowed') {
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.showAlert) {
-                window.Telegram.WebApp.showAlert("Для голосового ввода необходимо разрешить доступ к микрофону.");
-            } else {
-                alert("Для голосового ввода необходимо разрешить доступ к микрофону.");
-            }
-        }
-    };
-
-    recognition.onend = function() {
-        btn.classList.remove('listening');
-        btn.title = "Голосовой ввод";
-        if (window.activeRecognition === recognition) {
-            window.activeRecognition = null;
-        }
-    };
-
-    recognition.start();
-}
-
-// Global Clipboard Paste Support for Images
-window.addEventListener('paste', async (e) => {
-    if (appState !== 'editing') return;
-
-    // Check if any modal is open
-    const isModalOpen = ['guideModal', 'motivationModal', 'quizModal', 'lightboxModal', 'previewModal'].some(id => {
-        const el = document.getElementById(id);
-        return el && (el.style.display === 'flex' || el.style.display === 'block' || el.classList.contains('show'));
-    });
-    if (isModalOpen) return;
-
-    const items = e.clipboardData?.items;
-    if (!items) return;
-
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf('image') !== -1) {
-            const file = items[i].getAsFile();
-            if (!file) continue;
-
-            // Find target card
-            const activeCard = document.activeElement ? document.activeElement.closest('.item-card') : null;
-            const targetCard = activeCard || document.querySelector('.item-card:not(.collapsed)') || document.querySelector('.item-card');
-
-            if (targetCard) {
-                const fileInput = targetCard.querySelector('.file-input');
-                if (fileInput) {
-                    try {
-                        const dataTransfer = new DataTransfer();
-                        dataTransfer.items.add(file);
-                        fileInput.files = dataTransfer.files;
-
-                        // Highlight the target card's photo container briefly
-                        const previewContainer = targetCard.querySelector('.photo-preview-container');
-                        if (previewContainer) {
-                            previewContainer.style.outline = '2px dashed var(--primary-color)';
-                            setTimeout(() => {
-                                previewContainer.style.outline = '';
-                            }, 1000);
-                        }
-
-                        await handleFileSelect(fileInput);
-                    } catch (err) {
-                        console.error('Failed to paste image:', err);
+        if (Array.isArray(draft.items) && draft.items.length > 0) {
+            const list = document.getElementById('itemsList');
+            list.innerHTML = '';
+            itemCount = 0;
+            draft.items.forEach((item) => {
+                const card = addItem(false);
+                if (!card) return;
+                const descEl = card.querySelector('.desc');
+                const evalEl = card.querySelector('.eval');
+                if (descEl && item.description) {
+                    descEl.value = item.description;
+                    if (window.UX) {
+                        window.UX.autoResizeTextarea(descEl);
+                        window.UX.checkPreciousMetals(descEl);
                     }
                 }
-            }
-            e.preventDefault();
-            break;
+                if (evalEl && item.evaluation) evalEl.value = item.evaluation;
+                updateItemSummary(card);
+            });
         }
+
+        const notice = document.getElementById('draftNotice');
+        if (notice) notice.hidden = false;
+        if (window.UX) window.UX.updateTicketCounter(draft.ticket || '');
+        return true;
+    } catch (e) {
+        return false;
     }
+}
+
+function recordRegionUsage(region) {
+    if (!region) return;
+    try {
+        localStorage.setItem('last_region', region);
+        const history = JSON.parse(localStorage.getItem('region_history') || '{}');
+        history[region] = (history[region] || 0) + 1;
+        localStorage.setItem('region_history', JSON.stringify(history));
+    } catch (e) { }
+}
+
+function sortRegionsByFrequency() {
+    const select = document.getElementById('region');
+    if (!select) return;
+    try {
+        const history = JSON.parse(localStorage.getItem('region_history') || '{}');
+        const options = Array.from(select.querySelectorAll('option')).filter((opt) => opt.value !== '');
+        if (options.length === 0) return;
+
+        options.sort((a, b) => {
+            const diff = (history[b.value] || 0) - (history[a.value] || 0);
+            return diff !== 0 ? diff : a.textContent.localeCompare(b.textContent, 'ru');
+        });
+        options.forEach((opt) => select.appendChild(opt));
+    } catch (e) { }
+}
+
+// ============================================
+// 10. SERVICE WORKER & INITIALIZATION
+// ============================================
+async function forceUpdate() {
+    haptic('medium');
+    try {
+        if ('serviceWorker' in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(regs.map((r) => r.unregister()));
+        }
+        if ('caches' in window) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map((k) => caches.delete(k)));
+        }
+    } catch (e) { }
+    const nextUrl = new URL(window.location.href);
+    nextUrl.searchParams.set('v', APP_BUILD_ID);
+    window.location.replace(nextUrl.toString());
+}
+
+if ('serviceWorker' in navigator) {
+    const swDir = window.location.pathname.replace(/[^/]*$/, '');
+    const swUrl = `${swDir}service-worker.js?v=${APP_BUILD_ID}`;
+    navigator.serviceWorker.register(swUrl).catch(() => { });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    setupDialogDismissHandlers();
+    sortRegionsByFrequency();
+
+    const dateInput = document.getElementById('date');
+    const todayIso = window.UX ? window.UX.getLocalTodayIso() : new Date().toISOString().slice(0, 10);
+    if (dateInput) {
+        if (!dateInput.value) dateInput.value = todayIso;
+        dateInput.max = todayIso;
+    }
+
+    const restored = restoreDraft();
+    if (!restored) {
+        addItem(false);
+        const regionSelect = document.getElementById('region');
+        try {
+            const savedRegion = localStorage.getItem('last_region') || localStorage.getItem('default_region');
+            if (regionSelect && savedRegion) regionSelect.value = savedRegion;
+            const deptEl = document.getElementById('department');
+            const savedDept = localStorage.getItem('last_department') || localStorage.getItem('default_department');
+            if (deptEl && !deptEl.value && savedDept) deptEl.value = savedDept;
+        } catch (e) { }
+    }
+
+    const formEl = document.getElementById('mainForm');
+    if (formEl) {
+        formEl.addEventListener('input', () => {
+            saveFormData();
+            updateFormCompletion();
+        });
+        formEl.addEventListener('change', () => {
+            saveFormData();
+            updateFormCompletion();
+        });
+    }
+
+    if (!navigator.onLine) {
+        showOfflineBanner('📴 Нет подключения — данные будут сохранены', false);
+    }
+
+    updateTotal();
+    updateFormCompletion();
+    updateMainButton();
 });

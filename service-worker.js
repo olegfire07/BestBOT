@@ -1,5 +1,4 @@
-// Service Worker for offline support
-const VERSION = '2406';
+const VERSION = '6000';
 const CACHE_NAME = `bestbot-pages-${VERSION}`;
 const swPath = self.location.pathname.replace(/service-worker\.js.*$/, '');
 const BASE_PATH = swPath.endsWith('/') ? swPath : `${swPath}/`;
@@ -9,169 +8,113 @@ const urlsToCache = [
     `${BASE_PATH}ux-improvements.js?v=${VERSION}`,
     `${BASE_PATH}app.js?v=${VERSION}`,
     `${BASE_PATH}quiz_questions.json`,
-    `${BASE_PATH}fianit-logo.jpg`
+    `${BASE_PATH}fianit-logo.jpg?v=${VERSION}`
 ];
 
-// Install event - cache resources
-self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => Promise.all(
-                urlsToCache.map((url) => cache.add(url).catch(() => null))
-            ))
-    );
-    self.skipWaiting();
-});
+const NO_STORE_FILES = ['index.html', 'styles.css', 'app.js', 'ux-improvements.js', 'service-worker.js'];
 
-// Activate event - clean old caches
-self.addEventListener('activate', (event) => {
+// Install - cache core assets cleanly without blocking new releases
+self.addEventListener('install', (event) => {
+    console.log(`[SW v${VERSION}] Installing...`);
+    self.skipWaiting();
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (
-                        cacheName !== CACHE_NAME
-                        && (cacheName.startsWith('sklad-bot-') || cacheName.startsWith('bestbot-pages-'))
-                    ) {
-                        return caches.delete(cacheName);
-                    }
-                })
+        caches.open(CACHE_NAME).then((cache) => {
+            return Promise.allSettled(
+                urlsToCache.map((url) =>
+                    fetch(new Request(url, { cache: 'reload' })).then((resp) => {
+                        if (resp && resp.ok) {
+                            return cache.put(url, resp);
+                        }
+                        return null;
+                    }).catch(() => null)
+                )
             );
         })
     );
-    return self.clients.claim();
 });
 
-async function networkFirst(request) {
-    try {
-        const networkResponse = await fetch(request);
-        if (networkResponse && networkResponse.ok && request.method === 'GET') {
-            const cache = await caches.open(CACHE_NAME);
-            await cache.put(request, networkResponse.clone());
-        }
-        return networkResponse;
-    } catch (error) {
-        const cachedResponse = await caches.match(request);
-        if (cachedResponse) {
-            return cachedResponse;
-        }
-        throw error;
-    }
-}
+// Activate - remove older cache buckets and notify open pages
+self.addEventListener('activate', (event) => {
+    console.log(`[SW v${VERSION}] Activating...`);
+    event.waitUntil(
+        caches.keys()
+            .then((cacheNames) =>
+                Promise.all(
+                    cacheNames
+                        .filter(
+                            (name) =>
+                                (name.startsWith('bestbot-pages-') || name.startsWith('sklad-bot-')) &&
+                                name !== CACHE_NAME
+                        )
+                        .map((name) => caches.delete(name))
+                )
+            )
+            .then(() => self.clients.claim())
+            .then(() =>
+                self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+                    clients.forEach((client) => {
+                        client.postMessage({ type: 'SW_UPDATED', version: VERSION });
+                    });
+                })
+            )
+    );
+});
 
-async function cacheFirst(request) {
-    const cachedResponse = await caches.match(request);
-    if (cachedResponse) {
-        return cachedResponse;
-    }
-    const networkResponse = await fetch(request);
-    if (networkResponse && networkResponse.ok && request.method === 'GET') {
-        const cache = await caches.open(CACHE_NAME);
-        await cache.put(request, networkResponse.clone());
-    }
-    return networkResponse;
-}
-
-// Fetch event - Network First for HTML/CSS/JS to avoid stale browser versions.
+// Network-first for HTML/CSS/JS; cache-first for static images & quiz JSON
 self.addEventListener('fetch', (event) => {
-    if (event.request.method !== 'GET') {
+    const req = event.request;
+    if (req.method !== 'GET') return;
+
+    const url = new URL(req.url);
+    if (url.origin !== self.location.origin) return;
+    if (url.pathname.includes('/api/')) return;
+
+    const isFreshCritical =
+        req.mode === 'navigate' ||
+        req.destination === 'document' ||
+        req.destination === 'script' ||
+        req.destination === 'style' ||
+        NO_STORE_FILES.some((f) => url.pathname.endsWith(f) || url.pathname === BASE_PATH);
+
+    if (isFreshCritical) {
+        event.respondWith(
+            fetch(new Request(req, { cache: 'no-store' }))
+                .then((networkResp) => {
+                    if (networkResp && networkResp.ok) {
+                        const clone = networkResp.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
+                    }
+                    return networkResp;
+                })
+                .catch(async () => {
+                    const cached = await caches.match(req, { ignoreSearch: true });
+                    if (cached) return cached;
+                    if (req.mode === 'navigate') {
+                        return (
+                            (await caches.match(`${BASE_PATH}index.html`, { ignoreSearch: true })) ||
+                            (await caches.match(BASE_PATH, { ignoreSearch: true }))
+                        );
+                    }
+                    return new Response('Offline', { status: 503, statusText: 'Offline' });
+                })
+        );
         return;
     }
 
-    const url = new URL(event.request.url);
-    const isSameOrigin = url.origin === self.location.origin;
-
-    if (!isSameOrigin) {
-        return;
-    }
-
-    if (event.request.mode === 'navigate' || event.request.destination === 'document') {
-        event.respondWith(networkFirst(event.request));
-        return;
-    }
-
-    if (event.request.destination === 'script' || event.request.destination === 'style') {
-        event.respondWith(networkFirst(event.request));
-        return;
-    }
-
-    event.respondWith(cacheFirst(event.request));
-});
-
-// Background sync for offline submissions
-self.addEventListener('sync', (event) => {
-    if (event.tag === 'sync-reports') {
-        event.waitUntil(syncPendingReports());
-    }
-});
-
-async function syncPendingReports() {
-    const db = await openDB();
-    const tx = db.transaction('pending', 'readonly');
-    const store = tx.objectStore('pending');
-    const pending = await getAllFromStore(store);
-
-    for (const item of pending) {
-        try {
-            await sendReport(item.data);
-            // Remove from pending after successful send
-            const deleteTx = db.transaction('pending', 'readwrite');
-            deleteTx.objectStore('pending').delete(item.id);
-
-            // Notify all clients
-            const clients = await self.clients.matchAll();
-            clients.forEach(client => {
-                client.postMessage({
-                    type: 'SYNC_COMPLETE',
-                    id: item.id,
-                    timestamp: Date.now()
-                });
+    event.respondWith(
+        caches.match(req).then((cached) => {
+            if (cached) return cached;
+            return fetch(req).then((networkResp) => {
+                if (networkResp && networkResp.ok) {
+                    const clone = networkResp.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
+                }
+                return networkResp;
             });
-        } catch (error) {
-            console.error('Failed to sync report:', error);
-        }
-    }
-}
+        })
+    );
+});
 
-async function sendReport(data) {
-    const response = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    });
-
-    if (!response.ok) {
-        throw new Error('Failed to send report');
-    }
-
-    return response;
-}
-
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const request = indexedDB.open('ReportsDB', 1);
-
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => resolve(request.result);
-
-        request.onupgradeneeded = (event) => {
-            const db = event.target.result;
-            if (!db.objectStoreNames.contains('pending')) {
-                db.createObjectStore('pending', { keyPath: 'id', autoIncrement: true });
-            }
-        };
-    });
-}
-
-function getAllFromStore(store) {
-    return new Promise((resolve, reject) => {
-        const request = store.getAll();
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
-    });
-}
-
-// Listen for messages from main app
 self.addEventListener('message', (event) => {
     if (event.data && event.data.type === 'SKIP_WAITING') {
         self.skipWaiting();

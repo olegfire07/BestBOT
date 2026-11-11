@@ -3,403 +3,454 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#f2f5fa" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Создание заключения v5.6</title>
-    <!-- Version: 5.6 (browser mode fix) -->
-    <link rel="stylesheet" href="styles.css?v=2410">
+    <title>Заключение антиквариата • Фианит</title>
+
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.6.0/cleave.min.js"></script>
+    <link rel="stylesheet" href="styles.css?v=6000">
 </head>
 
 <body>
-    <!-- Offline banner -->
-    <div id="offlineBanner" class="offline-banner" style="display:none;">
-        <span>📴</span>
-        <span id="offlineBannerText">Нет подключения — данные будут сохранены и отправлены автоматически</span>
+    <div class="ambient-bg" aria-hidden="true"></div>
+
+    <!-- Offline / Sync Status Banner -->
+    <div id="offlineBanner" class="offline-banner" role="status" aria-live="polite" hidden>
+        <span id="offlineBannerText">Нет подключения к интернету</span>
     </div>
 
-    <div class="header-container" id="headerContainer">
-        <div class="motivation-trigger" onclick="showMotivation()" title="Рейтинговая система">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" style="color: #FFD700;">
-                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
-                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
-                <path d="M4 22h16"></path>
-                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
-                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
-                <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path>
-            </svg>
-        </div>
-        <h1 id="mainTitle">Новое заключение</h1>
-        <div class="brand-logo" aria-hidden="true">
-            <img src="fianit-logo.jpg" alt="">
-        </div>
-    </div>
-    <!-- Draft Notice -->
-    <div class="draft-notice" id="draftNotice">
-        ✅ Восстановлен черновик из предыдущей сессии
-    </div>
-
-    <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
-
-    <form id="mainForm" novalidate>
-        <div class="section">
-            <div class="form-group">
-                <label for="department">🏢 Подразделение <span class="required-star">*</span></label>
-                <div class="input-wrapper">
-                    <input type="tel" id="department" placeholder="Например: 385" required pattern="\d+">
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+    <main class="app-shell">
+        <div class="container">
+            <!-- Header -->
+            <header class="app-header" id="headerContainer">
+                <button type="button" class="icon-pill trophy-btn" onclick="showMotivation()"
+                    aria-label="Баллы и ранги товароведов" title="Баллы и ранги">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" width="20" height="20" aria-hidden="true">
+                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                        <path d="M4 22h16" />
+                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
                     </svg>
-                </div>
-                <div class="hint-text">Номер отделения (до 4 цифр, например 385)</div>
-            </div>
-            <div class="form-group">
-                <label for="issue">📋 Номер заключения <span class="required-star">*</span></label>
-                <div class="input-wrapper">
-                    <input type="tel" id="issue" placeholder="Например: 12" required pattern="\d+">
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <line x1="16" y1="13" x2="8" y2="13"></line>
-                        <line x1="16" y1="17" x2="8" y2="17"></line>
-                        <polyline points="10 9 9 9 8 9"></polyline>
-                    </svg>
-                </div>
-                <div class="hint-text">Порядковый номер заключения по журналу</div>
-            </div>
-            <div class="form-group">
-                <label for="ticket">🎫 Номер билета <span class="required-star">*</span></label>
-                <div class="input-wrapper">
-                    <input type="tel" id="ticket" placeholder="03850006392" required maxlength="11" inputmode="numeric"
-                        pattern="[0-9]{11}" autocomplete="off">
-                    <div class="error-message"></div>
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 11V7a5 5 0 0 1 10 0v4"></path>
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
-                </div>
-                <div class="hint-text">Ровно 11 цифр с залогового билета без пробелов</div>
-            </div>
-            <div class="form-group">
-                <label for="date">📅 Дата заключения <span class="required-star">*</span></label>
-                <div class="input-wrapper">
-                    <input type="date" id="date" required placeholder="Дата" title="Дата">
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                </div>
-                <div class="hint-text">Дата создания (сегодня или прошедшая дата)</div>
-            </div>
-            <div class="form-group">
-                <label for="region">🌍 Регион <span class="required-star">*</span></label>
-                <div class="input-wrapper">
-                    <select id="region" required aria-label="Регион">
-                        <option value="" disabled selected>Выберите регион филиала...</option>
-                        <option value="Санкт-Петербург">Санкт-Петербург</option>
-                        <option value="Свердловская область">Свердловская область</option>
-                        <option value="Челябинская область">Челябинская область</option>
-                        <option value="Екатеринбург">Екатеринбург</option>
-                        <option value="Башкирия">Башкирия</option>
-                        <option value="Тюмень">Тюмень</option>
-                        <option value="ХМАО-Югра">ХМАО-Югра</option>
-                        <option value="Нижний Новгород">Нижний Новгород</option>
-                        <option value="Ростовская область">Ростовская область</option>
-                        <option value="Челябинск">Челябинск</option>
-                        <option value="Магнитогорск">Магнитогорск</option>
-                        <option value="Курган">Курган</option>
-                        <option value="Краснодарский край">Краснодарский край</option>
-                    </select>
-                    <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                        <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <div class="items-header">
-            <h3 class="section-title">
-                Предметы
-                <span id="itemCountBadge" class="items-badge">1</span>
-            </h3>
-        </div>
-
-        <!-- Items List (moved outside items-header) -->
-        <div id="itemsList"></div>
-
-        <!-- Total Banner (Real-time) -->
-        <div id="realTimeTotal" class="total-banner real-time-banner">
-            <div class="total-label">💰 Итого:</div>
-            <div class="total-amount" id="totalAmountDisplay">0 ₽</div>
-        </div>
-
-        <button type="button" class="btn btn-secondary btn-dashed" onclick="addItem()">
-            + Добавить предмет
-        </button>
-
-        <!-- Mode Toggle (Moved to Bottom) -->
-        <div class="mode-label">📤 Режим отправки</div>
-        <div class="segmented-control">
-            <input type="radio" name="mode" id="mode-final" value="final" checked>
-            <label for="mode-final">
-                <span class="segmented-title">Оригинал</span>
-                <span class="segmented-subtitle">в группу</span>
-            </label>
-
-            <input type="radio" name="mode" id="mode-test" value="test">
-            <label for="mode-test">
-                <span class="segmented-title">Черновик</span>
-                <span class="segmented-subtitle">только вам</span>
-            </label>
-        </div>
-        <div class="hint-text">Оригинал — автоматически отправляется региональному менеджеру. Черновик — только вам.
-        </div>
-
-        <div class="sticky-footer">
-            <button type="button" class="btn btn-primary" onclick="showPreview()">
-                Проверить и отправить
-            </button>
-        </div>
-
-        <div class="footer-note">
-            <div class="action-buttons-row">
-                <button type="button" class="action-trigger" onclick="showUserGuide()">
-                    📘 Инструкция пользователя
                 </button>
-                <button type="button" class="action-trigger purple-tint" onclick="openQuiz()">
-                    🧠 Проверь себя — викторина
-                    <span class="notification-dot"></span>
+
+                <div class="header-copy">
+                    <h1 id="mainTitle">Новое заключение</h1>
+                    <div class="header-meta">
+                        <span class="subtitle-text">Заключение антиквариата</span>
+                        <span class="completion-pill" id="formCompletionPill">0 / 6</span>
+                    </div>
+                </div>
+
+                <div class="brand-badge" aria-label="Фианит Ломбард">
+                    <img src="fianit-logo.jpg?v=6000" alt="Фианит Ломбард" class="brand-logo" loading="eager">
+                </div>
+            </header>
+
+            <!-- Live Readiness / Upload Progress -->
+            <div class="progress-container" id="progressContainer" role="progressbar"
+                aria-label="Заполнение формы" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+
+            <!-- Restored Draft Banner -->
+            <div id="draftNotice" class="draft-notice" role="status" hidden>
+                <div class="draft-notice-body">
+                    <span class="draft-tag">Черновик</span>
+                    <span>Восстановлены несохранённые данные</span>
+                </div>
+                <button type="button" class="draft-clear-btn" onclick="discardDraft()">Очистить</button>
+            </div>
+
+            <!-- Single polite live announcer for validation errors -->
+            <div id="formErrorAnnouncer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+            <form id="mainForm" novalidate>
+                <!-- Accessible submit-time error summary -->
+                <div id="formErrorSummary" class="form-error-summary" hidden tabindex="-1"
+                    role="region" aria-labelledby="formErrorSummaryTitle">
+                    <div class="summary-title" id="formErrorSummaryTitle">Проверьте выделенные поля</div>
+                    <ul id="formErrorSummaryList" class="summary-list"></ul>
+                </div>
+
+                <!-- Section 1: Реквизиты -->
+                <section class="surface-card requisites-card" aria-labelledby="requisitesHeading">
+                    <div class="card-section-header">
+                        <div class="section-heading-group">
+                            <span class="section-step" aria-hidden="true">1</span>
+                            <h2 id="requisitesHeading">Реквизиты</h2>
+                        </div>
+                        <span class="section-meta-badge">Обязательные поля</span>
+                    </div>
+
+                    <div class="requisites-grid">
+                        <div class="form-group col-half">
+                            <label class="field-label" for="department">
+                                Подразделение <span class="required" aria-hidden="true">*</span>
+                            </label>
+                            <div class="input-wrapper has-prefix">
+                                <span class="input-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                                        <path d="M3 10.5L12 3l9 7.5" />
+                                        <path d="M5 10v10h14V10" />
+                                        <path d="M9 20v-6h6v6" />
+                                    </svg>
+                                </span>
+                                <input type="text" id="department" name="department" inputmode="numeric"
+                                    maxlength="4" pattern="[0-9]{1,4}" placeholder="Например: 385"
+                                    required aria-invalid="false"
+                                    data-hint="hint-department" data-error="err-department"
+                                    aria-describedby="hint-department">
+                            </div>
+                            <span class="field-hint" id="hint-department">Номер отделения (до 4 цифр)</span>
+                            <span class="error-message" id="err-department" hidden></span>
+                        </div>
+
+                        <div class="form-group col-half">
+                            <label class="field-label" for="issue">
+                                № заключения <span class="required" aria-hidden="true">*</span>
+                            </label>
+                            <div class="input-wrapper has-prefix">
+                                <span class="input-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                        <polyline points="14 2 14 8 20 8" />
+                                        <line x1="8" y1="13" x2="16" y2="13" />
+                                        <line x1="8" y1="17" x2="13" y2="17" />
+                                    </svg>
+                                </span>
+                                <input type="text" id="issue" name="issue" inputmode="numeric"
+                                    placeholder="Например: 12" required aria-invalid="false"
+                                    data-hint="hint-issue" data-error="err-issue"
+                                    aria-describedby="hint-issue">
+                            </div>
+                            <span class="field-hint" id="hint-issue">Порядковый номер по журналу</span>
+                            <span class="error-message" id="err-issue" hidden></span>
+                        </div>
+
+                        <div class="form-group col-full">
+                            <div class="label-row">
+                                <label class="field-label" for="ticket">
+                                    Номер билета <span class="required" aria-hidden="true">*</span>
+                                </label>
+                                <span class="ticket-counter" id="ticketCounter">0 / 11</span>
+                            </div>
+                            <div class="input-wrapper has-prefix">
+                                <span class="input-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                                        <path d="M4 3h16v18l-3-2-3 2-2-2-2 2-3-2-3 2V3z" />
+                                        <line x1="8" y1="8" x2="16" y2="8" />
+                                        <line x1="8" y1="12" x2="14" y2="12" />
+                                    </svg>
+                                </span>
+                                <input type="text" id="ticket" name="ticket" inputmode="numeric"
+                                    maxlength="14" placeholder="Например: 03850006392"
+                                    required aria-invalid="false"
+                                    data-hint="hint-ticket" data-error="err-ticket"
+                                    aria-describedby="hint-ticket">
+                            </div>
+                            <span class="field-hint" id="hint-ticket">Ровно 11 цифр с залогового билета без пробелов</span>
+                            <div id="ticketCheckStatus" class="ticket-check-status" hidden></div>
+                            <span class="error-message" id="err-ticket" hidden></span>
+                        </div>
+
+                        <div class="form-group col-half">
+                            <label class="field-label" for="date">
+                                Дата заключения <span class="required" aria-hidden="true">*</span>
+                            </label>
+                            <div class="input-wrapper has-prefix">
+                                <span class="input-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                        <line x1="16" y1="2" x2="16" y2="6" />
+                                        <line x1="8" y1="2" x2="8" y2="6" />
+                                        <line x1="3" y1="10" x2="21" y2="10" />
+                                    </svg>
+                                </span>
+                                <input type="date" id="date" name="date" required aria-invalid="false"
+                                    data-hint="hint-date" data-error="err-date"
+                                    aria-describedby="hint-date">
+                            </div>
+                            <span class="field-hint" id="hint-date">Сегодня или прошедшая дата</span>
+                            <span class="error-message" id="err-date" hidden></span>
+                        </div>
+
+                        <div class="form-group col-half">
+                            <label class="field-label" for="region">
+                                Регион <span class="required" aria-hidden="true">*</span>
+                            </label>
+                            <div class="input-wrapper has-prefix has-chevron">
+                                <span class="input-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                                        <circle cx="12" cy="10" r="3" />
+                                    </svg>
+                                </span>
+                                <select id="region" name="region" required aria-invalid="false"
+                                    data-hint="hint-region" data-error="err-region"
+                                    aria-describedby="hint-region">
+                                    <option value="" disabled selected>Выберите филиал...</option>
+                                    <option value="Санкт-Петербург">Санкт-Петербург</option>
+                                    <option value="Свердловская область">Свердловская область</option>
+                                    <option value="Челябинская область">Челябинская область</option>
+                                    <option value="Екатеринбург">Екатеринбург</option>
+                                    <option value="Башкирия">Башкирия</option>
+                                    <option value="Тюмень">Тюмень</option>
+                                    <option value="ХМАО-Югра">ХМАО-Югра</option>
+                                    <option value="Нижний Новгород">Нижний Новгород</option>
+                                    <option value="Ростовская область">Ростовская область</option>
+                                    <option value="Челябинск">Челябинск</option>
+                                    <option value="Магнитогорск">Магнитогорск</option>
+                                    <option value="Курган">Курган</option>
+                                    <option value="Краснодарский край">Краснодарский край</option>
+                                </select>
+                                <span class="select-chevron" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+                                        <polyline points="6 9 12 15 18 9" />
+                                    </svg>
+                                </span>
+                            </div>
+                            <span class="field-hint" id="hint-region">Территориальный филиал</span>
+                            <span class="error-message" id="err-region" hidden></span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section 2: Предметы -->
+                <section class="items-section" aria-labelledby="itemsHeading">
+                    <div class="section-bar">
+                        <div class="section-heading-group">
+                            <span class="section-step" aria-hidden="true">2</span>
+                            <h2 id="itemsHeading">Предметы</h2>
+                            <span class="count-badge" id="itemCountBadge">1</span>
+                        </div>
+                        <span class="section-bar-tip">Порядок можно менять за ⋮⋮</span>
+                    </div>
+
+                    <div id="itemsList" class="items-list">
+                        <!-- Предметы добавляются скриптом -->
+                    </div>
+
+                    <button type="button" class="btn btn-add-item" onclick="addItem()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                            stroke-linecap="round" stroke-linejoin="round" width="18" height="18" aria-hidden="true">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        Добавить ещё предмет
+                    </button>
+                </section>
+
+                <!-- Section 3: Итог и режим -->
+                <section class="summary-and-mode" aria-label="Итого и режим документа">
+                    <div id="realTimeTotal" class="surface-card total-card">
+                        <div class="total-copy">
+                            <span class="total-caption">Общая сумма оценки</span>
+                            <span class="total-submeta" id="totalItemsMeta">1 предмет • 0 фото</span>
+                        </div>
+                        <span id="totalAmountDisplay" class="total-amount">0 ₽</span>
+                    </div>
+
+                    <div class="surface-card mode-card">
+                        <div class="mode-header">
+                            <span class="mode-title">Режим оформления</span>
+                        </div>
+                        <div class="segmented-control" role="radiogroup" aria-label="Режим документа">
+                            <input type="radio" id="mode-final" name="mode" value="final" checked>
+                            <label for="mode-final" class="segmented-option">
+                                <span class="mode-name">Оригинал</span>
+                                <span class="mode-desc">В журнал + Word</span>
+                            </label>
+                            <input type="radio" id="mode-test" name="mode" value="test">
+                            <label for="mode-test" class="segmented-option">
+                                <span class="mode-name">Черновик</span>
+                                <span class="mode-desc">Тест без записи</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Quick Help & Quiz Actions -->
+                    <div class="quick-actions-grid">
+                        <button type="button" class="quick-action-btn" onclick="showUserGuide()">
+                            <span class="qa-icon" aria-hidden="true">📖</span>
+                            <span class="qa-copy">
+                                <span class="qa-title">Инструкция</span>
+                                <span class="qa-sub">Правила формы</span>
+                            </span>
+                        </button>
+                        <button type="button" class="quick-action-btn quiz-tint" onclick="openQuiz()">
+                            <span class="qa-icon" aria-hidden="true">🧠</span>
+                            <span class="qa-copy">
+                                <span class="qa-title">Викторина</span>
+                                <span class="qa-sub">5 вопросов • 1 мин</span>
+                            </span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Browser Sticky Action Footer (hidden automatically in Telegram WebView where MainButton is active) -->
+                <div class="sticky-footer" id="stickyFooter">
+                    <button type="button" id="mainSubmitBtn" class="btn btn-primary btn-submit-main"
+                        onclick="showPreview()">
+                        ПРОВЕРИТЬ И ОТПРАВИТЬ
+                    </button>
+                </div>
+
+                <footer class="app-footer">
+                    <span>Фианит Экспертиза</span>
+                    <span class="version-chip">v6.0</span>
+                </footer>
+            </form>
+        </div>
+    </main>
+
+    <!-- Native Top-Layer Dialog 1: Preview -->
+    <dialog id="previewModal" class="app-dialog" closedby="any" aria-labelledby="previewTitle">
+        <div class="dialog-panel">
+            <div class="dialog-header">
+                <h2 id="previewTitle">Проверьте данные</h2>
+                <button type="button" class="dialog-close" onclick="closePreview()" aria-label="Закрыть окно">×</button>
+            </div>
+            <div id="previewContent" class="dialog-body preview-scroll"></div>
+            <div class="dialog-footer">
+                <button type="button" class="btn btn-secondary" onclick="closePreview()">Назад</button>
+                <button type="button" class="btn btn-primary" onclick="submitForm()" id="finalSubmitBtn">
+                    Подтвердить и отправить
                 </button>
             </div>
-            <div class="footer-author">
-                Жуков Олег
+        </div>
+    </dialog>
+
+    <!-- Native Top-Layer Dialog 2: Lightbox -->
+    <dialog id="lightboxModal" class="app-dialog lightbox-dialog" closedby="any" aria-label="Увеличенное фото">
+        <div class="lightbox-frame" onclick="event.stopPropagation()">
+            <button type="button" class="lightbox-close" onclick="closeLightbox()"
+                aria-label="Закрыть фотографию">×</button>
+            <img id="lightboxImage" class="lightbox-img" src="" alt="Увеличенное фото предмета">
+        </div>
+    </dialog>
+
+    <!-- Native Top-Layer Dialog 3: Quiz -->
+    <dialog id="quizModal" class="app-dialog quiz-dialog" closedby="any" aria-labelledby="quizTitle">
+        <div class="dialog-panel">
+            <div class="dialog-header">
+                <h2 id="quizTitle">🧠 Антикварная викторина</h2>
+                <button type="button" class="dialog-close" onclick="closeQuiz()" aria-label="Закрыть викторину">×</button>
             </div>
-            <div class="footer-version">
-                Версия 5.6 07.03.2026
+            <div id="quizBody" class="dialog-body quiz-body">
+                <!-- Загружается динамически -->
             </div>
         </div>
-    </form>
+    </dialog>
 
-    <!-- Preview Modal -->
-    <div id="previewModal" class="modal">
-        <div class="modal-content">
-            <h2 class="no-margin-top">Проверка данных</h2>
-            <div id="previewContent"></div>
-            <div class="flex-gap">
-                <button class="btn btn-secondary" onclick="closePreview()">Назад</button>
-                <button class="btn btn-primary btn-no-margin" onclick="submitForm()"
-                    id="finalSubmitBtn">Отправить</button>
+    <!-- Native Top-Layer Dialog 4: Motivation & Ranks -->
+    <dialog id="motivationModal" class="app-dialog" closedby="any" aria-labelledby="motivationTitle">
+        <div class="dialog-panel">
+            <div class="dialog-header">
+                <h2 id="motivationTitle">🏆 Баллы и ранги</h2>
+                <button type="button" class="dialog-close" onclick="closeMotivation()" aria-label="Закрыть окно">×</button>
+            </div>
+
+            <div class="dialog-body">
+                <p class="dialog-lead">За каждое оригинальное заключение автоматически начисляется рейтинг.</p>
+
+                <div class="rules-grid">
+                    <div class="rule-card accent-blue">
+                        <span class="rule-value">+10</span>
+                        <span class="rule-label">баллов за каждое новое заключение</span>
+                    </div>
+                    <div class="rule-card accent-gold">
+                        <span class="rule-value">+1</span>
+                        <span class="rule-label">балл за каждые 1 000 ₽ суммы оценки</span>
+                    </div>
+                </div>
+
+                <div class="note-callout">
+                    В режиме «Черновик» и при повторном билете документ формируется без начисления баллов.
+                </div>
+
+                <div class="ranks-section-title">Шкала рангов</div>
+                <div class="ranks-grid">
+                    <div class="rank-pill"><span>🥉 Новичок</span><span class="rank-pts">0+</span></div>
+                    <div class="rank-pill"><span>🥈 Ученик</span><span class="rank-pts">50+</span></div>
+                    <div class="rank-pill"><span>🥇 Стажёр</span><span class="rank-pts">150+</span></div>
+                    <div class="rank-pill"><span>🎖 Специалист</span><span class="rank-pts">400+</span></div>
+                    <div class="rank-pill"><span>🏆 Мастер</span><span class="rank-pts">1 000+</span></div>
+                    <div class="rank-pill"><span>🚀 Профи</span><span class="rank-pts">2 500+</span></div>
+                    <div class="rank-pill"><span>💎 Эксперт</span><span class="rank-pts">5 000+</span></div>
+                    <div class="rank-pill"><span>👑 Легенда</span><span class="rank-pts">10 000+</span></div>
+                </div>
+            </div>
+
+            <div class="dialog-footer">
+                <button type="button" class="btn btn-primary" onclick="closeMotivation()">Понятно</button>
             </div>
         </div>
-    </div>
+    </dialog>
 
-    <!-- Lightbox Modal -->
-    <div id="lightboxModal" class="modal lightbox-modal" onclick="closeLightbox()">
-        <div class="modal-content lightbox-content" onclick="event.stopPropagation()">
-            <button type="button" class="lightbox-close" onclick="closeLightbox()">×</button>
-            <img id="lightboxImage" alt="Фото">
-        </div>
-    </div>
-
-    <!-- Quiz Modal -->
-    <div id="quizModal" class="modal">
-        <div class="modal-content quiz-content">
-            <div class="quiz-header">
-                <h2 class="quiz-title">Проверь себя</h2>
-                <button type="button" class="quiz-close" onclick="closeQuiz()">×</button>
-            </div>
-            <div id="quizBody"></div>
-        </div>
-    </div>
-
-    <!-- Motivation Modal -->
-    <div id="motivationModal" class="modal">
-        <div class="modal-content" style="max-width: 480px;">
-            <h2 class="no-margin-top guide-title">Рейтинги и достижения</h2>
-            
-            <h3 style="margin-top: 0; margin-bottom: 10px; font-size: 15px; font-weight: 700; color: var(--text-color);">Как начисляются баллы:</h3>
-            <div class="motivation-container" style="margin-bottom: 20px;">
-                <div class="motivation-item">
-                    <div class="motivation-icon">📄</div>
-                    <div class="motivation-text">
-                        <b>+10 баллов</b>
-                        <span>За каждое оформленное заключение</span>
-                    </div>
-                </div>
-                <div class="motivation-item">
-                    <div class="motivation-icon">💰</div>
-                    <div class="motivation-text">
-                        <b>+1 балл</b>
-                        <span>За каждые 1000 ₽ суммы оценки</span>
-                    </div>
-                </div>
+    <!-- Native Top-Layer Dialog 5: User Guide -->
+    <dialog id="guideModal" class="app-dialog" closedby="any" aria-labelledby="guideTitle">
+        <div class="dialog-panel">
+            <div class="dialog-header">
+                <h2 id="guideTitle">📖 Памятка товароведа</h2>
+                <button type="button" class="dialog-close" onclick="closeGuide()" aria-label="Закрыть памятку">×</button>
             </div>
 
-            <h3 style="margin-top: 15px; margin-bottom: 10px; font-size: 15px; font-weight: 700; color: var(--text-color);">Таблица рангов:</h3>
-            <div class="ranks-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-                <div class="rank-badge-item" style="display: flex; align-items: center; gap: 10px; background: rgba(0, 122, 255, 0.04); border: 1px solid rgba(0, 122, 255, 0.05); padding: 10px 12px; border-radius: 14px;">
-                    <span style="font-size: 22px;">🥉</span>
-                    <div>
-                        <div style="font-weight: 700; font-size: 13px;">Новичок</div>
-                        <div style="font-size: 11px; color: var(--secondary-text);">0+ баллов</div>
-                    </div>
-                </div>
-                <div class="rank-badge-item" style="display: flex; align-items: center; gap: 10px; background: rgba(0, 122, 255, 0.04); border: 1px solid rgba(0, 122, 255, 0.05); padding: 10px 12px; border-radius: 14px;">
-                    <span style="font-size: 22px;">🥈</span>
-                    <div>
-                        <div style="font-weight: 700; font-size: 13px;">Ученик</div>
-                        <div style="font-size: 11px; color: var(--secondary-text);">50+ баллов</div>
-                    </div>
-                </div>
-                <div class="rank-badge-item" style="display: flex; align-items: center; gap: 10px; background: rgba(0, 122, 255, 0.04); border: 1px solid rgba(0, 122, 255, 0.05); padding: 10px 12px; border-radius: 14px;">
-                    <span style="font-size: 22px;">🥇</span>
-                    <div>
-                        <div style="font-weight: 700; font-size: 13px;">Стажер</div>
-                        <div style="font-size: 11px; color: var(--secondary-text);">150+ баллов</div>
-                    </div>
-                </div>
-                <div class="rank-badge-item" style="display: flex; align-items: center; gap: 10px; background: rgba(0, 122, 255, 0.04); border: 1px solid rgba(0, 122, 255, 0.05); padding: 10px 12px; border-radius: 14px;">
-                    <span style="font-size: 22px;">🎖</span>
-                    <div>
-                        <div style="font-weight: 700; font-size: 13px;">Специалист</div>
-                        <div style="font-size: 11px; color: var(--secondary-text);">400+ баллов</div>
-                    </div>
-                </div>
-                <div class="rank-badge-item" style="display: flex; align-items: center; gap: 10px; background: rgba(0, 122, 255, 0.04); border: 1px solid rgba(0, 122, 255, 0.05); padding: 10px 12px; border-radius: 14px;">
-                    <span style="font-size: 22px;">🏆</span>
-                    <div>
-                        <div style="font-weight: 700; font-size: 13px;">Мастер</div>
-                        <div style="font-size: 11px; color: var(--secondary-text);">1000+ баллов</div>
-                    </div>
-                </div>
-                <div class="rank-badge-item" style="display: flex; align-items: center; gap: 10px; background: rgba(0, 122, 255, 0.04); border: 1px solid rgba(0, 122, 255, 0.05); padding: 10px 12px; border-radius: 14px;">
-                    <span style="font-size: 22px;">🚀</span>
-                    <div>
-                        <div style="font-weight: 700; font-size: 13px;">Профи</div>
-                        <div style="font-size: 11px; color: var(--secondary-text);">2500+ баллов</div>
-                    </div>
-                </div>
-                <div class="rank-badge-item" style="display: flex; align-items: center; gap: 10px; background: rgba(0, 122, 255, 0.04); border: 1px solid rgba(0, 122, 255, 0.05); padding: 10px 12px; border-radius: 14px;">
-                    <span style="font-size: 22px;">💎</span>
-                    <div>
-                        <div style="font-weight: 700; font-size: 13px;">Эксперт</div>
-                        <div style="font-size: 11px; color: var(--secondary-text);">5000+ баллов</div>
-                    </div>
-                </div>
-                <div class="rank-badge-item" style="display: flex; align-items: center; gap: 10px; background: rgba(0, 122, 255, 0.04); border: 1px solid rgba(0, 122, 255, 0.05); padding: 10px 12px; border-radius: 14px;">
-                    <span style="font-size: 22px;">👑</span>
-                    <div>
-                        <div style="font-weight: 700; font-size: 13px;">Легенда</div>
-                        <div style="font-size: 11px; color: var(--secondary-text);">10000+ баллов</div>
-                    </div>
-                </div>
-            </div>
-
-            <div style="text-align: center;">
-                <button class="btn btn-primary" style="margin-bottom: 5px; width: 100%;"
-                    onclick="closeMotivation()">Понятно</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Guide Modal -->
-    <div id="guideModal" class="modal">
-        <div class="modal-content">
-            <h2 class="no-margin-top guide-title">Как это работает</h2>
-
-            <div class="guide-steps">
+            <div class="dialog-body guide-steps">
                 <div class="guide-step">
-                    <div class="step-icon-wrapper">
-                        <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                        </svg>
-                    </div>
-                    <div class="step-text">
-                        <h3>1. Заполните данные</h3>
-                        <p>Укажите подразделение, номер билета и дату.</p>
+                    <span class="guide-num">1</span>
+                    <div>
+                        <div class="guide-step-title">Реквизиты и 11 цифр билета</div>
+                        <div class="guide-step-text">Введите код отделения, номер заключения и все 11 цифр билета без пробелов. Повторный билет подсветится автоматически.</div>
                     </div>
                 </div>
-
                 <div class="guide-step">
-                    <div class="step-icon-wrapper">
-                        <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                            <polyline points="21 15 16 10 5 21"></polyline>
-                        </svg>
-                    </div>
-                    <div class="step-text">
-                        <h3>2. Добавьте предметы</h3>
-                        <p>Загрузите одно фото и укажите оценку для каждого предмета.</p>
+                    <span class="guide-num">2</span>
+                    <div>
+                        <div class="guide-step-title">Описание, голос и фото</div>
+                        <div class="guide-step-text">Можно диктовать описание через 🎙, вставлять фото через Ctrl+V / Cmd+V или перетаскивать карточки предметов за ⋮⋮.</div>
                     </div>
                 </div>
-
                 <div class="guide-step">
-                    <div class="step-icon-wrapper">
-                        <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="9 11 12 14 22 4"></polyline>
-                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                        </svg>
-                    </div>
-                    <div class="step-text">
-                        <h3>3. Проверьте</h3>
-                        <p>Нажмите кнопку внизу, чтобы проверить введенные данные.</p>
+                    <span class="guide-num">3</span>
+                    <div>
+                        <div class="guide-step-title">Только антиквариат</div>
+                        <div class="guide-step-text">Заключение не оформляется на золото, серебро 925/585 и драгоценные металлы — форма предупредит, если заметит такие слова.</div>
                     </div>
                 </div>
-
                 <div class="guide-step">
-                    <div class="step-icon-wrapper">
-                        <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="22" y1="2" x2="11" y2="13"></line>
-                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                        </svg>
-                    </div>
-                    <div class="step-text">
-                        <h3>4. Отправьте</h3>
-                        <p>Выберите режим (Оригинал/Черновик) и отправьте боту.</p>
+                    <span class="guide-num">4</span>
+                    <div>
+                        <div class="guide-step-title">Оригинал или Черновик</div>
+                        <div class="guide-step-text">Нажмите «Проверить и отправить», сверьте карточку предпросмотра и подтвердите создание Word-документа.</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Antique Restriction Alert -->
-            <div class="alert-box alert-warning" style="margin-top: 15px; margin-bottom: 15px; padding: 12px; border-radius: 8px; background: rgba(255, 149, 0, 0.1); border-left: 4px solid #ff9500; font-size: 13px; color: #e67700; text-align: left; line-height: 1.45;">
-                ⚠️ <b>Важное правило:</b> изделия из драгоценных металлов (золото, серебро и др.) <b>не принимаются</b> в качестве антиквариата!
-            </div>
-
-            <button class="btn btn-primary guide-btn" onclick="closeGuide()">Всё понятно</button>
-            <div class="guide-update">
-                Если интерфейс не обновился — <a href="javascript:void(0)" onclick="forceUpdate()">обновить страницу</a>
+            <div class="dialog-footer stack-footer">
+                <button type="button" class="btn btn-primary" onclick="closeGuide()">Всё понятно</button>
+                <button type="button" class="btn-link-muted" onclick="forceUpdate()">
+                    🔄 Обновить интерфейс и сбросить кеш
+                </button>
             </div>
         </div>
-    </div>
+    </dialog>
 
-    <script src="ux-improvements.js?v=2410"></script>
-    <script src="app.js?v=2410"></script>
+    <script src="ux-improvements.js?v=6000"></script>
+    <script src="app.js?v=6000"></script>
 </body>
 
 </html>
