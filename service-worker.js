@@ -1,4 +1,4 @@
-const VERSION = '6000';
+const VERSION = '6001';
 const CACHE_NAME = `bestbot-pages-${VERSION}`;
 const swPath = self.location.pathname.replace(/service-worker\.js.*$/, '');
 const BASE_PATH = swPath.endsWith('/') ? swPath : `${swPath}/`;

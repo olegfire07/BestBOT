@@ -139,27 +139,35 @@
         let errorMsg = '';
 
         if (id === 'department') {
-            const digits = cleanDigits(raw);
+            const digits = cleanDigits(raw).slice(0, 4);
             if (!digits) {
                 errorMsg = 'Укажите номер подразделения';
+            } else if (parseInt(digits, 10) <= 0) {
+                errorMsg = 'Номер подразделения не может быть 0';
             } else if (digits.length > 4) {
                 errorMsg = 'Максимум 4 цифры';
             }
         } else if (id === 'issue') {
-            const digits = cleanDigits(raw);
+            const digits = cleanDigits(raw).slice(0, 6);
             if (!digits) {
                 errorMsg = 'Укажите номер заключения';
+            } else if (parseInt(digits, 10) <= 0) {
+                errorMsg = 'Укажите номер больше 0';
             }
         } else if (id === 'ticket') {
-            const digits = cleanDigits(raw);
+            const digits = cleanDigits(raw).slice(0, 11);
             if (!digits) {
                 errorMsg = 'Укажите 11-значный номер билета';
             } else if (digits.length !== 11) {
                 errorMsg = `Нужно ровно 11 цифр (сейчас ${digits.length})`;
+            } else if (/^0{11}$/.test(digits)) {
+                errorMsg = 'Номер билета не может состоять из одних нулей';
             }
         } else if (id === 'date') {
             if (!raw) {
                 errorMsg = 'Выберите дату заключения';
+            } else if (raw < '2020-01-01') {
+                errorMsg = 'Проверьте дату (не раньше 2020 г.)';
             } else if (raw > getLocalTodayIso()) {
                 errorMsg = 'Дата не может быть в будущем';
             }
@@ -168,9 +176,10 @@
                 errorMsg = 'Выберите регион филиала';
             }
         } else if (field.classList.contains('desc')) {
+            const meaningful = (raw.match(/[a-zа-яё0-9]/gi) || []).length;
             if (!raw) {
                 errorMsg = 'Добавьте описание предмета';
-            } else if (raw.length < 3) {
+            } else if (raw.length < 3 || meaningful < 2) {
                 errorMsg = 'Опишите предмет подробнее (от 3 символов)';
             }
         } else if (field.classList.contains('eval')) {
@@ -178,6 +187,8 @@
             const num = parseInt(digits, 10);
             if (!digits || Number.isNaN(num) || num <= 0) {
                 errorMsg = 'Укажите оценку больше 0 ₽';
+            } else if (num > 50000000) {
+                errorMsg = 'Проверьте сумму (максимум 50 000 000 ₽)';
             }
         }
 
@@ -192,17 +203,39 @@
         return { valid: true, message: '' };
     }
 
+    function updateTicketPrefixChip() {
+        const prefixBtn = document.getElementById('ticketPrefixBtn');
+        const deptEl = document.getElementById('department');
+        const ticketEl = document.getElementById('ticket');
+        if (!prefixBtn || !deptEl || !ticketEl) return;
+
+        const deptDigits = cleanDigits(deptEl.value).slice(0, 4);
+        const ticketDigits = cleanDigits(ticketEl.value);
+
+        if (deptDigits && parseInt(deptDigits, 10) > 0 && ticketDigits.length === 0) {
+            const padded = deptDigits.padStart(4, '0');
+            prefixBtn.dataset.prefix = padded;
+            prefixBtn.textContent = `Префикс ${padded}…`;
+            prefixBtn.hidden = false;
+        } else {
+            prefixBtn.hidden = true;
+        }
+    }
+
     function updateTicketCounter(rawVal) {
         const counter = document.getElementById('ticketCounter');
-        if (!counter) return;
-        const len = cleanDigits(rawVal).length;
-        counter.textContent = len === 11 ? '11 / 11 ✓' : `${len} / 11`;
-        counter.classList.remove('is-ready', 'is-warn');
-        if (len === 11) {
-            counter.classList.add('is-ready');
-        } else if (len > 0) {
-            counter.classList.add('is-warn');
+        const digits = cleanDigits(rawVal).slice(0, 11);
+        const len = digits.length;
+        if (counter) {
+            counter.textContent = len === 11 ? '11 / 11 ✓' : `${len} / 11`;
+            counter.classList.remove('is-ready', 'is-warn');
+            if (len === 11 && !/^0{11}$/.test(digits)) {
+                counter.classList.add('is-ready');
+            } else if (len > 0) {
+                counter.classList.add('is-warn');
+            }
         }
+        updateTicketPrefixChip();
     }
 
     let ticketCheckDebounce = null;
@@ -212,8 +245,8 @@
         const statusEl = document.getElementById('ticketCheckStatus');
         if (!statusEl) return;
 
-        const clean = cleanDigits(ticketDigits);
-        if (clean.length !== 11) {
+        const clean = cleanDigits(ticketDigits).slice(0, 11);
+        if (clean.length !== 11 || /^0{11}$/.test(clean)) {
             statusEl.hidden = true;
             statusEl.className = 'ticket-check-status';
             statusEl.textContent = '';
@@ -255,10 +288,10 @@
     }
 
     function scheduleTicketDuplicateCheck(rawVal) {
-        const digits = cleanDigits(rawVal);
+        const digits = cleanDigits(rawVal).slice(0, 11);
         updateTicketCounter(digits);
         clearTimeout(ticketCheckDebounce);
-        if (digits.length === 11) {
+        if (digits.length === 11 && !/^0{11}$/.test(digits)) {
             ticketCheckDebounce = setTimeout(() => {
                 checkTicketDuplicateLive(digits);
             }, 350);
@@ -327,14 +360,23 @@
 
         field.addEventListener('input', () => {
             field.dataset.touched = '1';
-            if (field.id === 'department' || field.id === 'issue' || field.id === 'ticket') {
-                const digitsOnly = cleanDigits(field.value);
-                if (field.value !== digitsOnly) {
-                    field.value = digitsOnly;
+            if (field.id === 'department') {
+                const clamped = cleanDigits(field.value).slice(0, 4);
+                if (field.value !== clamped) field.value = clamped;
+                updateTicketPrefixChip();
+            } else if (field.id === 'issue') {
+                const clamped = cleanDigits(field.value).slice(0, 6);
+                if (field.value !== clamped) field.value = clamped;
+            } else if (field.id === 'ticket') {
+                const clamped = cleanDigits(field.value).slice(0, 11);
+                if (field.value !== clamped) field.value = clamped;
+                scheduleTicketDuplicateCheck(clamped);
+            } else if (field.classList.contains('eval')) {
+                const digits = cleanDigits(field.value);
+                if (digits.length > 8) {
+                    const clipped = digits.slice(0, 8);
+                    field.value = clipped.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
                 }
-            }
-            if (field.id === 'ticket') {
-                scheduleTicketDuplicateCheck(field.value);
             }
             if (field.classList.contains('desc')) {
                 autoCapitalizeInput(field);
@@ -351,10 +393,13 @@
 
         field.addEventListener('change', () => {
             field.dataset.touched = '1';
-            if (field.id === 'department' && field.value.trim()) {
-                try {
-                    localStorage.setItem('last_department', field.value.trim());
-                } catch (e) { }
+            if (field.id === 'department') {
+                const val = cleanDigits(field.value).slice(0, 4);
+                field.value = val;
+                if (val && parseInt(val, 10) > 0) {
+                    try { localStorage.setItem('last_department', val); } catch (e) { }
+                }
+                updateTicketPrefixChip();
             }
             validateField(field, { force: false });
             if (typeof global.updateFormCompletion === 'function') {
@@ -373,13 +418,18 @@
         const deptEl = document.getElementById('department');
         if (deptEl && !deptEl.value) {
             try {
-                const lastDept = localStorage.getItem('last_department');
-                if (lastDept) deptEl.value = lastDept;
+                const lastDept = cleanDigits(localStorage.getItem('last_department') || '').slice(0, 4);
+                if (lastDept && parseInt(lastDept, 10) > 0) {
+                    deptEl.value = lastDept;
+                } else {
+                    localStorage.removeItem('last_department');
+                }
             } catch (e) { }
         }
 
         const dateEl = document.getElementById('date');
         if (dateEl) {
+            dateEl.min = '2020-01-01';
             dateEl.max = getLocalTodayIso();
         }
 
@@ -389,7 +439,9 @@
 
         const ticketEl = document.getElementById('ticket');
         if (ticketEl) {
-            updateTicketCounter(ticketEl.value);
+            const clamped = cleanDigits(ticketEl.value).slice(0, 11);
+            if (ticketEl.value !== clamped) ticketEl.value = clamped;
+            updateTicketCounter(clamped);
         }
 
         document.querySelectorAll('.desc, .eval').forEach((el) => bindFieldValidation(el));
@@ -405,6 +457,7 @@
         renderErrorSummary,
         clearErrorSummary,
         updateTicketCounter,
+        updateTicketPrefixChip,
         scheduleTicketDuplicateCheck,
         checkPreciousMetals,
         autoResizeTextarea,

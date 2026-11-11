@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
-    <meta name="theme-color" content="#f2f5fa" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#eef4f4" media="(prefers-color-scheme: light)">
     <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <title>Заключение антиквариата • Фианит</title>
@@ -13,7 +13,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.6.0/cleave.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=6000">
+    <link rel="stylesheet" href="styles.css?v=6001">
 </head>
 
 <body>
@@ -28,29 +28,42 @@
         <div class="container">
             <!-- Header -->
             <header class="app-header" id="headerContainer">
-                <button type="button" class="icon-pill trophy-btn" onclick="showMotivation()"
-                    aria-label="Баллы и ранги товароведов" title="Баллы и ранги">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round" width="20" height="20" aria-hidden="true">
-                        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
-                        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
-                        <path d="M4 22h16" />
-                        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
-                        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
-                        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
-                    </svg>
-                </button>
+                <div class="header-actions-left">
+                    <button type="button" class="icon-pill trophy-btn" onclick="showMotivation()"
+                        aria-label="Баллы и ранги товароведов" title="Баллы и ранги">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" width="19" height="19" aria-hidden="true">
+                            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                            <path d="M4 22h16" />
+                            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+                        </svg>
+                    </button>
+                    <button type="button" class="icon-pill palette-btn" onclick="openAppearanceModal()"
+                        aria-label="Настроить стиль и тему" title="Стиль и тема">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round" width="19" height="19" aria-hidden="true">
+                            <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
+                            <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
+                            <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
+                            <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
+                            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+                        </svg>
+                    </button>
+                </div>
 
                 <div class="header-copy">
                     <h1 id="mainTitle">Новое заключение</h1>
                     <div class="header-meta">
-                        <span class="subtitle-text">Заключение антиквариата</span>
+                        <span class="subtitle-text">Антиквариат</span>
                         <span class="completion-pill" id="formCompletionPill">0 / 6</span>
                     </div>
                 </div>
 
                 <div class="brand-badge" aria-label="Фианит Ломбард">
-                    <img src="fianit-logo.jpg?v=6000" alt="Фианит Ломбард" class="brand-logo" loading="eager">
+                    <img src="fianit-logo.jpg?v=6001" alt="Фианит Ломбард" class="brand-logo" loading="eager">
                 </div>
             </header>
 
@@ -110,7 +123,7 @@
                                     data-hint="hint-department" data-error="err-department"
                                     aria-describedby="hint-department">
                             </div>
-                            <span class="field-hint" id="hint-department">Номер отделения (до 4 цифр)</span>
+                            <span class="field-hint" id="hint-department">Номер отделения (1–4 цифры)</span>
                             <span class="error-message" id="err-department" hidden></span>
                         </div>
 
@@ -129,11 +142,12 @@
                                     </svg>
                                 </span>
                                 <input type="text" id="issue" name="issue" inputmode="numeric"
-                                    placeholder="Например: 12" required aria-invalid="false"
+                                    maxlength="6" pattern="[0-9]{1,6}" placeholder="Например: 12"
+                                    required aria-invalid="false"
                                     data-hint="hint-issue" data-error="err-issue"
                                     aria-describedby="hint-issue">
                             </div>
-                            <span class="field-hint" id="hint-issue">Порядковый номер по журналу</span>
+                            <span class="field-hint" id="hint-issue">Порядковый номер (до 6 цифр)</span>
                             <span class="error-message" id="err-issue" hidden></span>
                         </div>
 
@@ -154,20 +168,29 @@
                                     </svg>
                                 </span>
                                 <input type="text" id="ticket" name="ticket" inputmode="numeric"
-                                    maxlength="14" placeholder="Например: 03850006392"
+                                    maxlength="11" pattern="[0-9]{11}" placeholder="Например: 03850006392"
                                     required aria-invalid="false"
                                     data-hint="hint-ticket" data-error="err-ticket"
                                     aria-describedby="hint-ticket">
                             </div>
-                            <span class="field-hint" id="hint-ticket">Ровно 11 цифр с залогового билета без пробелов</span>
+                            <div class="ticket-helper-row">
+                                <span class="field-hint" id="hint-ticket">Ровно 11 цифр с залогового билета без пробелов</span>
+                                <button type="button" id="ticketPrefixBtn" class="prefix-chip-btn" hidden
+                                    onclick="applyDepartmentTicketPrefix()">
+                                    Префикс 0385…
+                                </button>
+                            </div>
                             <div id="ticketCheckStatus" class="ticket-check-status" hidden></div>
                             <span class="error-message" id="err-ticket" hidden></span>
                         </div>
 
                         <div class="form-group col-half">
-                            <label class="field-label" for="date">
-                                Дата заключения <span class="required" aria-hidden="true">*</span>
-                            </label>
+                            <div class="label-row">
+                                <label class="field-label" for="date">
+                                    Дата заключения <span class="required" aria-hidden="true">*</span>
+                                </label>
+                                <button type="button" class="inline-chip-btn" onclick="setTodayDate()">Сегодня</button>
+                            </div>
                             <div class="input-wrapper has-prefix">
                                 <span class="input-icon" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -178,7 +201,7 @@
                                         <line x1="3" y1="10" x2="21" y2="10" />
                                     </svg>
                                 </span>
-                                <input type="date" id="date" name="date" required aria-invalid="false"
+                                <input type="date" id="date" name="date" min="2020-01-01" required aria-invalid="false"
                                     data-hint="hint-date" data-error="err-date"
                                     aria-describedby="hint-date">
                             </div>
@@ -261,7 +284,10 @@
                             <span class="total-caption">Общая сумма оценки</span>
                             <span class="total-submeta" id="totalItemsMeta">1 предмет • 0 фото</span>
                         </div>
-                        <span id="totalAmountDisplay" class="total-amount">0 ₽</span>
+                        <div class="total-right">
+                            <span id="totalAmountDisplay" class="total-amount">0 ₽</span>
+                            <span id="estimatedPointsBadge" class="points-preview-pill">✨ +10 баллов</span>
+                        </div>
                     </div>
 
                     <div class="surface-card mode-card">
@@ -301,7 +327,7 @@
                     </div>
                 </section>
 
-                <!-- Browser Sticky Action Footer (hidden automatically in Telegram WebView where MainButton is active) -->
+                <!-- Browser Sticky Action Footer (hidden inside Telegram WebView where MainButton is active) -->
                 <div class="sticky-footer" id="stickyFooter">
                     <button type="button" id="mainSubmitBtn" class="btn btn-primary btn-submit-main"
                         onclick="showPreview()">
@@ -310,7 +336,7 @@
                 </div>
 
                 <footer class="app-footer">
-                    <span>Фианит Экспертиза</span>
+                    <span>Разработано Жуковым Олегом</span>
                     <span class="version-chip">v6.0</span>
                 </footer>
             </form>
@@ -414,14 +440,14 @@
                     <span class="guide-num">1</span>
                     <div>
                         <div class="guide-step-title">Реквизиты и 11 цифр билета</div>
-                        <div class="guide-step-text">Введите код отделения, номер заключения и все 11 цифр билета без пробелов. Повторный билет подсветится автоматически.</div>
+                        <div class="guide-step-text">Введите код отделения (1–4 цифры), номер заключения и 11 цифр билета. Дубликаты определяются автоматически.</div>
                     </div>
                 </div>
                 <div class="guide-step">
                     <span class="guide-num">2</span>
                     <div>
-                        <div class="guide-step-title">Описание, голос и фото</div>
-                        <div class="guide-step-text">Можно диктовать описание через 🎙, вставлять фото через Ctrl+V / Cmd+V или перетаскивать карточки предметов за ⋮⋮.</div>
+                        <div class="guide-step-title">Теги, голос и фото</div>
+                        <div class="guide-step-text">Пользуйтесь быстрыми тегами, диктовкой через 🎙, вставкой фото через Ctrl+V и сортировкой карточек за ⋮⋮.</div>
                     </div>
                 </div>
                 <div class="guide-step">
@@ -434,8 +460,8 @@
                 <div class="guide-step">
                     <span class="guide-num">4</span>
                     <div>
-                        <div class="guide-step-title">Оригинал или Черновик</div>
-                        <div class="guide-step-text">Нажмите «Проверить и отправить», сверьте карточку предпросмотра и подтвердите создание Word-документа.</div>
+                        <div class="guide-step-title">Стиль под себя</div>
+                        <div class="guide-step-text">Нажмите 🎨 в шапке, чтобы выбрать фирменную палитру («Фианит», «Антиквариат», «Графит», «Океан»), светлую/тёмную тему и звук.</div>
                     </div>
                 </div>
             </div>
@@ -449,8 +475,77 @@
         </div>
     </dialog>
 
-    <script src="ux-improvements.js?v=6000"></script>
-    <script src="app.js?v=6000"></script>
+    <!-- Native Top-Layer Dialog 6: Appearance Customizer -->
+    <dialog id="appearanceModal" class="app-dialog" closedby="any" aria-labelledby="appearanceTitle">
+        <div class="dialog-panel">
+            <div class="dialog-header">
+                <h2 id="appearanceTitle">🎨 Оформление и фишки</h2>
+                <button type="button" class="dialog-close" onclick="closeAppearanceModal()" aria-label="Закрыть настройки">×</button>
+            </div>
+
+            <div class="dialog-body">
+                <div class="appearance-section">
+                    <div class="appearance-label">Цветовая палитра</div>
+                    <div class="palette-grid" id="paletteSelector">
+                        <button type="button" class="palette-chip" data-palette="fianit" onclick="setAccentPalette('fianit')">
+                            <span class="swatch swatch-fianit" aria-hidden="true"></span>
+                            <span>
+                                <strong>Фианит</strong>
+                                <small>Бирюза и рубин</small>
+                            </span>
+                        </button>
+                        <button type="button" class="palette-chip" data-palette="gold" onclick="setAccentPalette('gold')">
+                            <span class="swatch swatch-gold" aria-hidden="true"></span>
+                            <span>
+                                <strong>Антиквариат</strong>
+                                <small>Бронза и золото</small>
+                            </span>
+                        </button>
+                        <button type="button" class="palette-chip" data-palette="graphite" onclick="setAccentPalette('graphite')">
+                            <span class="swatch swatch-graphite" aria-hidden="true"></span>
+                            <span>
+                                <strong>Графит</strong>
+                                <small>Строгий монохром</small>
+                            </span>
+                        </button>
+                        <button type="button" class="palette-chip" data-palette="ocean" onclick="setAccentPalette('ocean')">
+                            <span class="swatch swatch-ocean" aria-hidden="true"></span>
+                            <span>
+                                <strong>Океан</strong>
+                                <small>Глубокий синий</small>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="appearance-section">
+                    <div class="appearance-label">Тема интерфейса</div>
+                    <div class="theme-mode-row" id="themeModeSelector">
+                        <button type="button" class="theme-mode-btn" data-theme-pref="auto" onclick="setThemePreference('auto')">🌗 Авто</button>
+                        <button type="button" class="theme-mode-btn" data-theme-pref="light" onclick="setThemePreference('light')">☀️ Светлая</button>
+                        <button type="button" class="theme-mode-btn" data-theme-pref="dark" onclick="setThemePreference('dark')">🌙 Тёмная</button>
+                    </div>
+                </div>
+
+                <div class="appearance-section">
+                    <button type="button" class="sound-toggle-row" id="soundToggleBtn" onclick="toggleSoundEffects()" aria-pressed="true">
+                        <span>
+                            <strong>Звуковые эффекты</strong>
+                            <small>Мягкий отклик при загрузке фото и проверке</small>
+                        </span>
+                        <span class="sound-pill" id="soundToggleBadge">🔊 Вкл</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="dialog-footer">
+                <button type="button" class="btn btn-primary" onclick="closeAppearanceModal()">Готово</button>
+            </div>
+        </div>
+    </dialog>
+
+    <script src="ux-improvements.js?v=6001"></script>
+    <script src="app.js?v=6001"></script>
 </body>
 
 </html>

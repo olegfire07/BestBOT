@@ -1,4 +1,4 @@
-/* Фианит Экспертиза — Mini App Logic (v6.0) */
+/* Фианит Экспертиза — Mini App Logic (v6.0.1) */
 'use strict';
 
 // ============================================
@@ -22,6 +22,7 @@ const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp 
     onEvent: () => { },
     MainButton: {
         setText: () => { },
+        setParams: () => { },
         show: () => { },
         hide: () => { },
         enable: () => { },
@@ -42,13 +43,21 @@ const APP_CONFIG = {
     DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || '',
     IMAGEBAN_CLIENT_ID: window.APP_IMAGEBAN_CLIENT_ID || 'JNo3V4ZQiuzGItX0zXj1kFFfdJ1ocGs7dfN'
 };
-const APP_BUILD_ID = '6000';
+const APP_BUILD_ID = '6001';
 const QUIZ_SIZE = 5;
-const QUIZ_VERSION = '6000';
+const QUIZ_VERSION = '6001';
+
+const PALETTE_CONFIG = {
+    fianit: { accent: '#0f766e', lightBg: '#edf3f3', darkBg: '#0b1120' },
+    gold: { accent: '#b45309', lightBg: '#f5f1eb', darkBg: '#14100c' },
+    graphite: { accent: '#334155', lightBg: '#f1f3f5', darkBg: '#0d1016' },
+    ocean: { accent: '#1d4ed8', lightBg: '#eef2f8', darkBg: '#0b1120' }
+};
+
+const QUICK_ITEM_TAGS = ['Икона', 'Фарфор', 'Монеты', 'Часы', 'Бронза', 'Статуэтка', 'Картина', 'Клеймо'];
 
 const urlParams = new URLSearchParams(window.location.search);
 const urlBotUrl = (urlParams.get('bot_url') || '').trim();
-const urlImgbbKey = (urlParams.get('imgbb_key') || '').trim();
 const imagebanClientId = (urlParams.get('imageban_client') || APP_CONFIG.IMAGEBAN_CLIENT_ID || '').trim();
 
 function isTelegramWebAppRuntime() {
@@ -120,9 +129,37 @@ function showAppPopup(message) {
 }
 
 // ============================================
-// 2. AUDIO, HAPTICS & THEME SYNC
+// 2. AUDIO, HAPTICS, PALETTE & THEME SYNC
 // ============================================
 let audioCtx = null;
+
+function isSoundEnabled() {
+    try {
+        return localStorage.getItem('app_sound_enabled') !== '0';
+    } catch (e) {
+        return true;
+    }
+}
+
+function getSavedPalette() {
+    try {
+        const saved = localStorage.getItem('app_palette') || 'fianit';
+        return PALETTE_CONFIG[saved] ? saved : 'fianit';
+    } catch (e) {
+        return 'fianit';
+    }
+}
+
+function getSavedThemePreference() {
+    const paramTheme = (urlParams.get('theme') || '').toLowerCase();
+    if (paramTheme === 'dark' || paramTheme === 'light') return paramTheme;
+    try {
+        const saved = localStorage.getItem('app_theme_pref') || 'auto';
+        return (saved === 'light' || saved === 'dark' || saved === 'auto') ? saved : 'auto';
+    } catch (e) {
+        return 'auto';
+    }
+}
 
 function getAudioContext() {
     if (!audioCtx && (window.AudioContext || window.webkitAudioContext)) {
@@ -133,6 +170,7 @@ function getAudioContext() {
 }
 
 function unlockAudio() {
+    if (!isSoundEnabled()) return;
     const ctx = getAudioContext();
     if (ctx && ctx.state === 'suspended') {
         ctx.resume().catch(() => { });
@@ -140,6 +178,7 @@ function unlockAudio() {
 }
 
 function playTone(kind = 'success') {
+    if (!isSoundEnabled()) return;
     const ctx = getAudioContext();
     if (!ctx || ctx.state !== 'running') return;
     try {
@@ -185,13 +224,22 @@ function haptic(type = 'light', opts = {}) {
 }
 
 function applyTheme() {
-    const paramTheme = (urlParams.get('theme') || '').toLowerCase();
+    const paletteKey = getSavedPalette();
+    const palette = PALETTE_CONFIG[paletteKey] || PALETTE_CONFIG.fianit;
+    const themePref = getSavedThemePreference();
     const osPrefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const tgDark = isTelegramWebAppRuntime() && tg.colorScheme === 'dark';
-    const isDark = paramTheme ? paramTheme === 'dark' : (isTelegramWebAppRuntime() ? tgDark : osPrefersDark);
+
+    let isDark = false;
+    if (themePref === 'dark') isDark = true;
+    else if (themePref === 'light') isDark = false;
+    else isDark = isTelegramWebAppRuntime() ? tgDark : osPrefersDark;
 
     const htmlEl = document.documentElement;
-    if (paramTheme === 'dark' || paramTheme === 'light' || isTelegramWebAppRuntime()) {
+    if (paletteKey === 'fianit') htmlEl.removeAttribute('data-palette');
+    else htmlEl.setAttribute('data-palette', paletteKey);
+
+    if (themePref === 'dark' || themePref === 'light' || isTelegramWebAppRuntime()) {
         htmlEl.setAttribute('data-theme', isDark ? 'dark' : 'light');
     } else {
         htmlEl.removeAttribute('data-theme');
@@ -202,11 +250,79 @@ function applyTheme() {
     if (isTelegramWebAppRuntime()) {
         document.body.classList.add('in-telegram');
         try {
-            const bgColor = isDark ? '#0b1120' : '#eef2f8';
+            const bgColor = isDark ? palette.darkBg : palette.lightBg;
             if (typeof tg.setHeaderColor === 'function') tg.setHeaderColor(bgColor);
             if (typeof tg.setBackgroundColor === 'function') tg.setBackgroundColor(bgColor);
+            if (tg.MainButton && typeof tg.MainButton.setParams === 'function') {
+                tg.MainButton.setParams({ color: palette.accent, text_color: '#FFFFFF' });
+            }
         } catch (e) { }
     }
+
+    syncAppearanceControlsUI();
+}
+
+function syncAppearanceControlsUI() {
+    const paletteKey = getSavedPalette();
+    const themePref = getSavedThemePreference();
+    const soundOn = isSoundEnabled();
+
+    document.querySelectorAll('#paletteSelector .palette-chip').forEach((btn) => {
+        const active = btn.dataset.palette === paletteKey;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+
+    document.querySelectorAll('#themeModeSelector .theme-mode-btn').forEach((btn) => {
+        const active = btn.dataset.themePref === themePref;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+
+    const soundBtn = document.getElementById('soundToggleBtn');
+    const soundBadge = document.getElementById('soundToggleBadge');
+    if (soundBtn) soundBtn.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+    if (soundBadge) soundBadge.textContent = soundOn ? '🔊 Вкл' : '🔇 Выкл';
+}
+
+function setAccentPalette(palette) {
+    if (!PALETTE_CONFIG[palette]) return;
+    try { localStorage.setItem('app_palette', palette); } catch (e) { }
+    applyTheme();
+    haptic('light');
+}
+
+function setThemePreference(pref) {
+    if (pref !== 'auto' && pref !== 'light' && pref !== 'dark') return;
+    try { localStorage.setItem('app_theme_pref', pref); } catch (e) { }
+    if (urlParams.has('theme')) {
+        urlParams.delete('theme');
+    }
+    applyTheme();
+    haptic('light');
+}
+
+function toggleSoundEffects() {
+    const next = !isSoundEnabled();
+    try { localStorage.setItem('app_sound_enabled', next ? '1' : '0'); } catch (e) { }
+    syncAppearanceControlsUI();
+    if (next) {
+        unlockAudio();
+        haptic('success', { sound: true });
+    } else {
+        haptic('light');
+    }
+}
+
+function openAppearanceModal() {
+    haptic('light');
+    syncAppearanceControlsUI();
+    openDialog(document.getElementById('appearanceModal'));
+}
+
+function closeAppearanceModal() {
+    haptic('light');
+    closeDialog(document.getElementById('appearanceModal'));
 }
 
 applyTheme();
@@ -311,6 +427,7 @@ function setupDialogDismissHandlers() {
             else if (dialog.id === 'quizModal') closeQuiz();
             else if (dialog.id === 'motivationModal') closeMotivation();
             else if (dialog.id === 'guideModal') closeGuide();
+            else if (dialog.id === 'appearanceModal') closeAppearanceModal();
             else closeDialog(dialog);
         });
 
@@ -362,8 +479,58 @@ function closeLightbox() {
 }
 
 // ============================================
-// 4. QUIZ MODULE
+// 4. QUICK FIELD HELPERS & QUIZ MODULE
 // ============================================
+function applyDepartmentTicketPrefix() {
+    const ux = window.UX;
+    const prefixBtn = document.getElementById('ticketPrefixBtn');
+    const ticketEl = document.getElementById('ticket');
+    if (!prefixBtn || !ticketEl || !prefixBtn.dataset.prefix) return;
+
+    ticketEl.value = prefixBtn.dataset.prefix;
+    ticketEl.dataset.touched = '1';
+    if (ux) {
+        ux.clearFieldError(ticketEl);
+        ux.updateTicketCounter(ticketEl.value);
+    }
+    ticketEl.focus();
+    const len = ticketEl.value.length;
+    try { ticketEl.setSelectionRange(len, len); } catch (e) { }
+    saveFormData();
+    updateFormCompletion();
+    haptic('light');
+}
+
+function setTodayDate() {
+    const dateEl = document.getElementById('date');
+    if (!dateEl) return;
+    const today = window.UX ? window.UX.getLocalTodayIso() : new Date().toISOString().slice(0, 10);
+    dateEl.value = today;
+    dateEl.max = today;
+    dateEl.dataset.touched = '1';
+    if (window.UX) window.UX.clearFieldError(dateEl);
+    saveFormData();
+    updateFormCompletion();
+    haptic('light');
+}
+
+function appendQuickTag(idx, tag) {
+    const descEl = document.getElementById(`desc-${idx}`);
+    if (!descEl) return;
+
+    const current = descEl.value.trim();
+    const lowCurrent = current.toLowerCase();
+    const lowTag = tag.toLowerCase();
+    if (!lowCurrent.includes(lowTag)) {
+        const nextVal = current ? `${current}, ${lowTag}` : tag;
+        descEl.value = nextVal.slice(0, 800);
+        descEl.dataset.touched = '1';
+        descEl.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    descEl.focus();
+    haptic('light');
+}
+
 let quizQuestions = [];
 let quizState = null;
 
@@ -573,6 +740,10 @@ let itemCount = 0;
 let dragSrcCard = null;
 
 function createCardHtml(idx) {
+    const tagsHtml = QUICK_ITEM_TAGS.map((tag) =>
+        `<button type="button" class="quick-tag-chip" onclick="appendQuickTag(${idx}, '${tag}')">+ ${tag}</button>`
+    ).join('');
+
     return `
         <div class="swipe-delete-indicator" aria-hidden="true">Удалить</div>
         <div class="item-header">
@@ -595,7 +766,7 @@ function createCardHtml(idx) {
                     Описание предмета <span class="required" aria-hidden="true">*</span>
                 </label>
                 <div class="input-wrapper textarea-wrapper">
-                    <textarea id="desc-${idx}" class="desc item-field" rows="2"
+                    <textarea id="desc-${idx}" class="desc item-field" rows="2" maxlength="800"
                         placeholder="Например: Икона Николай Чудотворец, XIX век, дерево, темпера, 27×22 см"
                         required aria-invalid="false"
                         data-hint="hint-desc-${idx}" data-error="err-desc-${idx}"
@@ -612,6 +783,7 @@ function createCardHtml(idx) {
                         </svg>
                     </button>
                 </div>
+                <div class="quick-tags" aria-label="Быстрые теги для описания">${tagsHtml}</div>
                 <span class="field-hint" id="hint-desc-${idx}">Наименование, материал, период, клейма или дефекты</span>
                 <span class="error-message" id="err-desc-${idx}" hidden></span>
             </div>
@@ -622,7 +794,7 @@ function createCardHtml(idx) {
                 </label>
                 <div class="input-wrapper has-suffix">
                     <input type="text" id="eval-${idx}" class="eval item-field" inputmode="numeric"
-                        placeholder="Например: 15 000" required aria-invalid="false"
+                        maxlength="11" placeholder="Например: 15 000" required aria-invalid="false"
                         data-hint="hint-eval-${idx}" data-error="err-eval-${idx}"
                         aria-describedby="hint-eval-${idx}">
                     <span class="input-suffix" aria-hidden="true">₽</span>
@@ -848,8 +1020,21 @@ function updateTotal() {
 
     const totalEl = document.getElementById('totalAmountDisplay');
     const metaEl = document.getElementById('totalItemsMeta');
+    const pointsEl = document.getElementById('estimatedPointsBadge');
+    const isTest = document.getElementById('mode-test')?.checked || false;
+
     if (totalEl) totalEl.textContent = `${formatNumber(total)} ₽`;
     if (metaEl) metaEl.textContent = `${cards.length} ${pluralizeItems(cards.length)} • ${photoCount} фото`;
+    if (pointsEl) {
+        if (isTest) {
+            pointsEl.textContent = 'Черновик • 0 баллов';
+            pointsEl.classList.add('is-draft');
+        } else {
+            const estimatedPoints = 10 + Math.floor(total / 1000);
+            pointsEl.textContent = `✨ +${formatNumber(estimatedPoints)} баллов`;
+            pointsEl.classList.remove('is-draft');
+        }
+    }
 }
 
 function pluralizeItems(n) {
@@ -1170,27 +1355,38 @@ async function handleFileSelect(input) {
     }
 }
 
-async function uploadImageToBot(file, onProgress) {
+async function uploadImageToServerApi(file, onProgress) {
     const cleanBase = getCleanBotUrl();
     if (!cleanBase) {
-        return uploadWithRetry(() => uploadImageToImageBan(file, onProgress));
+        throw new Error('Сервер загрузки фото не настроен');
     }
-
-    const uploadUrl = `${cleanBase}/api/upload-photo`;
     const formData = new FormData();
-    formData.append('photo', file, 'photo.jpg');
+    formData.append('image', file, file.name || 'image.jpg');
 
-    const headers = {};
-    if (tg.initData) headers['X-Telegram-Init-Data'] = tg.initData;
-
-    try {
-        const result = await uploadWithRetry(() => uploadWithProgress(uploadUrl, formData, headers, onProgress));
-        if (!result || !result.url) throw new Error('Сервер не вернул ссылку на фото');
-        return result.url;
-    } catch (botErr) {
-        console.warn('Bot upload fallback to ImageBan:', botErr);
-        return uploadWithRetry(() => uploadImageToImageBan(file, onProgress));
+    const result = await uploadWithRetry(() =>
+        uploadWithProgress(`${cleanBase}/api/upload-photo`, formData, {}, onProgress)
+    );
+    const url = result && ((result.data && result.data.url) || result.url);
+    if (!url) {
+        throw new Error((result && result.error) || 'Сервер не вернул ссылку на фото');
     }
+    return url;
+}
+
+async function uploadImageToBot(file, onProgress) {
+    const cleanBase = getCleanBotUrl();
+    if (imagebanClientId) {
+        try {
+            return await uploadWithRetry(() => uploadImageToImageBan(file, onProgress));
+        } catch (ibanErr) {
+            console.warn('ImageBan upload failed:', ibanErr);
+            if (cleanBase) {
+                return await uploadImageToServerApi(file, onProgress);
+            }
+            throw ibanErr;
+        }
+    }
+    return uploadImageToServerApi(file, onProgress);
 }
 
 async function uploadImageToImageBan(file, onProgress) {
@@ -1198,17 +1394,18 @@ async function uploadImageToImageBan(file, onProgress) {
         throw new Error('Не настроен ключ загрузки фото');
     }
     const formData = new FormData();
-    formData.append('image', file, 'photo.jpg');
+    formData.append('image', file, file.name || 'image.jpg');
     const result = await uploadWithProgress(
         'https://api.imageban.ru/v1',
         formData,
         { Authorization: `TOKEN ${imagebanClientId}` },
         onProgress
     );
-    if (!result || !result.success || !result.data || !result.data.link) {
-        throw new Error('Ошибка фотохостинга ImageBan');
+    const link = result && ((result.data && result.data[0] && result.data[0].link) || (result.data && result.data.link));
+    if (!result || !result.success || !link) {
+        throw new Error((result && result.error) || 'Ошибка фотохостинга ImageBan');
     }
-    return result.data.link;
+    return link;
 }
 
 function shouldRetryUpload(error) {
@@ -1337,12 +1534,18 @@ function updateMainButton() {
     const isTg = isTelegramWebAppRuntime();
     const stickyFooter = document.getElementById('stickyFooter');
     const mainButton = tg.MainButton;
+    const palette = PALETTE_CONFIG[getSavedPalette()] || PALETTE_CONFIG.fianit;
 
     if (isTg) {
         document.body.classList.add('in-telegram');
         if (stickyFooter) stickyFooter.style.display = 'none';
         if (mainButton) {
             mainButton.setText(appState === 'preview' ? 'ПОДТВЕРДИТЬ И ОТПРАВИТЬ' : 'ПРОВЕРИТЬ И ОТПРАВИТЬ');
+            if (typeof mainButton.setParams === 'function') {
+                try {
+                    mainButton.setParams({ color: palette.accent, text_color: '#FFFFFF' });
+                } catch (e) { }
+            }
             mainButton.show();
             mainButton.enable();
             mainButton.offClick(handleMainButton);
@@ -1364,11 +1567,14 @@ function updateFormCompletion() {
     const ux = window.UX;
     if (!ux) return;
 
-    const deptOk = ux.cleanDigits(document.getElementById('department')?.value).length >= 1;
-    const issueOk = ux.cleanDigits(document.getElementById('issue')?.value).length >= 1;
-    const ticketOk = ux.cleanDigits(document.getElementById('ticket')?.value).length === 11;
+    const deptDigits = ux.cleanDigits(document.getElementById('department')?.value).slice(0, 4);
+    const deptOk = deptDigits.length >= 1 && parseInt(deptDigits, 10) > 0;
+    const issueDigits = ux.cleanDigits(document.getElementById('issue')?.value).slice(0, 6);
+    const issueOk = issueDigits.length >= 1 && parseInt(issueDigits, 10) > 0;
+    const ticketDigits = ux.cleanDigits(document.getElementById('ticket')?.value).slice(0, 11);
+    const ticketOk = ticketDigits.length === 11 && !/^0{11}$/.test(ticketDigits);
     const dateVal = document.getElementById('date')?.value || '';
-    const dateOk = Boolean(dateVal && dateVal <= ux.getLocalTodayIso());
+    const dateOk = Boolean(dateVal && dateVal >= '2020-01-01' && dateVal <= ux.getLocalTodayIso());
     const regionOk = Boolean(document.getElementById('region')?.value);
 
     const cards = Array.from(document.querySelectorAll('.item-card'));
@@ -1376,7 +1582,7 @@ function updateFormCompletion() {
         const desc = (card.querySelector('.desc')?.value || '').trim();
         const evalNum = cleanNumber(card.querySelector('.eval')?.value);
         const photoUrl = card.querySelector('.photo-upload-container')?.dataset.photoUrl;
-        return desc.length >= 3 && evalNum > 0 && Boolean(photoUrl);
+        return desc.length >= 3 && evalNum > 0 && evalNum <= 50000000 && Boolean(photoUrl);
     });
 
     const completed = [deptOk, issueOk, ticketOk, dateOk, regionOk, itemsOk].filter(Boolean).length;
@@ -1504,10 +1710,11 @@ function validateForm() {
 // 8. PREVIEW, SUBMIT & OFFLINE SYNC
 // ============================================
 function collectFormData() {
+    const ux = window.UX;
     const cards = document.querySelectorAll('.item-card');
     const items = [];
     cards.forEach((card) => {
-        const description = (card.querySelector('.desc')?.value || '').trim();
+        const description = (card.querySelector('.desc')?.value || '').replace(/\s+/g, ' ').trim();
         const evaluation = String(cleanNumber(card.querySelector('.eval')?.value));
         const photoUrl = card.querySelector('.photo-upload-container')?.dataset.photoUrl || '';
         items.push({ description, evaluation, photo_url: photoUrl });
@@ -1515,11 +1722,13 @@ function collectFormData() {
 
     const isTest = document.getElementById('mode-test')?.checked || false;
     const rawDate = document.getElementById('date').value;
-    const cleanTicket = window.UX ? window.UX.cleanDigits(document.getElementById('ticket').value) : document.getElementById('ticket').value;
+    const cleanTicket = ux ? ux.cleanDigits(document.getElementById('ticket').value).slice(0, 11) : document.getElementById('ticket').value.slice(0, 11);
+    const cleanDept = ux ? ux.cleanDigits(document.getElementById('department').value).slice(0, 4) : document.getElementById('department').value.trim();
+    const cleanIssue = ux ? ux.cleanDigits(document.getElementById('issue').value).slice(0, 6) : document.getElementById('issue').value.trim();
 
     return {
-        department_number: document.getElementById('department').value.trim(),
-        issue_number: document.getElementById('issue').value.trim(),
+        department_number: cleanDept,
+        issue_number: cleanIssue,
         ticket_number: cleanTicket,
         date: rawDate ? rawDate.split('-').reverse().join('.') : '',
         region: document.getElementById('region').value,
@@ -1562,7 +1771,7 @@ function showPreview() {
                 <span class="preview-v">${escapeHtml(data.issue_number)}</span>
             </div>
             <div class="preview-kv full">
-                <span class="preview-k">Билет</span>
+                <span class="preview-k">Билет (11 цифр)</span>
                 <span class="preview-v">${escapeHtml(data.ticket_number)}</span>
             </div>
             <div class="preview-kv">
@@ -1876,9 +2085,18 @@ function restoreDraft() {
         );
         if (!hasUseful) return false;
 
-        if (draft.department) document.getElementById('department').value = draft.department;
-        if (draft.issue) document.getElementById('issue').value = draft.issue;
-        if (draft.ticket) document.getElementById('ticket').value = draft.ticket;
+        if (draft.department) {
+            const clampedDept = window.UX ? window.UX.cleanDigits(draft.department).slice(0, 4) : draft.department;
+            if (clampedDept && parseInt(clampedDept, 10) > 0) {
+                document.getElementById('department').value = clampedDept;
+            }
+        }
+        if (draft.issue) {
+            document.getElementById('issue').value = window.UX ? window.UX.cleanDigits(draft.issue).slice(0, 6) : draft.issue;
+        }
+        if (draft.ticket) {
+            document.getElementById('ticket').value = window.UX ? window.UX.cleanDigits(draft.ticket).slice(0, 11) : String(draft.ticket).slice(0, 11);
+        }
         if (draft.date) document.getElementById('date').value = draft.date;
         if (draft.region) document.getElementById('region').value = draft.region;
 
@@ -1905,7 +2123,7 @@ function restoreDraft() {
 
         const notice = document.getElementById('draftNotice');
         if (notice) notice.hidden = false;
-        if (window.UX) window.UX.updateTicketCounter(draft.ticket || '');
+        if (window.UX) window.UX.updateTicketCounter(document.getElementById('ticket')?.value || '');
         return true;
     } catch (e) {
         return false;
@@ -1967,11 +2185,13 @@ if ('serviceWorker' in navigator) {
 document.addEventListener('DOMContentLoaded', () => {
     setupDialogDismissHandlers();
     sortRegionsByFrequency();
+    syncAppearanceControlsUI();
 
     const dateInput = document.getElementById('date');
     const todayIso = window.UX ? window.UX.getLocalTodayIso() : new Date().toISOString().slice(0, 10);
     if (dateInput) {
         if (!dateInput.value) dateInput.value = todayIso;
+        dateInput.min = '2020-01-01';
         dateInput.max = todayIso;
     }
 
@@ -1983,9 +2203,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const savedRegion = localStorage.getItem('last_region') || localStorage.getItem('default_region');
             if (regionSelect && savedRegion) regionSelect.value = savedRegion;
             const deptEl = document.getElementById('department');
-            const savedDept = localStorage.getItem('last_department') || localStorage.getItem('default_department');
-            if (deptEl && !deptEl.value && savedDept) deptEl.value = savedDept;
+            const rawSavedDept = localStorage.getItem('last_department') || localStorage.getItem('default_department');
+            const cleanSavedDept = window.UX ? window.UX.cleanDigits(rawSavedDept).slice(0, 4) : rawSavedDept;
+            if (deptEl && !deptEl.value && cleanSavedDept && parseInt(cleanSavedDept, 10) > 0) {
+                deptEl.value = cleanSavedDept;
+            }
         } catch (e) { }
+    }
+
+    if (window.UX) {
+        window.UX.updateTicketPrefixChip();
     }
 
     const formEl = document.getElementById('mainForm');
@@ -1997,6 +2224,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formEl.addEventListener('change', () => {
             saveFormData();
             updateFormCompletion();
+            updateTotal();
         });
     }
 
