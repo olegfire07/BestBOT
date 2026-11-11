@@ -1,4 +1,4 @@
-/* Фианит Экспертиза — Mini App Logic (v6.0.1) */
+/* Фианит Экспертиза — Mini App Logic (v6.0.3) */
 'use strict';
 
 // ============================================
@@ -43,9 +43,9 @@ const APP_CONFIG = {
     DEFAULT_BOT_URL: window.APP_DEFAULT_BOT_URL || '',
     IMAGEBAN_CLIENT_ID: window.APP_IMAGEBAN_CLIENT_ID || 'JNo3V4ZQiuzGItX0zXj1kFFfdJ1ocGs7dfN'
 };
-const APP_BUILD_ID = '6002';
+const APP_BUILD_ID = '6003';
 const QUIZ_SIZE = 5;
-const QUIZ_VERSION = '6002';
+const QUIZ_VERSION = '6003';
 
 const PALETTE_CONFIG = {
     fianit: { accent: '#e01b24', lightBg: '#f8fafa', darkBg: '#0d1117' },
@@ -425,6 +425,7 @@ function setupDialogDismissHandlers() {
             else if (dialog.id === 'quizModal') closeQuiz();
             else if (dialog.id === 'guideModal') closeGuide();
             else if (dialog.id === 'appearanceModal') closeAppearanceModal();
+            else if (dialog.id === 'regionPickerModal') closeRegionPickerModal();
             else closeDialog(dialog);
         });
 
@@ -707,13 +708,13 @@ function showQuizResult() {
 // 5. ITEM CARDS, CLEAVE, DRAG-DROP & SWIPE
 // ============================================
 let itemCount = 0;
-let dragSrcCard = null;
 
 function createCardHtml(idx) {
     return `
         <div class="swipe-delete-indicator" aria-hidden="true">Удалить</div>
         <div class="item-header">
-            <span class="drag-handle" aria-hidden="true" title="Перетащить для сортировки">⋮⋮</span>
+            <button type="button" class="drag-handle" aria-label="Переместить предмет ${idx}"
+                aria-pressed="false" title="Перетащить для сортировки">⋮⋮</button>
             <button type="button" class="item-header-toggle" onclick="toggleItem(this)"
                 aria-expanded="true" aria-controls="item-body-${idx}">
                 <span class="item-number">#${idx}</span>
@@ -904,6 +905,16 @@ function renumberItems() {
         const badge = card.querySelector('.item-number');
         if (badge) badge.textContent = `#${number}`;
 
+        const handle = card.querySelector('.drag-handle');
+        if (handle) {
+            handle.setAttribute('aria-label', `Переместить предмет ${number}`);
+        }
+
+        const photoTrigger = card.querySelector('.photo-preview[aria-label]');
+        if (photoTrigger) {
+            photoTrigger.setAttribute('aria-label', `Добавить фото предмета ${number}`);
+        }
+
         const header = card.querySelector('.item-header');
         if (!header) return;
 
@@ -998,59 +1009,360 @@ function pluralizeItems(n) {
     return 'предметов';
 }
 
+let activeItemReorder = null;
+let keyboardGrabState = null;
+
+function announceReorder(message) {
+    const announcer = document.getElementById('reorderAnnouncer');
+    if (!announcer || !message) return;
+    announcer.textContent = '';
+    window.setTimeout(() => {
+        announcer.textContent = message;
+    }, 60);
+}
+
+function moveCardAtomically(list, card, referenceNode) {
+    if (!list || !card) return;
+    if (typeof list.moveBefore === 'function') {
+        list.moveBefore(card, referenceNode || null);
+    } else if (referenceNode) {
+        referenceNode.before(card);
+    } else {
+        list.append(card);
+    }
+}
+
+function animateFlipReorder(preRects, cards) {
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    cards.forEach((c) => {
+        const pre = preRects.get(c);
+        if (!pre) return;
+        const post = c.getBoundingClientRect();
+        const dy = pre.top - post.top;
+        const dx = pre.left - post.left;
+        if (Math.abs(dy) < 1 && Math.abs(dx) < 1) return;
+
+        c.getAnimations().forEach((anim) => anim.finish());
+        c.animate(
+            [
+                { translate: `${dx}px ${dy}px` },
+                { translate: '0px 0px' }
+            ],
+            {
+                duration: 220,
+                easing: 'cubic-bezier(0.22, 1, 0.36, 1)'
+            }
+        );
+    });
+}
+
+function releaseKeyboardGrab(restoreOriginal = false) {
+    if (!keyboardGrabState) return;
+    const { list, card, handle, originalNext } = keyboardGrabState;
+    keyboardGrabState = null;
+    card.classList.remove('keyboard-grabbed');
+    handle.setAttribute('aria-pressed', 'false');
+
+    if (restoreOriginal && originalNext !== undefined && card.nextElementSibling !== originalNext) {
+        const cards = Array.from(list.children);
+        const preRects = new Map(cards.map((c) => [c, c.getBoundingClientRect()]));
+        const ref = originalNext && originalNext.parentElement === list ? originalNext : null;
+        moveCardAtomically(list, card, ref);
+        renumberItems();
+        card.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        animateFlipReorder(preRects, Array.from(list.children));
+        handle.focus({ preventScroll: true });
+        saveFormData();
+        announceReorder('Перемещение отменено.');
+        return;
+    }
+
+    const pos = Array.from(list.children).indexOf(card) + 1;
+    announceReorder(`Предмет закреплён на позиции ${pos}.`);
+}
+
 function initDragAndDrop(card) {
     const handle = card.querySelector('.drag-handle');
     if (!handle) return;
 
-    handle.addEventListener('pointerdown', () => {
-        card.setAttribute('draggable', 'true');
-    });
+    handle.addEventListener('pointerdown', (e) => {
+        if (!e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0)) return;
+        const list = card.closest('#itemsList');
+        if (!list || list.children.length < 2) return;
+        if (activeItemReorder) return;
 
-    card.addEventListener('dragstart', (e) => {
-        dragSrcCard = card;
-        card.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', card.id);
-        haptic('medium');
-    });
-
-    card.addEventListener('dragend', () => {
-        card.classList.remove('dragging');
-        card.removeAttribute('draggable');
-        document.querySelectorAll('.item-card.drag-over').forEach((c) => c.classList.remove('drag-over'));
-        dragSrcCard = null;
-    });
-
-    card.addEventListener('dragover', (e) => {
-        if (!dragSrcCard || dragSrcCard === card) return;
         e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        if (!card.classList.contains('drag-over')) {
-            haptic('light');
+        releaseKeyboardGrab(false);
+
+        const state = {
+            list,
+            card,
+            handle,
+            pointerId: e.pointerId,
+            startClientY: e.clientY,
+            currentClientY: e.clientY,
+            startScrollY: window.scrollY,
+            started: false,
+            targetRef: card.nextElementSibling,
+            lastSlotRef: card.nextElementSibling,
+            rafId: 0,
+            lastFrameTime: 0
+        };
+        activeItemReorder = state;
+
+        try {
+            handle.setPointerCapture(e.pointerId);
+        } catch (err) { }
+
+        const updateDropTarget = () => {
+            const cards = Array.from(list.children);
+            const siblings = cards.filter((c) => c !== card);
+            if (!siblings.length) return;
+
+            const listRect = list.getBoundingClientRect();
+            const clampedY = Math.max(listRect.top - 12, Math.min(listRect.bottom + 12, state.currentClientY));
+
+            const ref = siblings.find((c) => {
+                const r = c.getBoundingClientRect();
+                return (r.top + r.height / 2) > clampedY;
+            }) || null;
+
+            state.targetRef = ref;
+
+            if (ref === card.nextElementSibling) {
+                delete list.dataset.drop;
+                list.style.removeProperty('--drop-x');
+                list.style.removeProperty('--drop-y');
+                list.style.removeProperty('--drop-w');
+                state.lastSlotRef = ref;
+                return;
+            }
+
+            const refIdx = ref ? siblings.indexOf(ref) : siblings.length;
+            const prevCard = refIdx > 0 ? siblings[refIdx - 1] : null;
+            const nextCard = refIdx < siblings.length ? siblings[refIdx] : null;
+
+            let lineY;
+            if (prevCard && nextCard) {
+                lineY = (prevCard.getBoundingClientRect().bottom + nextCard.getBoundingClientRect().top) / 2;
+            } else if (nextCard) {
+                lineY = nextCard.getBoundingClientRect().top - 6;
+            } else if (prevCard) {
+                lineY = prevCard.getBoundingClientRect().bottom + 6;
+            } else {
+                lineY = listRect.top;
+            }
+
+            list.dataset.drop = '1';
+            list.style.setProperty('--drop-x', `${Math.round(listRect.left)}px`);
+            list.style.setProperty('--drop-y', `${Math.round(lineY)}px`);
+            list.style.setProperty('--drop-w', `${Math.round(listRect.width)}px`);
+
+            if (ref !== state.lastSlotRef) {
+                haptic('light');
+                state.lastSlotRef = ref;
+            }
+        };
+
+        const autoScrollStep = (now) => {
+            if (activeItemReorder !== state) return;
+            if (!state.lastFrameTime) state.lastFrameTime = now;
+            const dt = Math.min(48, Math.max(8, now - state.lastFrameTime));
+            state.lastFrameTime = now;
+
+            if (state.started) {
+                const topZone = 76;
+                const bottomZone = window.innerHeight - 96;
+                let velocity = 0;
+
+                if (state.currentClientY < topZone) {
+                    const ratio = Math.min(1.6, (topZone - state.currentClientY) / topZone);
+                    velocity = -Math.round(11 * ratio * (dt / 16));
+                } else if (state.currentClientY > bottomZone) {
+                    const ratio = Math.min(1.6, (state.currentClientY - bottomZone) / 96);
+                    velocity = Math.round(11 * ratio * (dt / 16));
+                }
+
+                if (velocity !== 0) {
+                    const prevScrollY = window.scrollY;
+                    window.scrollBy(0, velocity);
+                    if (window.scrollY !== prevScrollY) {
+                        const dy = (state.currentClientY - state.startClientY) + (window.scrollY - state.startScrollY);
+                        card.style.translate = `0px ${dy}px`;
+                        updateDropTarget();
+                    }
+                }
+            }
+
+            state.rafId = window.requestAnimationFrame(autoScrollStep);
+        };
+
+        const cleanupDrag = (commit) => {
+            if (activeItemReorder !== state) return;
+            activeItemReorder = null;
+
+            if (state.rafId) window.cancelAnimationFrame(state.rafId);
+            document.removeEventListener('pointermove', onPointerMove);
+            document.removeEventListener('pointerup', onPointerUp);
+            document.removeEventListener('pointercancel', onPointerCancel);
+            document.removeEventListener('keydown', onDragKeyDown, true);
+            handle.removeEventListener('lostpointercapture', onLostCapture);
+
+            if (handle.hasPointerCapture && handle.hasPointerCapture(state.pointerId)) {
+                try {
+                    handle.releasePointerCapture(state.pointerId);
+                } catch (err) { }
+            }
+
+            document.documentElement.classList.remove('is-reordering-items');
+            delete list.dataset.drop;
+            list.style.removeProperty('--drop-x');
+            list.style.removeProperty('--drop-y');
+            list.style.removeProperty('--drop-w');
+
+            if (!state.started) {
+                card.style.translate = '';
+                card.classList.remove('dragging');
+                return;
+            }
+
+            const cardsBefore = Array.from(list.children);
+            const preRects = new Map();
+            cardsBefore.forEach((c) => {
+                c.getAnimations().forEach((anim) => anim.finish());
+                preRects.set(c, c.getBoundingClientRect());
+            });
+
+            const shouldMove = commit && state.targetRef !== card.nextElementSibling;
+            card.style.translate = '';
+            card.classList.remove('dragging');
+
+            if (shouldMove) {
+                moveCardAtomically(list, card, state.targetRef);
+                renumberItems();
+                card.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+                animateFlipReorder(preRects, Array.from(list.children));
+                const newPos = Array.from(list.children).indexOf(card) + 1;
+                announceReorder(`Предмет перемещён на позицию ${newPos}.`);
+                haptic('success');
+                saveFormData();
+            } else {
+                animateFlipReorder(preRects, cardsBefore);
+                if (!commit) {
+                    announceReorder('Перемещение отменено.');
+                }
+            }
+        };
+
+        const onPointerMove = (moveEvt) => {
+            if (activeItemReorder !== state || moveEvt.pointerId !== state.pointerId) return;
+            state.currentClientY = moveEvt.clientY;
+            const dy = (state.currentClientY - state.startClientY) + (window.scrollY - state.startScrollY);
+
+            if (!state.started) {
+                if (Math.abs(moveEvt.clientY - state.startClientY) < 4) return;
+                state.started = true;
+                card.getAnimations().forEach((anim) => anim.finish());
+                card.classList.add('dragging');
+                document.documentElement.classList.add('is-reordering-items');
+                haptic('medium');
+                state.rafId = window.requestAnimationFrame(autoScrollStep);
+            }
+
+            card.style.translate = `0px ${dy}px`;
+            updateDropTarget();
+        };
+
+        const onPointerUp = (upEvt) => {
+            if (activeItemReorder !== state || upEvt.pointerId !== state.pointerId) return;
+            cleanupDrag(true);
+        };
+
+        const onPointerCancel = (cancelEvt) => {
+            if (activeItemReorder !== state || cancelEvt.pointerId !== state.pointerId) return;
+            cleanupDrag(false);
+        };
+
+        const onDragKeyDown = (keyEvt) => {
+            if (keyEvt.key === 'Escape') {
+                keyEvt.preventDefault();
+                cleanupDrag(false);
+            }
+        };
+
+        const onLostCapture = () => {
+            if (activeItemReorder === state) {
+                cleanupDrag(state.started);
+            }
+        };
+
+        document.addEventListener('pointermove', onPointerMove);
+        document.addEventListener('pointerup', onPointerUp);
+        document.addEventListener('pointercancel', onPointerCancel);
+        document.addEventListener('keydown', onDragKeyDown, true);
+        handle.addEventListener('lostpointercapture', onLostCapture);
+    });
+
+    handle.addEventListener('keydown', (e) => {
+        const list = card.closest('#itemsList');
+        if (!list || list.children.length < 2) return;
+
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            if (keyboardGrabState && keyboardGrabState.card === card) {
+                releaseKeyboardGrab(false);
+                haptic('light');
+            } else {
+                releaseKeyboardGrab(false);
+                keyboardGrabState = {
+                    list,
+                    card,
+                    handle,
+                    originalNext: card.nextElementSibling
+                };
+                card.classList.add('keyboard-grabbed');
+                handle.setAttribute('aria-pressed', 'true');
+                haptic('medium');
+                const pos = Array.from(list.children).indexOf(card) + 1;
+                announceReorder(`Предмет ${pos} выбран. Используйте стрелки вверх и вниз для перемещения.`);
+            }
+            return;
         }
-        card.classList.add('drag-over');
-    });
 
-    card.addEventListener('dragleave', () => {
-        card.classList.remove('drag-over');
-    });
+        if (e.key === 'Escape' && keyboardGrabState && keyboardGrabState.card === card) {
+            e.preventDefault();
+            releaseKeyboardGrab(true);
+            return;
+        }
 
-    card.addEventListener('drop', (e) => {
-        if (!dragSrcCard || dragSrcCard === card) return;
+        if (!keyboardGrabState || keyboardGrabState.card !== card) return;
+        if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+
         e.preventDefault();
-        card.classList.remove('drag-over');
-        const list = document.getElementById('itemsList');
         const cards = Array.from(list.children);
-        const fromIdx = cards.indexOf(dragSrcCard);
-        const toIdx = cards.indexOf(card);
-        if (fromIdx < toIdx) {
-            list.insertBefore(dragSrcCard, card.nextSibling);
-        } else {
-            list.insertBefore(dragSrcCard, card);
-        }
+        const idx = cards.indexOf(card);
+        const targetIdx = e.key === 'ArrowUp' ? idx - 1 : idx + 1;
+        if (targetIdx < 0 || targetIdx >= cards.length) return;
+
+        const preRects = new Map(cards.map((c) => [c, c.getBoundingClientRect()]));
+        const ref = e.key === 'ArrowUp' ? cards[targetIdx] : cards[targetIdx].nextElementSibling;
+        moveCardAtomically(list, card, ref);
         renumberItems();
-        haptic('success');
+        card.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+        handle.focus({ preventScroll: true });
+        animateFlipReorder(preRects, Array.from(list.children));
+        haptic('light');
         saveFormData();
+        const newPos = Array.from(list.children).indexOf(card) + 1;
+        announceReorder(`Предмет на позиции ${newPos} из ${cards.length}.`);
+    });
+
+    handle.addEventListener('blur', () => {
+        if (keyboardGrabState && keyboardGrabState.card === card && document.activeElement !== handle) {
+            releaseKeyboardGrab(false);
+        }
     });
 }
 
@@ -2000,6 +2312,12 @@ function discardDraft() {
     const form = document.getElementById('mainForm');
     if (form) form.reset();
 
+    const regionEl = document.getElementById('region');
+    if (regionEl && regionEl.options.length > 0) {
+        regionEl.value = '';
+        regionEl.options[0].selected = true;
+    }
+
     const dateEl = document.getElementById('date');
     if (dateEl && window.UX) {
         const today = window.UX.getLocalTodayIso();
@@ -2051,7 +2369,12 @@ function restoreDraft() {
             document.getElementById('ticket').value = window.UX ? window.UX.cleanDigits(draft.ticket).slice(0, 11) : String(draft.ticket).slice(0, 11);
         }
         if (draft.date) document.getElementById('date').value = draft.date;
-        if (draft.region) document.getElementById('region').value = draft.region;
+        if (draft.region) {
+            const regionEl = document.getElementById('region');
+            if (regionEl && Array.from(regionEl.options).some((opt) => opt.value === draft.region)) {
+                regionEl.value = draft.region;
+            }
+        }
 
         if (Array.isArray(draft.items) && draft.items.length > 0) {
             const list = document.getElementById('itemsList');
@@ -2103,10 +2426,98 @@ function sortRegionsByFrequency() {
 
         options.sort((a, b) => {
             const diff = (history[b.value] || 0) - (history[a.value] || 0);
-            return diff !== 0 ? diff : a.textContent.localeCompare(b.textContent, 'ru');
+            return diff !== 0 ? diff : a.textContent.trim().localeCompare(b.textContent.trim(), 'ru');
         });
-        options.forEach((opt) => select.appendChild(opt));
+        options.forEach((opt) => {
+            opt.classList.toggle('is-frequent', (history[opt.value] || 0) > 0);
+            select.appendChild(opt);
+        });
     } catch (e) { }
+}
+
+function closeRegionPickerModal() {
+    const dialog = document.getElementById('regionPickerModal');
+    closeDialog(dialog);
+    const trigger = document.querySelector('.region-fallback-trigger');
+    if (trigger) trigger.focus({ preventScroll: true });
+}
+
+function renderRegionPickerOptions() {
+    const select = document.getElementById('region');
+    const listEl = document.getElementById('regionOptionsList');
+    if (!select || !listEl) return;
+
+    const currentVal = select.value;
+    const options = Array.from(select.querySelectorAll('option')).filter((opt) => opt.value !== '');
+    listEl.innerHTML = '';
+
+    options.forEach((opt) => {
+        const selected = opt.value === currentVal;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'region-option-btn';
+        if (opt.classList.contains('is-frequent')) btn.classList.add('is-frequent');
+        btn.setAttribute('role', 'option');
+        btn.setAttribute('aria-selected', selected ? 'true' : 'false');
+
+        const dot = document.createElement('span');
+        dot.className = 'region-opt-dot';
+        dot.setAttribute('aria-hidden', 'true');
+
+        const label = document.createElement('span');
+        label.textContent = opt.textContent.trim();
+
+        btn.append(dot, label);
+        if (selected) {
+            const check = document.createElement('span');
+            check.className = 'region-opt-check';
+            check.setAttribute('aria-hidden', 'true');
+            check.textContent = '✓';
+            btn.appendChild(check);
+        }
+
+        btn.addEventListener('click', () => {
+            select.value = opt.value;
+            select.dataset.touched = '1';
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+            if (window.UX) window.UX.validateField(select, { force: true });
+            haptic('light');
+            closeRegionPickerModal();
+        });
+
+        listEl.appendChild(btn);
+    });
+}
+
+function initRegionPickerFallback() {
+    const select = document.getElementById('region');
+    if (!select) return;
+
+    const supportsBaseSelect = typeof CSS !== 'undefined'
+        && typeof CSS.supports === 'function'
+        && CSS.supports('appearance', 'base-select');
+    if (supportsBaseSelect) return;
+
+    const wrapper = select.closest('.input-wrapper');
+    if (!wrapper || wrapper.querySelector('.region-fallback-trigger')) return;
+
+    select.tabIndex = -1;
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'region-fallback-trigger';
+    trigger.setAttribute('aria-haspopup', 'listbox');
+    trigger.setAttribute('aria-label', 'Выбрать филиал');
+    trigger.addEventListener('click', () => {
+        haptic('light');
+        renderRegionPickerOptions();
+        const dialog = document.getElementById('regionPickerModal');
+        openDialog(dialog);
+        const activeBtn = dialog?.querySelector('.region-option-btn[aria-selected="true"]')
+            || dialog?.querySelector('.region-option-btn');
+        if (activeBtn) activeBtn.focus({ preventScroll: true });
+    });
+
+    wrapper.appendChild(trigger);
 }
 
 // ============================================
@@ -2138,6 +2549,7 @@ if ('serviceWorker' in navigator) {
 document.addEventListener('DOMContentLoaded', () => {
     setupDialogDismissHandlers();
     sortRegionsByFrequency();
+    initRegionPickerFallback();
     syncAppearanceControlsUI();
 
     const dateInput = document.getElementById('date');
@@ -2154,7 +2566,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const regionSelect = document.getElementById('region');
         try {
             const savedRegion = localStorage.getItem('last_region') || localStorage.getItem('default_region');
-            if (regionSelect && savedRegion) regionSelect.value = savedRegion;
+            if (regionSelect && savedRegion && Array.from(regionSelect.options).some((opt) => opt.value === savedRegion)) {
+                regionSelect.value = savedRegion;
+            }
             const deptEl = document.getElementById('department');
             const rawSavedDept = localStorage.getItem('last_department') || localStorage.getItem('default_department');
             const cleanSavedDept = window.UX ? window.UX.cleanDigits(rawSavedDept).slice(0, 4) : rawSavedDept;

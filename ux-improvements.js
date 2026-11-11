@@ -326,7 +326,7 @@
                     formGroup.appendChild(warnEl);
                 }
             }
-            warnEl.textContent = '⛔ На монеты, золото, серебро (925/585) и драгметаллы заключение не оформляется.';
+            warnEl.textContent = '⛔ Монеты из драгметаллов и предметы, содержащие драгоценные металлы, не принимаются по схеме кредитования «Антиквариат».';
             warnEl.hidden = false;
         } else if (warnEl) {
             warnEl.hidden = true;

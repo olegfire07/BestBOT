@@ -13,7 +13,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cleave.js/1.6.0/cleave.min.js"></script>
-    <link rel="stylesheet" href="styles.css?v=6002">
+    <link rel="stylesheet" href="styles.css?v=6003">
 </head>
 
 <body>
@@ -51,7 +51,7 @@
                 </div>
 
                 <div class="brand-badge" aria-label="Фианит Ломбард">
-                    <img src="fianit-logo.jpg?v=6002" alt="Фианит Ломбард" class="brand-logo" loading="eager">
+                    <img src="fianit-logo.jpg?v=6003" alt="Фианит Ломбард" class="brand-logo" loading="eager">
                 </div>
             </header>
 
@@ -209,23 +209,26 @@
                                         <circle cx="12" cy="10" r="3" />
                                     </svg>
                                 </span>
+                                <!-- Временно скрыто: Башкирия -->
                                 <select id="region" name="region" required aria-invalid="false"
                                     data-hint="hint-region" data-error="err-region"
                                     aria-describedby="hint-region">
+                                    <button type="button">
+                                        <selectedcontent></selectedcontent>
+                                    </button>
                                     <option value="" disabled selected>Выберите филиал...</option>
-                                    <option value="Санкт-Петербург">Санкт-Петербург</option>
-                                    <option value="Свердловская область">Свердловская область</option>
-                                    <option value="Челябинская область">Челябинская область</option>
-                                    <option value="Екатеринбург">Екатеринбург</option>
-                                    <option value="Башкирия">Башкирия</option>
-                                    <option value="Тюмень">Тюмень</option>
-                                    <option value="ХМАО-Югра">ХМАО-Югра</option>
-                                    <option value="Нижний Новгород">Нижний Новгород</option>
-                                    <option value="Ростовская область">Ростовская область</option>
-                                    <option value="Челябинск">Челябинск</option>
-                                    <option value="Магнитогорск">Магнитогорск</option>
-                                    <option value="Курган">Курган</option>
-                                    <option value="Краснодарский край">Краснодарский край</option>
+                                    <option value="Санкт-Петербург"><span class="region-opt-dot" aria-hidden="true"></span><span>Санкт-Петербург</span></option>
+                                    <option value="Свердловская область"><span class="region-opt-dot" aria-hidden="true"></span><span>Свердловская область</span></option>
+                                    <option value="Челябинская область"><span class="region-opt-dot" aria-hidden="true"></span><span>Челябинская область</span></option>
+                                    <option value="Екатеринбург"><span class="region-opt-dot" aria-hidden="true"></span><span>Екатеринбург</span></option>
+                                    <option value="Тюмень"><span class="region-opt-dot" aria-hidden="true"></span><span>Тюмень</span></option>
+                                    <option value="ХМАО-Югра"><span class="region-opt-dot" aria-hidden="true"></span><span>ХМАО-Югра</span></option>
+                                    <option value="Нижний Новгород"><span class="region-opt-dot" aria-hidden="true"></span><span>Нижний Новгород</span></option>
+                                    <option value="Ростовская область"><span class="region-opt-dot" aria-hidden="true"></span><span>Ростовская область</span></option>
+                                    <option value="Челябинск"><span class="region-opt-dot" aria-hidden="true"></span><span>Челябинск</span></option>
+                                    <option value="Магнитогорск"><span class="region-opt-dot" aria-hidden="true"></span><span>Магнитогорск</span></option>
+                                    <option value="Курган"><span class="region-opt-dot" aria-hidden="true"></span><span>Курган</span></option>
+                                    <option value="Краснодарский край"><span class="region-opt-dot" aria-hidden="true"></span><span>Краснодарский край</span></option>
                                 </select>
                                 <span class="select-chevron" aria-hidden="true">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -250,6 +253,8 @@
                         </div>
                         <span class="section-bar-tip">Порядок можно менять за ⋮⋮</span>
                     </div>
+
+                    <div id="reorderAnnouncer" class="sr-only" aria-live="polite"></div>
 
                     <div id="itemsList" class="items-list">
                         <!-- Предметы добавляются скриптом -->
@@ -396,7 +401,7 @@
                     <span class="guide-num">3</span>
                     <div>
                         <div class="guide-step-title">Что не принимаем</div>
-                        <div class="guide-step-text">На монеты, золото, серебро (925/585) и драгметаллы заключения не оформляются — форма покажет предупреждение.</div>
+                        <div class="guide-step-text">Монеты из драгметаллов и предметы с драгоценными металлами (золото, серебро) не принимаются по схеме кредитования «Антиквариат» — форма сразу напомнит.</div>
                     </div>
                 </div>
                 <div class="guide-step">
@@ -486,8 +491,23 @@
         </div>
     </dialog>
 
-    <script src="ux-improvements.js?v=6002"></script>
-    <script src="app.js?v=6002"></script>
+    <!-- Native Top-Layer Dialog 6: Region Picker Fallback (for browsers without customizable select) -->
+    <dialog id="regionPickerModal" class="app-dialog is-animating-top-layer region-picker-dialog" closedby="any"
+        aria-labelledby="regionPickerTitle">
+        <div class="dialog-panel">
+            <div class="dialog-header">
+                <h2 id="regionPickerTitle">Выберите филиал</h2>
+                <button type="button" class="dialog-close" onclick="closeRegionPickerModal()"
+                    aria-label="Закрыть выбор филиала">×</button>
+            </div>
+            <div class="dialog-body region-picker-body">
+                <div id="regionOptionsList" class="region-option-list" role="listbox" aria-label="Филиалы"></div>
+            </div>
+        </div>
+    </dialog>
+
+    <script src="ux-improvements.js?v=6003"></script>
+    <script src="app.js?v=6003"></script>
 </body>
 
 </html>

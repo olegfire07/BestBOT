@@ -41,6 +41,7 @@
 @layer theme {
     :root {
         color-scheme: light dark;
+        interpolate-size: allow-keywords;
         --in-oklab: ;
 
         --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
@@ -935,6 +936,7 @@
         color: var(--text-muted);
         pointer-events: none;
         display: flex;
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
     }
 
     .input-suffix {
@@ -986,6 +988,253 @@
 
     .form-group select::picker-icon {
         display: none;
+    }
+
+    @supports (appearance: base-select) {
+        #region,
+        #region::picker(select) {
+            appearance: base-select;
+        }
+
+        #region {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+        }
+
+        #region > button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            min-width: 0;
+            padding: 0;
+            border: none;
+            background: transparent;
+            color: inherit;
+            font: inherit;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        #region > button:focus {
+            outline: none;
+        }
+
+        #region selectedcontent {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+        #region:has(option[value=""]:checked) selectedcontent {
+            color: var(--text-muted);
+        }
+
+        #region selectedcontent .region-opt-dot {
+            display: none;
+        }
+
+        #region::picker-icon {
+            display: none;
+        }
+
+        .input-wrapper.has-chevron:has(#region:open) .select-chevron {
+            transform: translateY(-50%) rotate(180deg);
+            color: var(--accent-ink);
+        }
+
+        #region::picker(select) {
+            background: var(--surface-card);
+            color: var(--text-primary);
+            border: 1.5px solid var(--border-card);
+            border-radius: 18px;
+            box-shadow: var(--shadow-dialog);
+            padding: 6px;
+            margin-block-start: 6px;
+            width: anchor-size(width);
+            max-height: min(52dvh, 360px);
+            opacity: 0;
+            transform: translateY(-6px) scale(0.985);
+            transition-property: display, overlay, opacity, transform;
+            transition-duration: 0.22s;
+            transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+            transition-behavior: allow-discrete;
+        }
+
+        #region:open::picker(select) {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        @starting-style {
+            #region:open::picker(select) {
+                opacity: 0;
+                transform: translateY(-6px) scale(0.985);
+            }
+        }
+
+        #region option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: background-color 0.14s ease, color 0.14s ease;
+        }
+
+        #region option + option {
+            margin-top: 2px;
+        }
+
+        #region option[value=""] {
+            color: var(--text-muted);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            padding: 6px 12px 8px;
+            border-bottom: 1px solid var(--border-card);
+            border-radius: 0;
+            margin-bottom: 4px;
+            cursor: default;
+        }
+
+        #region option .region-opt-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: var(--radius-pill);
+            flex-shrink: 0;
+            background: var(--secondary-ink, var(--border-strong));
+            opacity: 0.45;
+            transition: transform 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+        }
+
+        #region option.is-frequent .region-opt-dot {
+            background: var(--secondary-ink, var(--accent-ink));
+            opacity: 0.95;
+        }
+
+        #region option:hover:not(:disabled) {
+            background: var(--surface-hover);
+        }
+
+        #region option:focus-visible {
+            background: var(--surface-hover);
+            outline: 2px solid var(--accent-solid);
+            outline-offset: -2px;
+        }
+
+        #region option:checked {
+            background: var(--accent-soft);
+            color: var(--accent-ink);
+            font-weight: 700;
+        }
+
+        #region option:checked .region-opt-dot {
+            background: var(--accent-solid);
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        #region option::checkmark {
+            order: 2;
+            margin-left: auto;
+            font-weight: 800;
+            color: var(--accent-solid);
+        }
+    }
+
+    .region-fallback-trigger {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        border: 0;
+        border-radius: var(--radius-control);
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    .input-wrapper:has(.region-fallback-trigger:focus-visible) #region {
+        outline: none;
+        border-color: var(--accent-solid);
+        box-shadow: 0 0 0 3.5px var(--accent-ring);
+        background: var(--surface-card);
+    }
+
+    .region-picker-body {
+        padding: 10px 12px 14px;
+    }
+
+    .region-option-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .region-option-btn {
+        width: 100%;
+        min-block-size: 46px;
+        padding: 10px 14px;
+        border-radius: 13px;
+        border: 1px solid transparent;
+        background: transparent;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+        cursor: pointer;
+        transition: background-color 0.14s ease, border-color 0.14s ease, color 0.14s ease;
+    }
+
+    .region-option-btn:hover,
+    .region-option-btn:focus-visible {
+        background: var(--surface-hover);
+        outline: none;
+    }
+
+    .region-option-btn .region-opt-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: var(--radius-pill);
+        flex-shrink: 0;
+        background: var(--secondary-ink, var(--border-strong));
+        opacity: 0.45;
+    }
+
+    .region-option-btn.is-frequent .region-opt-dot {
+        background: var(--secondary-ink, var(--accent-ink));
+        opacity: 0.95;
+    }
+
+    .region-option-btn[aria-selected="true"] {
+        background: var(--accent-soft);
+        border-color: var(--accent-ring);
+        color: var(--accent-ink);
+        font-weight: 700;
+    }
+
+    .region-option-btn[aria-selected="true"] .region-opt-dot {
+        background: var(--accent-solid);
+        opacity: 1;
+        transform: scale(1.2);
+    }
+
+    .region-opt-check {
+        margin-left: auto;
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: var(--accent-solid);
     }
 
     .input-wrapper.has-suffix input {
@@ -1140,9 +1389,38 @@
     }
 
     .items-list {
+        position: relative;
         display: flex;
         flex-direction: column;
         gap: 12px;
+    }
+
+    .items-list[data-drop]::before,
+    .items-list[data-drop]::after {
+        content: '';
+        position: fixed;
+        left: var(--drop-x, 0px);
+        top: var(--drop-y, 0px);
+        pointer-events: none;
+        z-index: 45;
+    }
+
+    .items-list[data-drop]::after {
+        width: var(--drop-w, 200px);
+        height: 3px;
+        border-radius: var(--radius-pill);
+        background: var(--accent-solid);
+        box-shadow: 0 0 0 2px var(--accent-ring);
+        transform: translateY(-1.5px);
+    }
+
+    .items-list[data-drop]::before {
+        width: 11px;
+        height: 11px;
+        border-radius: var(--radius-pill);
+        border: 2.5px solid var(--accent-solid);
+        background: var(--surface-card);
+        transform: translate(-4px, -5.5px);
     }
 
     .item-card {
@@ -1153,17 +1431,30 @@
         corner-shape: squircle;
         box-shadow: var(--shadow-card);
         overflow: hidden;
-        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, scale 0.16s ease;
     }
 
     .item-card.dragging {
-        opacity: 0.65;
-        transform: scale(0.99);
+        position: relative;
+        z-index: 18;
+        opacity: 0.96;
+        scale: 1.015;
+        border-color: var(--accent-solid);
+        box-shadow: var(--shadow-dialog);
+        pointer-events: none;
     }
 
-    .item-card.drag-over {
-        border: 2px dashed var(--accent-solid);
-        box-shadow: 0 0 0 4px var(--accent-ring);
+    .item-card.keyboard-grabbed,
+    .item-card:has(.drag-handle:focus-visible) {
+        border-color: var(--accent-solid);
+        box-shadow: 0 0 0 3px var(--accent-ring);
+    }
+
+    html.is-reordering-items,
+    html.is-reordering-items * {
+        cursor: grabbing !important;
+        -webkit-user-select: none;
+        user-select: none;
     }
 
     .item-header {
@@ -1180,8 +1471,13 @@
     }
 
     .drag-handle {
-        min-inline-size: 32px;
-        min-block-size: 38px;
+        min-inline-size: 38px;
+        min-block-size: 40px;
+        padding: 0;
+        border: none;
+        border-radius: 10px;
+        background: transparent;
+        font: inherit;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -1189,8 +1485,18 @@
         font-weight: 800;
         letter-spacing: -1px;
         cursor: grab;
+        -webkit-user-select: none;
         user-select: none;
         touch-action: none;
+        -webkit-touch-callout: none;
+        transition: background-color 0.16s ease, color 0.16s ease;
+    }
+
+    .drag-handle:is(:hover, :focus-visible),
+    .drag-handle[aria-pressed="true"] {
+        background: var(--accent-soft);
+        color: var(--accent-ink);
+        outline: none;
     }
 
     .drag-handle:active {
@@ -2276,12 +2582,19 @@
 
     @media (pointer: coarse) {
         .btn-remove,
+        .drag-handle,
         .icon-pill,
         .dialog-close,
         .mic-btn,
         .draft-clear-btn {
             min-inline-size: 44px;
             min-block-size: 44px;
+        }
+    }
+
+    @media (max-width: 600px) {
+        dialog.app-dialog.region-picker-dialog {
+            margin-block-end: max(8px, env(safe-area-inset-bottom));
         }
     }
 
@@ -2310,9 +2623,19 @@
 
         .segmented-control input[type="radio"]:checked + .segmented-option,
         .theme-mode-btn.active,
-        .palette-chip.active {
+        .palette-chip.active,
+        .region-option-btn[aria-selected="true"] {
             outline: 2px solid Highlight;
             outline-offset: -2px;
+        }
+
+        .items-list[data-drop]::after {
+            background: Highlight;
+        }
+
+        .items-list[data-drop]::before {
+            border-color: Highlight;
+            background: Canvas;
         }
     }
 }
